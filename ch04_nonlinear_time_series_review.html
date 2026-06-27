@@ -1,0 +1,1345 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>第4章 非线性时间序列模型：超级详细复习资料</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.10/dist/katex.min.css">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.10/dist/katex.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.10/dist/contrib/auto-render.min.js"></script>
+<style>
+:root {
+  color-scheme: light;
+  --bg: #f7f2e8;
+  --paper: #fffdf8;
+  --ink: #24211c;
+  --muted: #706a5f;
+  --line: #ded3bf;
+  --accent: #8f3f2b;
+  --accent-2: #225f73;
+  --accent-3: #4f6f3a;
+  --code-bg: #f0eadf;
+  --shadow: 0 16px 42px rgba(57, 44, 27, .10);
+}
+[data-theme="dark"] {
+  color-scheme: dark;
+  --bg: #181713;
+  --paper: #222019;
+  --ink: #eee8da;
+  --muted: #b8ad9a;
+  --line: #454033;
+  --accent: #e18b67;
+  --accent-2: #7fc2d4;
+  --accent-3: #a8c779;
+  --code-bg: #171914;
+  --shadow: none;
+}
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--ink);
+  font-family: "Noto Serif SC", "Source Han Serif SC", "Songti SC", Georgia, serif;
+  line-height: 1.78;
+}
+.layout {
+  display: grid;
+  grid-template-columns: 280px minmax(0, 1fr);
+  min-height: 100vh;
+}
+aside {
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  padding: 24px 18px;
+  border-right: 1px solid var(--line);
+  background: color-mix(in srgb, var(--paper) 88%, var(--bg));
+  overflow: auto;
+}
+.brand {
+  font-family: "Noto Sans SC", system-ui, sans-serif;
+  font-weight: 800;
+  line-height: 1.2;
+  margin-bottom: 16px;
+}
+.brand small {
+  display: block;
+  color: var(--muted);
+  font-weight: 500;
+  margin-top: 8px;
+}
+.toolbar {
+  display: flex;
+  gap: 8px;
+  margin: 16px 0 20px;
+}
+button {
+  border: 1px solid var(--line);
+  background: var(--paper);
+  color: var(--ink);
+  border-radius: 8px;
+  padding: 8px 10px;
+  cursor: pointer;
+  font-family: "Noto Sans SC", system-ui, sans-serif;
+}
+nav a {
+  display: block;
+  color: var(--muted);
+  text-decoration: none;
+  font-family: "Noto Sans SC", system-ui, sans-serif;
+  line-height: 1.35;
+  margin: 0 0 8px;
+  border-left: 2px solid transparent;
+}
+nav a:hover { color: var(--accent-2); border-left-color: var(--accent-2); }
+.toc-l2 { padding-left: 8px; font-weight: 700; }
+.toc-l3 { padding-left: 20px; font-size: 13px; }
+main {
+  max-width: 980px;
+  width: 100%;
+  margin: 0 auto;
+  padding: 48px 40px 96px;
+}
+article {
+  background: var(--paper);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  box-shadow: var(--shadow);
+  padding: 46px;
+}
+h1, h2, h3, h4 {
+  font-family: "Noto Sans SC", system-ui, sans-serif;
+  line-height: 1.28;
+  letter-spacing: 0;
+}
+h1 {
+  font-size: 34px;
+  margin: 0 0 28px;
+  color: var(--accent);
+}
+h2 {
+  font-size: 25px;
+  margin: 46px 0 18px;
+  padding-top: 12px;
+  border-top: 1px solid var(--line);
+}
+h3 {
+  font-size: 19px;
+  margin: 28px 0 10px;
+  color: var(--accent-2);
+}
+h4 { font-size: 16px; margin: 20px 0 8px; }
+p, li { font-size: 16.5px; }
+a { color: var(--accent-2); }
+blockquote {
+  margin: 20px 0;
+  padding: 14px 18px;
+  border-left: 4px solid var(--accent-3);
+  background: color-mix(in srgb, var(--accent-3) 10%, transparent);
+  color: var(--muted);
+}
+pre {
+  overflow: auto;
+  padding: 16px;
+  border-radius: 8px;
+  border: 1px solid var(--line);
+  background: var(--code-bg);
+}
+code {
+  font-family: "SFMono-Regular", Consolas, monospace;
+  font-size: .92em;
+}
+p code, li code {
+  background: var(--code-bg);
+  border: 1px solid var(--line);
+  border-radius: 5px;
+  padding: 1px 5px;
+}
+.math-block {
+  overflow-x: auto;
+  padding: 10px 0;
+}
+.table-wrap { overflow-x: auto; margin: 18px 0; }
+table {
+  border-collapse: collapse;
+  min-width: 640px;
+  width: 100%;
+  font-family: "Noto Sans SC", system-ui, sans-serif;
+}
+th, td {
+  border: 1px solid var(--line);
+  padding: 10px 12px;
+  vertical-align: top;
+}
+th {
+  background: color-mix(in srgb, var(--accent-2) 12%, transparent);
+  text-align: left;
+}
+details {
+  margin: 10px 0 18px;
+  padding: 0 14px 12px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: color-mix(in srgb, var(--accent-3) 7%, transparent);
+}
+summary {
+  cursor: pointer;
+  padding: 10px 0;
+  font-family: "Noto Sans SC", system-ui, sans-serif;
+  font-weight: 700;
+  color: var(--accent-2);
+}
+ol, ul { padding-left: 1.35rem; }
+@media (max-width: 900px) {
+  .layout { display: block; }
+  aside { position: relative; height: auto; border-right: 0; border-bottom: 1px solid var(--line); }
+  main { padding: 22px 14px 60px; }
+  article { padding: 24px 18px; }
+  h1 { font-size: 28px; }
+  h2 { font-size: 22px; }
+}
+@media print {
+  body { background: white; }
+  aside, .toolbar { display: none; }
+  .layout { display: block; }
+  main { max-width: none; padding: 0; }
+  article { border: 0; box-shadow: none; padding: 0; }
+  a { color: black; text-decoration: none; }
+  pre, blockquote, details, table { break-inside: avoid; }
+}
+</style>
+</head>
+<body>
+<div class="layout">
+<aside>
+  <div class="brand">第4章复习资料<small>非线性时间序列模型</small></div>
+  <div class="toolbar">
+    <button id="themeBtn" type="button">切换深色</button>
+    <button type="button" onclick="window.print()">打印</button>
+  </div>
+  <nav><a class="toc-l2" href="#学习路线">学习路线</a>
+<a class="toc-l2" href="#开场难题">开场难题</a>
+<a class="toc-l2" href="#原始课件抽取摘要">原始课件抽取摘要</a>
+<a class="toc-l2" href="#§1-线性模型为什么不够用">§1 线性模型为什么不够用 ★★★</a>
+<a class="toc-l3" href="#脉络梳理">脉络梳理</a>
+<a class="toc-l3" href="#重点内容申明">重点内容申明</a>
+<a class="toc-l3" href="#习题">习题</a>
+<a class="toc-l2" href="#§2-非线性时间序列的一般表示">§2 非线性时间序列的一般表示 ★★</a>
+<a class="toc-l3" href="#脉络梳理-2">脉络梳理</a>
+<a class="toc-l3" href="#重点内容申明-2">重点内容申明</a>
+<a class="toc-l3" href="#习题-2">习题</a>
+<a class="toc-l2" href="#§3-马尔可夫转换模型-msm-核心">§3 马尔可夫转换模型 MSM ★★★ 核心</a>
+<a class="toc-l3" href="#脉络梳理-3">脉络梳理</a>
+<a class="toc-l3" href="#重点内容申明-3">重点内容申明</a>
+<a class="toc-l3" href="#习题-3">习题</a>
+<a class="toc-l2" href="#§4-门限自回归-tar-setar">§4 门限自回归 TAR/SETAR ★★★</a>
+<a class="toc-l3" href="#脉络梳理-4">脉络梳理</a>
+<a class="toc-l3" href="#重点内容申明-4">重点内容申明</a>
+<a class="toc-l3" href="#习题-4">习题</a>
+<a class="toc-l2" href="#§5-平滑转换-star-与参数模型比较">§5 平滑转换 STAR 与参数模型比较 ★★</a>
+<a class="toc-l3" href="#脉络梳理-5">脉络梳理</a>
+<a class="toc-l3" href="#重点内容申明-5">重点内容申明</a>
+<a class="toc-l3" href="#习题-5">习题</a>
+<a class="toc-l2" href="#§6-核函数与-nadaraya-watson-核回归-核心">§6 核函数与 Nadaraya-Watson 核回归 ★★★ 核心</a>
+<a class="toc-l3" href="#脉络梳理-6">脉络梳理</a>
+<a class="toc-l3" href="#重点内容申明-6">重点内容申明</a>
+<a class="toc-l3" href="#习题-6">习题</a>
+<a class="toc-l2" href="#§7-窗宽选择与核回归应用-核心">§7 窗宽选择与核回归应用 ★★★ 核心</a>
+<a class="toc-l3" href="#脉络梳理-7">脉络梳理</a>
+<a class="toc-l3" href="#重点内容申明-7">重点内容申明</a>
+<a class="toc-l3" href="#习题-7">习题</a>
+<a class="toc-l2" href="#§8-筛分估计-sieve">§8 筛分估计 Sieve ★★</a>
+<a class="toc-l3" href="#脉络梳理-8">脉络梳理</a>
+<a class="toc-l3" href="#重点内容申明-8">重点内容申明</a>
+<a class="toc-l3" href="#习题-8">习题</a>
+<a class="toc-l2" href="#§9-半参数时间序列模型">§9 半参数时间序列模型 ★★</a>
+<a class="toc-l3" href="#脉络梳理-9">脉络梳理</a>
+<a class="toc-l3" href="#重点内容申明-9">重点内容申明</a>
+<a class="toc-l3" href="#习题-9">习题</a>
+<a class="toc-l2" href="#§10-参数非线性检验-reset-与门限检验-核心">§10 参数非线性检验：RESET 与门限检验 ★★★ 核心</a>
+<a class="toc-l3" href="#脉络梳理-10">脉络梳理</a>
+<a class="toc-l3" href="#重点内容申明-10">重点内容申明</a>
+<a class="toc-l3" href="#习题-10">习题</a>
+<a class="toc-l2" href="#§11-非参数设定检验与自助抽样-核心">§11 非参数设定检验与自助抽样 ★★★ 核心</a>
+<a class="toc-l3" href="#脉络梳理-11">脉络梳理</a>
+<a class="toc-l3" href="#重点内容申明-11">重点内容申明</a>
+<a class="toc-l3" href="#习题-11">习题</a>
+<a class="toc-l2" href="#§12-案例-美国失业率">§12 案例：美国失业率 ★★</a>
+<a class="toc-l3" href="#脉络梳理-12">脉络梳理</a>
+<a class="toc-l3" href="#重点内容申明-12">重点内容申明</a>
+<a class="toc-l3" href="#习题-12">习题</a>
+<a class="toc-l2" href="#外部来源汇总">外部来源汇总</a>
+<a class="toc-l2" href="#外部来源汇总-2">外部来源汇总</a>
+<a class="toc-l2" href="#质量检查记录">质量检查记录</a></nav>
+</aside>
+<main>
+<article>
+<h1 id="第4章-非线性时间序列模型-超级详细复习资料">第4章 非线性时间序列模型：超级详细复习资料</h1>
+<blockquote>来源：<code>第4章 非线性时间序列模型.pptx</code>。本资料基于 PPTX 文字层与公式 token 抽取后重写，公式已整理为 LaTeX；不直接依据图片猜测内容。</blockquote>
+<h2 id="学习路线">学习路线</h2>
+<h2 id="开场难题">开场难题</h2>
+<p>为什么同一个失业率序列，在扩张期慢慢下降、衰退期突然上升；同一个汇率偏离 PPP 时，小偏离像随机游走，大偏离却会迅速回归？如果用一个固定参数的 ARMA 模型解释所有时期，它会把“状态变化、市场摩擦、非线性回归函数”统统压扁成平均效应。</p>
+<p><strong>本章主线：</strong> 非线性时间序列模型的核心任务，是让条件均值函数 $E(y_t\mid\mathcal F_{t-1})$ 可以随状态、门限、平滑权重或未知函数形状而改变。</p>
+<p><strong>方法谱系：</strong></p>
+<p>线性 ARMA $\rightarrow$ 参数非线性（MSM/TAR/STAR） $\rightarrow$ 非参数估计（核/筛分） $\rightarrow$ 半参数折中（部分线性/单指标/可加/变系数） $\rightarrow$ 非线性设定检验（RESET/门限/L2/条件均值/Bootstrap） $\rightarrow$ 失业率案例中的预测与结构解释。</p>
+<h2 id="原始课件抽取摘要">原始课件抽取摘要</h2>
+<p>课件共 44 页，覆盖参数非线性模型、非参数模型、半参数模型、非线性检验与美国失业率案例。完整抽取文本保存于 <code>intermediates/ch04_nonlinear_time_series/chapter_md/ch04_nonlinear_time_series.md</code>。</p>
+<h2 id="§1-线性模型为什么不够用">§1 线性模型为什么不够用 ★★★</h2>
+<h3 id="脉络梳理">脉络梳理</h3>
+<p>线性时间序列模型最舒服的地方在于“一个公式走天下”：AR、MA、ARMA、ARIMA 都把过去信息压缩成固定系数的线性组合。问题是，金融和宏观数据常常不是这样运行的。经济扩张可能持续很久、变化很缓，衰退却可能来得很急；实际汇率小幅偏离 PPP 时可能没有套利者动手，大幅偏离后却突然均值回归；失业率下降通常慢，上升却很陡。这些都不是“同一组固定系数 + 对称冲击”容易解释的。</p>
+<h3 id="重点内容申明">重点内容申明</h3>
+<p>线性模型通常隐含三个强约束。</p>
+<p>第一，<strong>参数恒定</strong>。例如 AR($p$) 模型</p>
+<div class="math-block">$$
+y_t=c+\phi_1y_{t-1}+\cdots+\phi_py_{t-p}+a_t
+$$</div>
+<p>要求 $c,\phi_1,\ldots,\phi_p$ 在所有时期都一样。若经济状态已经从扩张转为衰退，但模型仍用同一组参数预测，就会把状态差异平均掉。</p>
+<p>第二，<strong>冲击对称</strong>。线性模型里 $+x$ 和 $-x$ 的影响只差符号，不会出现“坏消息比好消息影响更大”的情形。商业周期中的陡峭衰退、金融市场中的杠杆效应，往往都违反这一点。</p>
+<p>第三，<strong>比例性</strong>。如果 $x$ 的冲击带来影响 $A$，那么 $2x$ 的冲击必须带来 $2A$。但存在交易成本时，小偏离可能没人套利，大偏离才触发交易，影响不是按比例增加，而是跨过某个门限后突然改变。</p>
+<p>本章开头列出的典型事实可以用一句话串起来：<strong>数据的条件均值函数可能随状态、门限、偏离程度或未知函数形状而变化。</strong> 这时要研究的是</p>
+<div class="math-block">$$
+E(y_t\mid \mathcal F_{t-1})
+$$</div>
+<p>是否真的能被固定线性函数描述。这里 $\mathcal F_{t-1}$ 表示截至 $t-1$ 的全部信息，包括 $y$ 的滞后项、冲击的滞后项以及可观测解释变量。</p>
+<p>考试里常见陷阱是把“非线性”等同于“曲线看起来弯”。更准确地说，非线性是指条件分布或条件均值对过去信息的反应不是固定线性的。一个过程即使局部是线性的，只要不同状态下线性系数不同，也属于非线性时间序列。</p>
+<h3 id="习题">习题</h3>
+<ol start="1"><li>★ 用自己的话解释：线性 AR 模型为什么同时隐含“对称性”和“比例性”？</li></ol>
+<details><summary>参考答案要点</summary><p>对称性：正负同等大小冲击只改变符号，绝对影响相同。比例性：冲击扩大两倍，响应也扩大两倍。现实中衰退冲击、交易成本、风险约束常使响应不对称、不成比例。</p></details>
+<ol start="2"><li>★ Friedman 的“拨弦模型”说明了商业周期中的哪种非线性？</li></ol>
+<details><summary>参考答案要点</summary><p>收缩越深，随后扩张越强；但扩张强弱不必然预测随后收缩强弱。说明经济动态对正负方向或不同阶段的反应不对称。</p></details>
+<ol start="3"><li>★★ 为什么实际汇率在 PPP 附近可能看起来像随机游走，而偏离足够大后又均值回归？</li></ol>
+<details><summary>参考答案要点</summary><p>交易、运输、关税、信息搜集等成本形成无行动区间。小偏离不足以覆盖成本，套利不发生；大偏离超过门限，套利进入，均值回归增强。</p></details>
+<ol start="4"><li>★★ 设真实过程是门限平稳过程，为什么线性 ADF 检验可能不拒绝单位根？</li></ol>
+<details><summary>参考答案要点</summary><p>线性 ADF 强制全样本一个回归速度。若带内近似随机游走、带外强均值回归，平均线性系数可能接近单位根，从而降低检验功效。</p></details>
+<ol start="5"><li>★★★ 外部扩展：阅读 NBER 商业周期日期说明，思考“衰退判定”为什么更像状态识别而不是线性趋势回归。来源：<a href="https://www.nber.org/research/business-cycle-dating">NBER Business Cycle Dating</a></li></ol>
+<details><summary>参考答案要点</summary><p>NBER 判定重视多个指标、峰谷日期和经济活动显著下降的状态，而非单一线性趋势偏离。MSM 的衰退概率与这种状态识别逻辑更接近。</p></details>
+<h2 id="§2-非线性时间序列的一般表示">§2 非线性时间序列的一般表示 ★★</h2>
+<h3 id="脉络梳理-2">脉络梳理</h3>
+<p>把所有模型统一起来，最重要的公式是：</p>
+<div class="math-block">$$
+y_t=E(y_t\mid \mathcal F_{t-1})+a_t=f(\mathcal F_{t-1})+a_t,
+$$</div>
+<p>其中 $a_t$ 是白噪声或鞅差误差。学习本章时，不要先背模型名字，要先问：这一类模型是怎样处理未知函数 $f(\cdot)$ 的？</p>
+<h3 id="重点内容申明-2">重点内容申明</h3>
+<p>三条路线如下。</p>
+<p><strong>参数非线性模型</strong>：直接给 $f(\cdot)$ 指定有限维形式，再估计参数。例如 Markov 转换模型让参数依赖潜在状态，TAR 让参数依赖门限区间，STAR 让参数依赖平滑转换函数。优点是经济解释强，缺点是设定错了会很伤。</p>
+<p><strong>非参数模型</strong>：不指定 $f(\cdot)$ 的形状，而是用数据直接估计函数。例如核回归用“附近样本的加权平均”，筛分估计用“越来越多的基函数”逼近未知函数。优点是灵活，缺点是维度一高就需要大量样本。</p>
+<p><strong>半参数模型</strong>：把可信的线性部分保留，把不确定的部分交给未知函数。例如部分线性模型</p>
+<div class="math-block">$$
+y_t=x_{1t}&#x27;\beta+g(x_{2t})+a_t.
+$$</div>
+<p>它的思想很务实：如果某些变量的边际作用大致线性，就不要浪费样本去非参数估计；把非参数能力用在最可能非线性的部分。</p>
+<p>一个很实用的复习表：</p>
+<div class="table-wrap"><table>
+<thead><tr>
+<th>模型路线</th>
+<th>对 $f(\cdot)$ 的处理</th>
+<th>代表模型</th>
+<th>主要风险</th>
+</tr></thead>
+<tbody>
+<tr>
+<td>参数非线性</td>
+<td>预先设定结构，估计有限参数</td>
+<td>MSM, TAR, STAR</td>
+<td>结构设错、局部最优、过拟合</td>
+</tr>
+<tr>
+<td>非参数</td>
+<td>用数据直接逼近函数</td>
+<td>Kernel, Sieve</td>
+<td>维度灾难、窗宽/阶数敏感</td>
+</tr>
+<tr>
+<td>半参数</td>
+<td>一部分参数化，一部分非参数</td>
+<td>部分线性、单指标、可加、变系数</td>
+<td>识别和估计步骤更复杂</td>
+</tr>
+</tbody></table></div>
+<h3 id="习题-2">习题</h3>
+<ol start="6"><li>★ 写出非线性时间序列的一般条件均值表示，并说明 $\mathcal F_{t-1}$ 的含义。</li></ol>
+<details><summary>参考答案要点</summary><p>$y_t=E(y_t\mid\mathcal F_{t-1})+a_t=f(\mathcal F_{t-1})+a_t$。$\mathcal F_{t-1}$ 是截至 $t-1$ 的信息集，包括滞后观测、滞后误差和其他可用变量。</p></details>
+<ol start="7"><li>★ 参数非线性、非参数、半参数三类模型分别怎样处理 $f(\cdot)$？</li></ol>
+<details><summary>参考答案要点</summary><p>参数非线性指定有限维结构；非参数不指定具体函数形状，直接由数据估计；半参数保留部分参数结构，同时允许某些部分为未知函数。</p></details>
+<ol start="8"><li>★★ 给出一个金融市场例子，说明 $f(\mathcal F_{t-1})$ 可能依赖的不只是 $y$ 的滞后项。</li></ol>
+<details><summary>参考答案要点</summary><p>汇率均值回归可能依赖偏离 PPP 的幅度、交易成本、利差、波动率状态；股票收益波动可能依赖过去负收益和杠杆状态。</p></details>
+<ol start="9"><li>★★ 为什么“非线性模型参数更多”并不自动意味着“预测更好”？</li></ol>
+<details><summary>参考答案要点</summary><p>参数更多可能过拟合，估计误差更大，多期预测会累积误差。非线性模型的优势常在结构解释、状态概率、门限宽度和冲击响应分析。</p></details>
+<ol start="10"><li>★★★ 外部扩展：查阅 Stata ARIMA 文档，列出线性 ARMA 基准模型通常需要报告哪些估计与诊断结果。来源：<a href="https://www.stata.com/manuals/tsarima.pdf">Stata ARIMA manual</a></li></ol>
+<details><summary>参考答案要点</summary><p>应报告 AR/MA 阶数、系数、标准误、信息准则、残差自相关诊断、稳定性/可逆性、样本期和预测评价。</p></details>
+<h2 id="§3-马尔可夫转换模型-msm-核心">§3 马尔可夫转换模型 MSM ★★★ 核心</h2>
+<h3 id="脉络梳理-3">脉络梳理</h3>
+<p>Markov Switching Model 的核心想法是：经济系统有一些状态，例如扩张和衰退，但这些状态不是直接观测到的。我们只能观察 $y_t$，然后根据 $y_t$ 的表现反推当前更可能处在哪个状态。状态本身按照 Markov 链转移，即下一期状态只依赖当前状态，不依赖更早历史。</p>
+<h3 id="重点内容申明-3">重点内容申明</h3>
+<p>两区制 MS-AR($p$) 可写成</p>
+<div class="math-block">$$
+y_t=c_{s_t}+\sum_{i=1}^{p}\phi_{s_t,i}y_{t-i}+a_{s_t,t},\qquad s_t\in\{1,2\}.
+$$</div>
+<p>若 $s_t=1$，使用第一套截距、AR 系数和误差方差；若 $s_t=2$，使用第二套。状态 $s_t$ 的转移概率为</p>
+<div class="math-block">$$
+p_{ij}=P(s_t=j\mid s_{t-1}=i),\qquad i,j\in\{1,2\}.
+$$</div>
+<p>转移矩阵为</p>
+<div class="math-block">$$
+P=
+\begin{pmatrix}
+p_{11} &amp; p_{12}\\
+p_{21} &amp; p_{22}
+\end{pmatrix},
+\qquad p_{i1}+p_{i2}=1.
+$$</div>
+<p>这里 $p_{11}$ 是“本期在状态 1，下期仍在状态 1”的概率；$p_{22}$ 类似。若状态 $i$ 的持续概率是 $p_{ii}$，则状态持续期服从几何分布，预期持续时间是</p>
+<div class="math-block">$$
+E(D_i)=\frac{1}{1-p_{ii}}.
+$$</div>
+<p>推导很简单：每期留在状态 $i$ 的概率是 $p_{ii}$，离开的概率是 $1-p_{ii}$。几何分布等待第一次“离开”的期望就是 $1/(1-p_{ii})$。所以当 $p_{11}=0.95$ 时，状态 1 平均持续 $20$ 期；当 $p_{22}=0.75$ 时，状态 2 平均持续 $4$ 期。这正好能刻画“扩张长、衰退短”的周期事实。</p>
+<p>由于状态不可观测，OLS 不能直接用。原因不是“模型复杂”这么简单，而是每个观测属于哪个回归方程都不知道。Hamilton 滤波的任务是递推状态概率。</p>
+<p>设</p>
+<div class="math-block">$$
+\xi_{t\mid t}=
+\begin{pmatrix}
+P(s_t=1\mid \Omega_t)\\
+P(s_t=2\mid \Omega_t)
+\end{pmatrix}
+$$</div>
+<p>表示看到 $t$ 期信息后的过滤概率。递推分两步。</p>
+<p><strong>第一步：预测状态概率。</strong></p>
+<div class="math-block">$$
+\xi_{t\mid t-1}=P&#x27;\xi_{t-1\mid t-1}.
+$$</div>
+<p>这一步只用 Markov 转移矩阵，把上一期的状态判断推到下一期。</p>
+<p><strong>第二步：用新观测更新概率。</strong></p>
+<p>令 $\eta_t(j)=f(y_t\mid s_t=j,\Omega_{t-1})$ 是状态 $j$ 下观测到 $y_t$ 的条件密度，则</p>
+<div class="math-block">$$
+\xi_{t\mid t}
+=
+\frac{\eta_t\odot \xi_{t\mid t-1}}
+{\mathbf 1&#x27;(\eta_t\odot \xi_{t\mid t-1})}.
+$$</div>
+<p>分子是“先验状态概率 $\times$ 该状态下观测到 $y_t$ 的可能性”；分母是归一化项，也是当期观测的预测密度。因此对数似然为</p>
+<div class="math-block">$$
+\ell(\theta)=\sum_{t=1}^{T}\log\left[\mathbf 1&#x27;(\eta_t\odot \xi_{t\mid t-1})\right].
+$$</div>
+<p>估计 MSM 就是寻找参数 $\theta=(c_j,\phi_{j,i},\sigma_j^2,p_{ij})$ 使得这个似然最大。平滑概率 $P(s_t=j\mid\Omega_T)$ 则是在看完整个样本后回头判断第 $t$ 期处于某状态的概率，常用于周期识别。</p>
+<p>经济解释上，MSM 的价值不只是预测。它能把“均值增长率突变”“衰退概率”“状态持续期”变成可估计对象。例如 Hamilton 用它识别美国 GNP 的衰退状态，输出的衰退概率与 NBER 周期日期高度相关。</p>
+<p><strong>Stata 可运行思路：线性 AR 与状态转换前的基准比较</strong></p>
+<p>Stata 的 Markov switching 命令随版本不同略有差异。下面先给出任何标准 Stata 都能跑的线性 AR 基准；若版本支持 <code>mswitch ar</code>，可在同一数据上进一步估计 Markov 转换 AR。</p>
+<pre><code class="language-stata">clear all
+set seed 202604
+set obs 500
+gen t = _n
+tsset t
+
+gen e = rnormal()
+gen y = .
+replace y = e in 1/2
+forvalues i = 3/500 {
+    replace y = 0.4*y[`i&#x27;-1] + 0.2*y[`i&#x27;-2] + e[`i&#x27;] in `i&#x27;
+}
+
+reg y L(1/2).y
+estat ic
+
+* 若 Stata 版本支持 Markov switching，可尝试：
+* mswitch ar y, ar(1/2) states(2)
+* predict p_state1 p_state2, pr</code></pre>
+<h3 id="习题-3">习题</h3>
+<ol start="11"><li>★ 两区制 MS-AR($p$) 与普通 AR($p$) 的核心区别是什么？</li></ol>
+<details><summary>参考答案要点</summary><p>普通 AR 只有一套系数；MS-AR 的截距、AR 系数和方差可随不可观测状态 $s_t$ 改变，状态由 Markov 链控制。</p></details>
+<ol start="12"><li>★ 给定 $p_{11}=0.95$、$p_{22}=0.80$，两个状态的预期持续期分别是多少？</li></ol>
+<details><summary>参考答案要点</summary><p>$E(D_1)=1/(1-0.95)=20$；$E(D_2)=1/(1-0.80)=5$。状态 1 更持久。</p></details>
+<ol start="13"><li>★★ 为什么 MSM 不能直接用 OLS 估计？</li></ol>
+<details><summary>参考答案要点</summary><p>每个观测对应哪个状态未知，等于不知道该用哪套回归方程。状态概率需要通过滤波和似然递推估计，通常用 MLE。</p></details>
+<ol start="14"><li>★★ 写出 Hamilton 滤波的“预测-更新”两步，并解释分母的作用。</li></ol>
+<details><summary>参考答案要点</summary><p>预测：$\xi_{t\mid t-1}=P&#x27;\xi_{t-1\mid t-1}$。更新：$\xi_{t\mid t}=(\eta_t\odot\xi_{t\mid t-1})/[\mathbf1&#x27;(\eta_t\odot\xi_{t\mid t-1})]$。分母是归一化项，也是当期观测的预测密度。</p></details>
+<ol start="15"><li>★★★ 外部扩展：Hamilton (1989) 的经典论文为什么适合用来解释美国商业周期？来源：<a href="https://doi.org/10.2307/1912559">doi.org/10.2307/1912559</a></li></ol>
+<details><summary>参考答案要点</summary><p>论文把 GNP 增长率的均值变化解释为不可观测状态转换，输出衰退概率；它避免固定线性趋势假设，并把周期状态作为可估计对象。</p></details>
+<h2 id="§4-门限自回归-tar-setar">§4 门限自回归 TAR/SETAR ★★★</h2>
+<h3 id="脉络梳理-4">脉络梳理</h3>
+<p>TAR 的关键词是“看得见的触发器”。MSM 的状态不可观测，TAR 则认为机制转换由可观测变量跨过门限触发。最典型的是 SETAR：门限变量就是因变量自己的滞后项。</p>
+<h3 id="重点内容申明-4">重点内容申明</h3>
+<p>一般 TAR 可写成</p>
+<div class="math-block">$$
+y_t=
+\sum_{j=1}^{J+1}
+\left(
+\phi_{0j}+\phi_{1j}y_{t-1}+\cdots+\phi_{pj}y_{t-p}
+\right)
+\mathbf 1\{\gamma_{j-1}\le q_t&lt;\gamma_j\}
+a_t,
+$$</div>
+<p>其中 $q_t$ 是门限变量，$\gamma_j$ 是门限值。SETAR 常取</p>
+<div class="math-block">$$
+q_t=y_{t-d},
+$$</div>
+<p>$d$ 是延迟参数。直觉是：不是 $y_t$ 当期水平触发机制，因为当期值还没发生；而是过去某一期的水平或变化率触发今天使用哪套 AR 动态。</p>
+<p>单门限 SETAR 形式最常考：</p>
+<div class="math-block">$$
+y_t=
+\begin{cases}
+\phi_{1,0}+\sum_{i=1}^{p}\phi_{1,i}y_{t-i}+a_{1t}, &amp; q_t&lt;r,\\
+\phi_{2,0}+\sum_{i=1}^{p}\phi_{2,i}y_{t-i}+a_{2t}, &amp; q_t\ge r.
+\end{cases}
+$$</div>
+<p>如果 $q_t$ 在门限内，模型使用第一套系数；越过门限，使用第二套系数。于是 $y_t$ 的条件均值是分段线性的，而整体是非线性的。</p>
+<p>估计 TAR 最常见方法是网格搜索。</p>
+<ol start="1"><li>选候选延迟 $d$ 和门限 $r$。</li><li>按 $q_t&lt;r$ 与 $q_t\ge r$ 分样本。</li><li>在每个区制内分别 OLS。</li><li>计算总残差平方和</li></ol>
+<div class="math-block">$$
+RSS(d,r)=RSS_1(d,r)+RSS_2(d,r).
+$$</div>
+<ol start="5"><li>选择使 $RSS(d,r)$ 最小的 $(\hat d,\hat r)$。</li></ol>
+<p>实际操作会把过小或过大的门限候选删掉，例如只在 $q_t$ 的 15% 到 85% 分位数之间搜索，避免某个区制样本太少。</p>
+<p>经济直觉可以用 PPP 套利带解释：当实际汇率偏离小于交易成本时，套利收益不够覆盖成本，汇率像随机游走；当偏离超过门限，套利者入场，均值回归增强。TAR 把这种“带内弱回归、带外强回归”写进模型。</p>
+<p><strong>Stata 可运行思路：手工网格搜索单门限</strong></p>
+<pre><code class="language-stata">clear all
+set seed 202604
+set obs 600
+gen t = _n
+tsset t
+
+gen e = rnormal()
+gen y = .
+replace y = e in 1/2
+forvalues i = 3/600 {
+    if y[`i&#x27;-1] &lt; 0.1 {
+        replace y = 0.5*y[`i&#x27;-1] + e[`i&#x27;] in `i&#x27;
+    }
+    else {
+        replace y = -0.8*y[`i&#x27;-1] + e[`i&#x27;] in `i&#x27;
+    }
+}
+
+gen q = L.y
+tempname memhold
+tempfile grid
+postfile `memhold&#x27; pct r rss using `grid&#x27;, replace
+
+forvalues pct = 15(5)85 {
+    quietly centile q if !missing(q), centile(`pct&#x27;)
+    scalar r = r(c_1)
+    quietly regress y L.y if q &lt; r
+    scalar rss_low = e(rss)
+    quietly regress y L.y if q &gt;= r &amp; !missing(q)
+    scalar rss_high = e(rss)
+    scalar rss_total = rss_low + rss_high
+    post `memhold&#x27; (`pct&#x27;) (r) (rss_total)
+}
+postclose `memhold&#x27;
+
+use `grid&#x27;, clear
+sort rss
+list in 1/5</code></pre>
+<p>这段代码不是完整论文级 SETAR 估计器，但它把门限搜索的核心动作跑通了：候选门限、分区制回归、比较 RSS。</p>
+<h3 id="习题-4">习题</h3>
+<ol start="16"><li>★ SETAR 中的 “self-exciting” 是什么意思？</li></ol>
+<details><summary>参考答案要点</summary><p>触发机制转换的门限变量来自因变量自身的滞后项，例如 $q_t=y_{t-d}$，所以序列自身过去状态决定当前区制。</p></details>
+<ol start="17"><li>★ 单门限 SETAR 模型中，$d$ 和 $r$ 分别代表什么？</li></ol>
+<details><summary>参考答案要点</summary><p>$d$ 是延迟参数，说明用第几期滞后变量触发区制；$r$ 是门限值，决定样本分到哪个区制。</p></details>
+<ol start="18"><li>★★ 为什么 TAR 通常要对门限值和延迟参数做网格搜索？</li></ol>
+<details><summary>参考答案要点</summary><p>门限位置和延迟参数未知，目标函数对它们通常不光滑，不能直接用普通一阶条件求解；网格搜索可比较不同候选下的 RSS 或似然。</p></details>
+<ol start="19"><li>★★ 设 PPP 套利带内 AR 系数接近 1，带外 AR 系数小于 1。怎样解释这两个区制？</li></ol>
+<details><summary>参考答案要点</summary><p>带内偏离小，套利不活跃，汇率近似随机游走；带外偏离大，套利收益覆盖成本，均值回归显著。</p></details>
+<ol start="20"><li>★★★ 外部扩展：查阅 Stata threshold 文档，说明实际估计门限模型时为什么要设置 trim 或最小区制样本比例。来源：<a href="https://www.stata.com/manuals/tsthreshold.pdf">Stata threshold manual</a></li></ol>
+<details><summary>参考答案要点</summary><p>若门限太靠近样本边缘，某个区制样本过少，系数不稳定、RSS 比较失真。trim 可排除极端候选门限。</p></details>
+<h2 id="§5-平滑转换-star-与参数模型比较">§5 平滑转换 STAR 与参数模型比较 ★★</h2>
+<h3 id="脉络梳理-5">脉络梳理</h3>
+<p>TAR 的切换像开关：门限左边一套参数，右边一套参数。STAR 的切换像旋钮：随着门限变量偏离某个位置越来越远，第二套动态逐渐变重要。</p>
+<h3 id="重点内容申明-5">重点内容申明</h3>
+<p>两区制 STAR($p$) 常写成</p>
+<div class="math-block">$$
+y_t=\phi_0&#x27;z_t+\phi_1&#x27;z_tG(q_t;\gamma,c)+a_t,
+$$</div>
+<p>其中</p>
+<div class="math-block">$$
+z_t=(1,y_{t-1},\ldots,y_{t-p})&#x27;,
+$$</div>
+<p>$G(\cdot)$ 是平滑转换函数，满足 $0\le G\le 1$。当 $G\approx 0$ 时，模型接近第一套线性动态；当 $G\approx 1$ 时，模型接近两套动态之和；当 $G$ 在中间，两个区制按权重混合。</p>
+<p>常见 LSTAR 函数为</p>
+<div class="math-block">$$
+G(q_t;\gamma,c)=\frac{1}{1+\exp[-\gamma(q_t-c)]},\qquad \gamma&gt;0.
+$$</div>
+<p>$c$ 是位置参数，决定转换中心；$\gamma$ 是速度参数，决定转换陡峭程度。若 $\gamma\to\infty$，LSTAR 会越来越像 TAR；若 $\gamma$ 很小，转换非常平缓，模型接近线性。</p>
+<p>常见 ESTAR 函数为</p>
+<div class="math-block">$$
+G(q_t;\gamma,c)=1-\exp[-\gamma(q_t-c)^2],\qquad \gamma&gt;0.
+$$</div>
+<p>ESTAR 对正负偏离对称，适合描述“偏离中心越远，均值回归越强”的场景，例如实际汇率偏离 PPP 的绝对值。</p>
+<p>STAR 的经济基础常来自异质主体加总。微观层面，套利者各自有门限：交易成本低的人先动，交易成本高的人后动。宏观数据把很多人的离散门限叠加起来，观察到的就不是一个硬门限，而是平滑转换。</p>
+<p>三类参数非线性模型可以这样比较：</p>
+<div class="table-wrap"><table>
+<thead><tr>
+<th>模型</th>
+<th>状态是否可观测</th>
+<th>切换方式</th>
+<th>适合问题</th>
+</tr></thead>
+<tbody>
+<tr>
+<td>MSM</td>
+<td>不可观测</td>
+<td>Markov 概率转移</td>
+<td>商业周期、危机状态、制度状态</td>
+</tr>
+<tr>
+<td>TAR/SETAR</td>
+<td>可观测</td>
+<td>跨过门限即硬切换</td>
+<td>交易成本、套利带、阈值政策</td>
+</tr>
+<tr>
+<td>STAR</td>
+<td>可观测</td>
+<td>转换函数平滑变化</td>
+<td>宏观加总、渐进调整、异质主体</td>
+</tr>
+</tbody></table></div>
+<p>非线性参数模型的真正价值不一定是样本外预测。它们更常用于结构解释：衰退概率是多少？门限宽度对应多大交易成本？偏离越大时均值回归速度是否更快？</p>
+<h3 id="习题-5">习题</h3>
+<ol start="21"><li>★ TAR 和 STAR 在机制转换方式上有什么区别？</li></ol>
+<details><summary>参考答案要点</summary><p>TAR 是硬切换，门限两边使用不同参数；STAR 是软切换，通过 $G(q_t;\gamma,c)$ 在 0 到 1 之间平滑改变权重。</p></details>
+<ol start="22"><li>★ LSTAR 中 $\gamma$ 和 $c$ 的含义是什么？</li></ol>
+<details><summary>参考答案要点</summary><p>$c$ 是转换中心或位置参数；$\gamma$ 是转换速度参数。$\gamma$ 越大，转换越陡，越接近 TAR。</p></details>
+<ol start="23"><li>★★ 为什么异质主体加总会让宏观数据呈现平滑转换？</li></ol>
+<details><summary>参考答案要点</summary><p>不同主体有不同成本、风险偏好和反应时间。微观层面的离散门限叠加后，宏观层面呈现连续的参与比例变化。</p></details>
+<ol start="24"><li>★★ 何时更适合 ESTAR 而不是 LSTAR？</li></ol>
+<details><summary>参考答案要点</summary><p>当正负偏离方向对称，关键是偏离中心的绝对距离时，ESTAR 更合适；例如实际汇率偏离均衡越远，均值回归越强。</p></details>
+<ol start="25"><li>★★★ 外部扩展：阅读 Teräsvirta 平滑转换模型相关综述或软件文档，说明 STAR 估计为什么容易出现局部最优。来源：<a href="https://www.cambridge.org/core/search?q=smooth+transition+autoregressive+model">Cambridge nonlinear time series topic page</a></li></ol>
+<details><summary>参考答案要点</summary><p>转换函数包含非线性参数，目标函数可能多峰；初值、尺度化和搜索范围都会影响结果，因此常需要多初值和线性检验预筛选。</p></details>
+<h2 id="§6-核函数与-nadaraya-watson-核回归-核心">§6 核函数与 Nadaraya-Watson 核回归 ★★★ 核心</h2>
+<h3 id="脉络梳理-6">脉络梳理</h3>
+<p>核回归的“笨蛋讲法”是：如果要估计 $x$ 附近的函数值，就看训练样本里哪些 $x_t$ 离它近。近的样本权重大，远的样本权重小。核函数决定“权重长什么样”，窗宽决定“附近有多宽”。</p>
+<h3 id="重点内容申明-6">重点内容申明</h3>
+<p>核函数 $K(u)$ 通常满足</p>
+<div class="math-block">$$
+\int K(u)\,du=1,\qquad K(u)\ge 0,
+$$</div>
+<p>多元情形常用乘积核</p>
+<div class="math-block">$$
+K(u_1,\ldots,u_q)=\prod_{j=1}^{q}k(u_j).
+$$</div>
+<p>窗宽缩放后的核为</p>
+<div class="math-block">$$
+K_h(x)=\frac{1}{h^q}K\left(\frac{x}{h}\right).
+$$</div>
+<p>为什么要除以 $h^q$？因为把横轴放大或缩小后，要保持核函数总面积仍等于 1。单变量时面积缩放因子是 $h$，多变量体积缩放因子是 $h^q$。</p>
+<p>常用核函数：</p>
+<div class="math-block">$$
+K_U(u)=\frac{1}{2}\mathbf 1(|u|&lt;1),
+$$</div>
+<div class="math-block">$$
+K_E(u)=\frac{3}{4}(1-u^2)\mathbf 1(|u|&lt;1),
+$$</div>
+<div class="math-block">$$
+K_G(u)=\frac{1}{\sqrt{2\pi}}\exp\left(-\frac{u^2}{2}\right).
+$$</div>
+<p>Epanechnikov 核在均方误差意义下效率较高，但考试里更重要的是理解：核函数的具体形状通常不如窗宽重要。</p>
+<p>考虑非线性回归</p>
+<div class="math-block">$$
+y_t=f(x_t)+a_t,\qquad E(a_t\mid x_t)=0.
+$$</div>
+<p>Nadaraya-Watson 局部常数估计量为</p>
+<div class="math-block">$$
+\hat f_h(x)=
+\frac{\sum_{t=1}^{T}K_h(x-x_t)y_t}
+{\sum_{t=1}^{T}K_h(x-x_t)}
+=\sum_{t=1}^{T}w_t(x)y_t,
+$$</div>
+<p>其中</p>
+<div class="math-block">$$
+w_t(x)=
+\frac{K_h(x-x_t)}
+{\sum_{s=1}^{T}K_h(x-x_s)},\qquad
+\sum_{t=1}^{T}w_t(x)=1.
+$$</div>
+<p>推导并不神秘。局部常数估计的目标是在 $x$ 附近找一个常数 $c$，让加权平方误差最小：</p>
+<div class="math-block">$$
+\min_c \sum_{t=1}^{T}K_h(x-x_t)(y_t-c)^2.
+$$</div>
+<p>对 $c$ 求导：</p>
+<div class="math-block">$$
+-2\sum_{t=1}^{T}K_h(x-x_t)(y_t-c)=0.
+$$</div>
+<p>移项得到</p>
+<div class="math-block">$$
+\sum_{t=1}^{T}K_h(x-x_t)y_t
+=
+c\sum_{t=1}^{T}K_h(x-x_t).
+$$</div>
+<p>所以</p>
+<div class="math-block">$$
+\hat c=\hat f_h(x)=
+\frac{\sum_{t=1}^{T}K_h(x-x_t)y_t}
+{\sum_{t=1}^{T}K_h(x-x_t)}.
+$$</div>
+<p>这就是 NW 估计量。它本质上是“局部加权平均”。</p>
+<p>核回归的两个核心误差来源：</p>
+<p><strong>偏差</strong>：窗宽越大，混入越远的点，函数局部细节被抹平，偏差上升。光滑条件下局部常数估计常有 $O(h^2)$ 量级偏差。</p>
+<p><strong>方差</strong>：窗宽越小，参与估计的有效样本越少，估计更抖，方差上升。多元情形方差大致与 $1/(Th^q)$ 同阶。</p>
+<p>于是均方误差近似为</p>
+<div class="math-block">$$
+MSE(h)\approx C_1h^4+\frac{C_2}{Th^q}.
+$$</div>
+<p>维度灾难就藏在 $h^q$ 里。$q$ 越大，同样半径的局部邻域体积越稀疏，要保持方差不爆炸，需要的样本量急剧增加。</p>
+<p><strong>Stata 可运行思路：核回归与线性回归对比</strong></p>
+<pre><code class="language-stata">clear all
+set seed 202604
+set obs 1000
+gen t = _n
+tsset t
+
+gen u = rnormal()
+gen x = .
+replace x = u in 1/2
+forvalues i = 3/1000 {
+    replace x = 0.5*x[`i&#x27;-1] + 0.3*x[`i&#x27;-2] + u[`i&#x27;] in `i&#x27;
+}
+
+gen e = rnormal(0, 0.5)
+gen y = sin(x) + e
+
+reg y x
+predict y_linear, xb
+
+capture noisily npregress kernel y x, kernel(gaussian)
+capture predict y_kernel, mean
+
+* 如果 npregress 不可用，lpoly 仍可画出局部平滑曲线：
+twoway (scatter y x, msymbol(o) msize(tiny)) ///
+       (lfit y x) ///
+       (lpoly y x, kernel(gaussian)), ///
+       legend(order(2 &quot;linear&quot; 3 &quot;local polynomial&quot;))</code></pre>
+<h3 id="习题-6">习题</h3>
+<ol start="26"><li>★ 为什么缩放核函数要写成 $K_h(x)=h^{-q}K(x/h)$？</li></ol>
+<details><summary>参考答案要点</summary><p>变量缩放后积分体积变化为 $h^q$，乘以 $h^{-q}$ 才能保持核函数总质量为 1。</p></details>
+<ol start="27"><li>★ 写出 Nadaraya-Watson 估计量，并解释权重为何加总为 1。</li></ol>
+<details><summary>参考答案要点</summary><p>$\hat f_h(x)=\sum K_h(x-x_t)y_t/\sum K_h(x-x_t)=\sum w_t(x)y_t$，其中 $w_t(x)=K_h(x-x_t)/\sum_sK_h(x-x_s)$，分母归一化保证权重和为 1。</p></details>
+<ol start="28"><li>★★ 从加权最小二乘目标推导 NW 估计量。</li></ol>
+<details><summary>参考答案要点</summary><p>最小化 $\sum K_h(x-x_t)(y_t-c)^2$，对 $c$ 求导并令零，得到 $c=\sum K_hy_t/\sum K_h$。</p></details>
+<ol start="29"><li>★★ 为什么维度 $q$ 增大会导致非参数估计困难？</li></ol>
+<details><summary>参考答案要点</summary><p>有效样本量约与 $Th^q$ 相关。维度越高，局部邻域越稀疏；为了降低方差需要更大窗宽，从而增加偏差。</p></details>
+<ol start="30"><li>★★★ 外部扩展：查阅 R 的 <code>np</code> 包说明，找出核回归中至少两种可选带宽方法。来源：<a href="https://cran.r-project.org/package=np">CRAN np package</a></li></ol>
+<details><summary>参考答案要点</summary><p>常见包括 least-squares cross-validation、likelihood cross-validation、规则带宽或插件式带宽。重点是说明带宽可通过数据驱动选择。</p></details>
+<h2 id="§7-窗宽选择与核回归应用-核心">§7 窗宽选择与核回归应用 ★★★ 核心</h2>
+<h3 id="脉络梳理-7">脉络梳理</h3>
+<p>核函数决定权重形状，窗宽决定权重范围。非参数估计里最常见的问题不是“该用 Gaussian 还是 Epanechnikov”，而是“窗宽选大还是选小”。窗宽是偏差-方差权衡的旋钮。</p>
+<h3 id="重点内容申明-7">重点内容申明</h3>
+<p>课件给出的经验法则：</p>
+<div class="math-block">$$
+h_{\text{opt}}=
+1.06sT^{-1/(4+q)}
+$$</div>
+<p>适用于 Gaussian 核；Epanechnikov 核可用</p>
+<div class="math-block">$$
+h_{\text{opt}}=
+2.34sT^{-1/(4+q)}.
+$$</div>
+<p>其中 $s$ 是 $x_t$ 的样本标准差，$T$ 是样本量，$q$ 是维度。指数 $-1/(4+q)$ 的含义是：样本量越大，窗宽可以变小；维度越高，窗宽缩小得越慢，因为局部样本更稀疏。</p>
+<p>交叉验证更贴近预测目的。留一估计为</p>
+<div class="math-block">$$
+\hat f_{h,-j}(x_j)
+=
+\sum_{t\ne j}w_{t,-j}(x_j)y_t,
+$$</div>
+<p>CV 目标函数为</p>
+<div class="math-block">$$
+CV(h)
+=
+\frac{1}{T}\sum_{j=1}^{T}
+\left[y_j-\hat f_{h,-j}(x_j)\right]^2W(x_j).
+$$</div>
+<p>选择</p>
+<div class="math-block">$$
+\hat h_{CV}=\arg\min_{h\in H}CV(h).
+$$</div>
+<p>课件中的搜索集合是</p>
+<div class="math-block">$$
+H=\{c\cdot s\cdot T^{-1/5}:c=0.01,0.02,\ldots,3\}
+$$</div>
+<p>这是单变量局部平滑常用的网格。注意：交叉验证不是保证“真实函数最好看”，而是让样本外预测误差尽可能小。</p>
+<p>用模拟例子理解：</p>
+<div class="math-block">$$
+x_t=0.5x_{t-1}+0.3x_{t-2}+u_t,
+$$</div>
+<div class="math-block">$$
+y_t=\sin(x_t)+e_t.
+$$</div>
+<p>线性模型只能画出一条直线，核回归可以捕捉 $\sin(x)$ 的弯曲。课件中 rule-of-thumb 选到 $h_1=0.3685$，CV 选到 $h_2=0.2083$。较小窗宽通常更灵活，但也更容易抖。</p>
+<p>考试判断题常这样问：窗宽越小是否越好？答案是否定的。窗宽趋近于 0 时，估计可能几乎记住样本点；窗宽过大时，估计退化成全局平均。好的窗宽在偏差和方差之间取平衡。</p>
+<h3 id="习题-7">习题</h3>
+<ol start="31"><li>★ 窗宽过大和过小分别会导致什么问题？</li></ol>
+<details><summary>参考答案要点</summary><p>过大：过度平滑，偏差高；过小：曲线抖动，方差高，可能过拟合。</p></details>
+<ol start="32"><li>★ Silverman 经验法则中 $T^{-1/(4+q)}$ 的方向含义是什么？</li></ol>
+<details><summary>参考答案要点</summary><p>样本量增加时窗宽下降；维度越高，下降越慢，因为高维下需要更宽邻域维持有效样本量。</p></details>
+<ol start="33"><li>★★ 留一交叉验证为什么不能用第 $j$ 个观测预测它自己？</li></ol>
+<details><summary>参考答案要点</summary><p>若包含自身，尤其窗宽很小时，预测误差会被人为压低。留一预测更接近样本外预测。</p></details>
+<ol start="34"><li>★★ 在 $y_t=\sin(x_t)+e_t$ 的例子中，为什么线性回归可能 Bias 很大？</li></ol>
+<details><summary>参考答案要点</summary><p>真实条件均值是弯曲的 $\sin(x)$，线性回归只能估计一条直线，系统性遗漏非线性形状。</p></details>
+<ol start="35"><li>★★★ 外部扩展：查阅 Stata <code>npregress kernel</code> 文档，说明核回归输出为什么不能只看系数表。来源：<a href="https://www.stata.com/manuals/rnpregress.pdf">Stata npregress manual</a></li></ol>
+<details><summary>参考答案要点</summary><p>核回归估计的是函数而非少数固定斜率。应关注预测函数、边际效应、带宽、图形和样本外表现。</p></details>
+<h2 id="§8-筛分估计-sieve">§8 筛分估计 Sieve ★★</h2>
+<h3 id="脉络梳理-8">脉络梳理</h3>
+<p>筛分估计的直觉像“用积木搭曲线”。不知道 $f(x)$ 长什么样，但假设它可以被一组已知基函数逐步逼近。样本少时只用少量积木，样本多时增加积木数量。</p>
+<h3 id="重点内容申明-8">重点内容申明</h3>
+<p>假设函数可展开为</p>
+<div class="math-block">$$
+f(x)=\sum_{j=0}^{\infty}c_jh_j(x).
+$$</div>
+<p>其中 $h_j(x)$ 是已知基函数，$c_j$ 是未知系数。实际估计只能取前 $k$ 项：</p>
+<div class="math-block">$$
+f_k(x)=\sum_{j=0}^{k-1}c_jh_j(x).
+$$</div>
+<p>模型变成</p>
+<div class="math-block">$$
+y_t=f_k(x_t)+\gamma_k(x_t)+a_t
+=\sum_{j=0}^{k-1}c_jh_j(x_t)+e_t.
+$$</div>
+<p>这里 $\gamma_k(x_t)$ 是截断误差，$e_t=\gamma_k(x_t)+a_t$。若把</p>
+<div class="math-block">$$
+H_t=(h_0(x_t),h_1(x_t),\ldots,h_{k-1}(x_t))&#x27;
+$$</div>
+<p>记为基函数向量，就得到普通线性回归：</p>
+<div class="math-block">$$
+y_t=H_t&#x27;c+e_t.
+$$</div>
+<p>于是</p>
+<div class="math-block">$$
+\hat c=(H&#x27;H)^{-1}H&#x27;y.
+$$</div>
+<p>这就是筛分估计最重要的转化：无限维函数估计被转化为有限维 OLS，但维数 $k=k_T$ 随样本量增加。</p>
+<p>常见基函数空间：</p>
+<div class="table-wrap"><table>
+<thead><tr>
+<th>空间</th>
+<th>例子</th>
+<th>适合直觉</th>
+</tr></thead>
+<tbody>
+<tr>
+<td>多项式</td>
+<td>$1,x,x^2,\ldots,x^{k-1}$</td>
+<td>简单平滑曲线</td>
+</tr>
+<tr>
+<td>三角多项式</td>
+<td>$\sin(jx),\cos(jx)$</td>
+<td>周期性形状</td>
+</tr>
+<tr>
+<td>样条</td>
+<td>分段多项式拼接</td>
+<td>局部弯曲强</td>
+</tr>
+<tr>
+<td>Hermite 多项式</td>
+<td>正交多项式族</td>
+<td>正态权重下的函数逼近</td>
+</tr>
+</tbody></table></div>
+<p>阶数 $k$ 决定复杂度。$k$ 太小，欠拟合；$k$ 太大，过拟合。课件给出均方误差意义下常见阶数</p>
+<div class="math-block">$$
+k_T=O(T^{1/5}).
+$$</div>
+<p>实际中可用广义交叉验证：</p>
+<div class="math-block">$$
+GCV(k)=\frac{\hat\sigma^2(k)}{(1-k/T)^2},
+$$</div>
+<p>其中</p>
+<div class="math-block">$$
+\hat\sigma^2(k)=\frac{1}{T}\sum_{t=1}^{T}[y_t-\hat f_k(x_t)]^2.
+$$</div>
+<p>选择</p>
+<div class="math-block">$$
+\hat k_{GCV}=\arg\min_{k\in\mathcal N_T}GCV(k).
+$$</div>
+<p>分母 $(1-k/T)^2$ 是复杂度惩罚：加入更多基函数会降低残差平方和，但也会消耗自由度。</p>
+<p>核估计与筛分估计的差异：</p>
+<p>核估计是局部方法，每个 $x$ 点都有自己的加权平均；筛分是全局方法，一次估计整条函数。核估计对局部形状敏感，筛分估计对基函数选择敏感。</p>
+<p><strong>Stata 可运行思路：多项式筛分</strong></p>
+<pre><code class="language-stata">clear all
+set seed 202604
+set obs 1000
+gen t = _n
+tsset t
+
+gen x = rnormal()
+gen y = x + 2*sin(x) + rnormal()
+
+forvalues k = 1/8 {
+    gen x`k&#x27; = x^`k&#x27;
+}
+
+reg y x1-x8
+predict y_sieve, xb
+
+* 简单比较较低阶与较高阶
+reg y x1-x3
+estat ic
+reg y x1-x8
+estat ic</code></pre>
+<h3 id="习题-8">习题</h3>
+<ol start="36"><li>★ 筛分估计为什么可以用 OLS 实现？</li></ol>
+<details><summary>参考答案要点</summary><p>截断后 $f_k(x)=\sum_{j=0}^{k-1}c_jh_j(x)$，基函数值是已知解释变量，未知的是有限维系数 $c_j$，所以可做线性回归。</p></details>
+<ol start="37"><li>★ 截断误差 $\gamma_k(x)$ 是什么？</li></ol>
+<details><summary>参考答案要点</summary><p>真实函数无限展开中第 $k$ 项以后被省略的部分，即 $\gamma_k(x)=\sum_{j=k}^{\infty}c_jh_j(x)$。</p></details>
+<ol start="38"><li>★★ 为什么 $k$ 太大也不好？</li></ol>
+<details><summary>参考答案要点</summary><p>虽然训练残差下降，但自由度消耗增加，估计方差上升，样本外过拟合风险增加。</p></details>
+<ol start="39"><li>★★ 对周期性函数，为什么三角多项式可能比普通多项式更自然？</li></ol>
+<details><summary>参考答案要点</summary><p>三角基 $\sin(jx),\cos(jx)$ 本身具有周期结构，更容易用少量基函数表达周期形状。</p></details>
+<ol start="40"><li>★★★ 外部扩展：比较 AIC/BIC 与 GCV 在选择模型复杂度时的共同点。来源：<a href="https://www.stata.com/manuals/restatic.pdf">Stata estat ic manual</a></li></ol>
+<details><summary>参考答案要点</summary><p>共同点是都在拟合优度和复杂度之间权衡。AIC/BIC通过惩罚参数数量，GCV通过自由度调整预测误差。</p></details>
+<h2 id="§9-半参数时间序列模型">§9 半参数时间序列模型 ★★</h2>
+<h3 id="脉络梳理-9">脉络梳理</h3>
+<p>非参数估计很灵活，但维度一高会迅速变差。半参数模型的策略是：能线性解释的部分就线性解释，必须灵活的部分再用未知函数。它是“结构”和“灵活性”的折中。</p>
+<h3 id="重点内容申明-9">重点内容申明</h3>
+<p><strong>部分线性模型</strong>：</p>
+<div class="math-block">$$
+y_t=x_{1t}&#x27;\beta+g(x_{2t})+a_t.
+$$</div>
+<p>$x_{1t}$ 的影响由固定参数 $\beta$ 描述，$x_{2t}$ 的影响由未知函数 $g$ 描述。Robinson 思路是先对 $x_{2t}$ 条件下取期望：</p>
+<div class="math-block">$$
+E(y_t\mid x_{2t})=E(x_{1t}\mid x_{2t})&#x27;\beta+g(x_{2t}).
+$$</div>
+<p>两式相减：</p>
+<div class="math-block">$$
+y_t-E(y_t\mid x_{2t})
+=
+[x_{1t}-E(x_{1t}\mid x_{2t})]&#x27;\beta+a_t.
+$$</div>
+<p>于是先用非参数方法估计两个条件期望，再对“去掉 $x_2$ 影响后的残差”做 OLS 估计 $\beta$。</p>
+<p><strong>单指标模型</strong>：</p>
+<div class="math-block">$$
+y_t=g(x_t&#x27;\beta)+a_t.
+$$</div>
+<p>高维 $x_t$ 先压缩成一维指标 $x_t&#x27;\beta$，再进入未知函数 $g$。这可以缓解维度灾难，但需要识别约束，例如固定 $\|\beta\|=1$ 或某个分量为正。</p>
+<p><strong>可加模型</strong>：</p>
+<div class="math-block">$$
+y_t=g_1(x_{1t})+\cdots+g_l(x_{lt})+a_t.
+$$</div>
+<p>它允许每个变量非线性影响 $y_t$，但要求影响可以相加。这样避免估计一个高维函数 $g(x_1,\ldots,x_l)$。</p>
+<p><strong>变系数模型</strong>：</p>
+<div class="math-block">$$
+y_t=x_{2t}&#x27;\beta(x_{1t})+a_t.
+$$</div>
+<p>这里 $x_{2t}$ 的系数不是常数，而是随 $x_{1t}$ 改变。例如利率对投资的影响可能随信用条件变化。</p>
+<p>四类模型的选择逻辑：</p>
+<div class="table-wrap"><table>
+<thead><tr>
+<th>经济故事</th>
+<th>推荐结构</th>
+</tr></thead>
+<tbody>
+<tr>
+<td>一部分变量有明确线性边际效应，另一部分不确定</td>
+<td>部分线性</td>
+</tr>
+<tr>
+<td>多个变量通过一个综合指数发挥作用</td>
+<td>单指标</td>
+</tr>
+<tr>
+<td>各变量都有非线性，但交互不强</td>
+<td>可加</td>
+</tr>
+<tr>
+<td>某个变量的边际效应随状态变量变化</td>
+<td>变系数</td>
+</tr>
+</tbody></table></div>
+<h3 id="习题-9">习题</h3>
+<ol start="41"><li>★ 部分线性模型适合什么样的研究问题？</li></ol>
+<details><summary>参考答案要点</summary><p>部分变量有可信线性影响，另一部分变量作用形状未知。例如控制变量线性进入，核心状态变量非线性进入。</p></details>
+<ol start="42"><li>★ 单指标模型怎样缓解维度灾难？</li></ol>
+<details><summary>参考答案要点</summary><p>把高维 $x_t$ 压缩成一维指数 $x_t&#x27;\beta$，只对一维指数估计非参数函数 $g$。</p></details>
+<ol start="43"><li>★★ 推导 Robinson 部分线性估计的“残差化”思想。</li></ol>
+<details><summary>参考答案要点</summary><p>对 $x_2$ 条件取期望后相减：$y-E(y|x_2)=[x_1-E(x_1|x_2)]&#x27;\beta+a$，于是先非参数估计条件期望，再 OLS。</p></details>
+<ol start="44"><li>★★ 可加模型相对完全非参数模型牺牲了什么、换来了什么？</li></ol>
+<details><summary>参考答案要点</summary><p>牺牲变量间任意交互形式；换来低维函数估计，缓解维度灾难，并保留每个变量的非线性边际影响。</p></details>
+<ol start="45"><li>★★★ 外部扩展：阅读 Hastie/Tibshirani 可加模型介绍，说明 GAM 的解释优势。来源：<a href="https://hastie.su.domains/ElemStatLearn/">Stanford GAM notes</a></li></ol>
+<details><summary>参考答案要点</summary><p>GAM 可分别展示每个变量的平滑函数，有较强可解释性；比黑箱非参数模型更容易说明变量如何影响响应变量。</p></details>
+<h2 id="§10-参数非线性检验-reset-与门限检验-核心">§10 参数非线性检验：RESET 与门限检验 ★★★ 核心</h2>
+<h3 id="脉络梳理-10">脉络梳理</h3>
+<p>非线性模型很多，不能看见曲线弯一点就上复杂模型。检验的第一问是：线性模型是否已经足够？参数非线性检验会指定某类备择方向，例如遗漏了非线性项，或存在门限效应。</p>
+<h3 id="重点内容申明-10">重点内容申明</h3>
+<p><strong>RESET 检验</strong></p>
+<p>以 AR($p$) 为原假设：</p>
+<div class="math-block">$$
+y_t=x_{t-1}&#x27;\phi+a_t,\qquad
+x_{t-1}=(1,y_{t-1},\ldots,y_{t-p})&#x27;.
+$$</div>
+<p>先估计线性模型，得到拟合值 $\hat y_t$ 和残差 $\hat a_t$。如果线性模型设定正确，拟合值的高次项不应再解释残差或 $y_t$。常见辅助回归为</p>
+<div class="math-block">$$
+y_t=x_{t-1}&#x27;\phi+\delta_2\hat y_t^2+\cdots+\delta_{s+1}\hat y_t^{s+1}+u_t.
+$$</div>
+<p>原假设：</p>
+<div class="math-block">$$
+H_0:\delta_2=\cdots=\delta_{s+1}=0.
+$$</div>
+<p>也可写成课件中的残差辅助回归形式。设受限模型残差平方和为 $SSR_0$，非受限辅助回归残差平方和为 $SSR_1$，新增限制个数为 $g$，则</p>
+<div class="math-block">$$
+F=
+\frac{(SSR_0-SSR_1)/g}
+{SSR_1/(T-k-g)}.
+$$</div>
+<p>若 $F$ 很大或 $p$ 值很小，说明加入非线性项显著降低残差平方和，线性设定可疑。</p>
+<p><strong>门限效应检验</strong></p>
+<p>以单门限 SETAR 为备择：</p>
+<div class="math-block">$$
+y_t=
+\begin{cases}
+\phi_{1,0}+\sum_{i=1}^{p}\phi_{1,i}y_{t-i}+a_{1t},&amp; q_t&lt;r,\\
+\phi_{2,0}+\sum_{i=1}^{p}\phi_{2,i}y_{t-i}+a_{2t},&amp; q_t\ge r.
+\end{cases}
+$$</div>
+<p>原假设是线性模型：</p>
+<div class="math-block">$$
+H_0:\phi_{1,i}=\phi_{2,i},\qquad i=0,1,\ldots,p.
+$$</div>
+<p>若门限 $r$ 已知，可以做常规似然比或 F 检验。但现实中 $r$ 未知，在原假设下门限参数没有识别，导致常规 $\chi^2$ 分布不适用。常用统计量是</p>
+<div class="math-block">$$
+LR=\sup_{r\in[u,v]}
+\left[
+\ell_1(r;\hat\theta_1(r))-\ell_0(\hat\theta_0)
+\right],
+$$</div>
+<p>通过网格搜索取最大。临界值通常依赖模拟或 bootstrap。</p>
+<p>Tsay 检验的思想是用排列后的自回归和递归残差构造 F 检验，以避免未知门限带来的冗余参数问题。考试不一定要求推导 Tsay 统计量，但要知道它用于检测 TAR 型门限效应。</p>
+<p><strong>Stata 可运行思路：RESET</strong></p>
+<pre><code class="language-stata">clear all
+set seed 202604
+set obs 600
+gen t = _n
+tsset t
+
+gen e = rnormal()
+gen y = .
+replace y = e in 1/2
+forvalues i = 3/600 {
+    replace y = 0.5*y[`i&#x27;-1] - 0.6*(y[`i&#x27;-1]^2) + e[`i&#x27;] in `i&#x27;
+}
+
+reg y L(1/2).y
+estat ovtest
+
+predict yhat, xb
+gen yhat2 = yhat^2
+gen yhat3 = yhat^3
+reg y L(1/2).y yhat2 yhat3
+test yhat2 yhat3</code></pre>
+<p>解释结果时只抓一句：若 <code>test</code> 的 p 值很小，就拒绝高次项系数全为零，说明线性 AR 设定不足。</p>
+<h3 id="习题-10">习题</h3>
+<ol start="46"><li>★ RESET 检验的原假设是什么？</li></ol>
+<details><summary>参考答案要点</summary><p>线性模型设定充分，加入拟合值高次项或其他非线性组合后不应显著改善解释力。</p></details>
+<ol start="47"><li>★ 在 RESET 的 F 统计量中，为什么要比较 $SSR_0$ 和 $SSR_1$？</li></ol>
+<details><summary>参考答案要点</summary><p>$SSR_0$ 来自受限线性模型，$SSR_1$ 来自加入非线性项的非受限模型。若下降幅度相对自由度足够大，说明非线性项有用。</p></details>
+<ol start="48"><li>★★ 为什么门限检验中的门限参数在原假设下“未识别”？</li></ol>
+<details><summary>参考答案要点</summary><p>原假设下两个区制系数相同，门限把样本怎样切分都不影响模型，因此门限位置没有意义，常规分布失效。</p></details>
+<ol start="49"><li>★★ RESET 拒绝线性，但门限检验不拒绝，可能意味着什么？</li></ol>
+<details><summary>参考答案要点</summary><p>存在非线性设定问题，但不一定是 TAR 型硬门限；可能是平滑转换、曲线型非线性、异方差或其他遗漏结构。</p></details>
+<ol start="50"><li>★★★ 外部扩展：阅读 Ramsey RESET 原文 DOI 页面，说明 RESET 属于“广义设定检验”而非特定经济结构模型。来源：<a href="https://doi.org/10.1111/j.2517-6161.1969.tb00796.x">doi.org/10.1111/j.2517-6161.1969.tb00796.x</a></li></ol>
+<details><summary>参考答案要点</summary><p>RESET 通过辅助项检测遗漏的非线性或错误函数形式，不告诉你真实模型是哪一个，只提示线性设定可能不充分。</p></details>
+<h2 id="§11-非参数设定检验与自助抽样-核心">§11 非参数设定检验与自助抽样 ★★★ 核心</h2>
+<h3 id="脉络梳理-11">脉络梳理</h3>
+<p>参数检验的弱点是备择方向窄。RESET 对某些遗漏非线性敏感，门限检验对 TAR 敏感，但如果真实偏离不是这些形式，功效可能低。非参数设定检验试图检验更宽泛的问题：参数模型 $m_\theta(x)$ 是否能代表真实条件均值 $m(x)$？</p>
+<h3 id="重点内容申明-11">重点内容申明</h3>
+<p>基本模型：</p>
+<div class="math-block">$$
+y_t=m(x_t)+e_t,\qquad E(e_t\mid x_t)=0.
+$$</div>
+<p>原假设：</p>
+<div class="math-block">$$
+H_0:m(x)=m_{\theta_0}(x),\quad \forall x\in\mathbb R^d.
+$$</div>
+<p>局部备择：</p>
+<div class="math-block">$$
+H_1:m(x)=m_{\theta_1}(x)+C_T\Delta(x),
+$$</div>
+<p>其中 $C_T\to0$，用于研究样本量增加时检验对微小偏离的识别能力。</p>
+<p><strong>基于 $L^2$ 距离的检验</strong></p>
+<p>直觉是比较非参数估计 $\hat m_h(x)$ 和参数模型的平滑版本 $\tilde m_{\hat\theta}(x)$：</p>
+<div class="math-block">$$
+I_{T,HM}(h)
+=
+Th^{d/2}\int
+\left[
+\hat m_h(x)-\tilde m_{\hat\theta}(x)
+\right]^2w(x)\,dx.
+$$</div>
+<p>若参数模型正确，二者差异应该主要来自抽样误差；若模型错了，差异会系统性变大。</p>
+<p>Nadaraya-Watson 估计为</p>
+<div class="math-block">$$
+\hat m_h(x)
+=
+\frac{\sum_{t=1}^{T}K_h(x-x_t)y_t}
+{\sum_{t=1}^{T}K_h(x-x_t)}.
+$$</div>
+<p>参数模型的局部平滑版本为</p>
+<div class="math-block">$$
+\tilde m_{\hat\theta}(x)
+=
+\frac{\sum_{t=1}^{T}K_h(x-x_t)m_{\hat\theta}(x_t)}
+{\sum_{t=1}^{T}K_h(x-x_t)}.
+$$</div>
+<p>课件给出某些权重选择下的简化形式：</p>
+<div class="math-block">$$
+I_{T,HM}(h)
+=
+\frac{1}{T}\sum_{s=1}^{T}\sum_{t=1}^{T}
+\hat e_s\hat e_tK_h(x_s,x_t),
+$$</div>
+<p>其中</p>
+<div class="math-block">$$
+\hat e_t=y_t-m_{\hat\theta}(x_t).
+$$</div>
+<p><strong>基于条件均值距离的检验</strong></p>
+<p>若 $H_0$ 成立，则</p>
+<div class="math-block">$$
+E(e_t\mid x_t)=0.
+$$</div>
+<p>因此 $E[e_tE(e_t\mid x_t)f(x_t)]=0$。Zheng 统计量可写成</p>
+<div class="math-block">$$
+I_T(h)=
+\frac{1}{T(T-1)}
+\sum_{s=1}^{T}
+\sum_{\substack{t=1\\t\ne s}}^{T}
+\hat e_s\hat e_tK_h(x_s-x_t).
+$$</div>
+<p>标准化后</p>
+<div class="math-block">$$
+J_T=
+\frac{Th^{d/2}I_T(h)}{\hat\sigma}
+\Rightarrow N(0,1),
+$$</div>
+<p>其中方差估计为</p>
+<div class="math-block">$$
+\hat\sigma^2=
+\frac{2h^d}{T(T-1)}
+\sum_{s=1}^{T}
+\sum_{\substack{t=1\\t\ne s}}^{T}
+\hat e_s^2\hat e_t^2K_h^2(x_s-x_t).
+$$</div>
+<p>这个统计量的核心不是公式长，而是思想清楚：如果残差还和 $x$ 附近的残差系统性相关，就说明条件均值没有被参数模型解释干净。</p>
+<p><strong>Wild bootstrap / Mammen 两点分布</strong></p>
+<p>非参数检验对窗宽敏感，有限样本分布也不总好用。课件介绍用自助抽样构造 p 值。步骤如下。</p>
+<ol start="1"><li>在原假设下估计参数模型，得到 $\hat m_{\hat\theta}(x_t)$ 和残差 $\hat e_t$。</li><li>生成随机权重 $v_t$：</li></ol>
+<div class="math-block">$$
+v_t=
+\begin{cases}
+(1-\sqrt5)/2,&amp; \text{概率 }(\sqrt5+1)/(2\sqrt5),\\
+(1+\sqrt5)/2,&amp; \text{概率 }(\sqrt5-1)/(2\sqrt5).
+\end{cases}
+$$</div>
+<p>并令</p>
+<div class="math-block">$$
+e_t^*=v_t\hat e_t.
+$$</div>
+<ol start="3"><li>生成 bootstrap 样本：</li></ol>
+<div class="math-block">$$
+y_t^*=\hat m_{\hat\theta}(x_t)+e_t^*.
+$$</div>
+<ol start="4"><li>对每个 bootstrap 样本重新估计参数模型，计算 $J_T^*$。</li><li>重复 $B$ 次，得到经验分布。p 值可计算为</li></ol>
+<div class="math-block">$$
+p=\frac{1}{B}\sum_{b=1}^{B}\mathbf 1\{J_T^{*(b)}&gt;J_T\}.
+$$</div>
+<p>若 $p&lt;\alpha$，拒绝原假设。</p>
+<p><strong>Stata 可运行思路：wild bootstrap 的基本结构</strong></p>
+<pre><code class="language-stata">clear all
+set seed 202604
+set obs 400
+gen x = rnormal()
+gen y = x + sin(x) + rnormal()
+
+reg y x
+predict yhat, xb
+predict ehat, resid
+
+local B = 199
+tempname memhold
+tempfile bootstats
+postfile `memhold&#x27; stat using `bootstats&#x27;, replace
+
+forvalues b = 1/`B&#x27; {
+    preserve
+    gen u = runiform()
+    gen v = cond(u &lt; ((sqrt(5)+1)/(2*sqrt(5))), ///
+        (1-sqrt(5))/2, (1+sqrt(5))/2)
+    gen ystar = yhat + v*ehat
+    quietly reg ystar x
+    predict rstar, resid
+    quietly corr rstar x
+    scalar stat = abs(r(rho))
+    post `memhold&#x27; (stat)
+    restore
+}
+postclose `memhold&#x27;
+use `bootstats&#x27;, clear
+summ stat</code></pre>
+<p>这不是课件中 $J_T$ 的完整实现，而是展示 wild bootstrap 的可运行骨架：在原假设拟合值上叠加随机化残差，并重复计算检验统计量。</p>
+<h3 id="习题-11">习题</h3>
+<ol start="51"><li>★ 非参数设定检验的原假设 $H_0:m(x)=m_{\theta_0}(x)$ 表达了什么？</li></ol>
+<details><summary>参考答案要点</summary><p>真实条件均值函数等于某个参数模型族中的成员；未知的是参数 $\theta_0$，不是函数形式本身。</p></details>
+<ol start="52"><li>★ 为什么局部备择中要写 $C_T\Delta(x)$ 且 $C_T\to0$？</li></ol>
+<details><summary>参考答案要点</summary><p>用于研究样本量增加时检验识别越来越小偏离的能力，即局部功效。</p></details>
+<ol start="53"><li>★★ L2 距离检验的直觉是什么？</li></ol>
+<details><summary>参考答案要点</summary><p>比较非参数估计函数和参数模型平滑函数之间的整体平方距离；若参数模型正确，距离应主要由抽样误差造成。</p></details>
+<ol start="54"><li>★★ wild bootstrap 为什么适合残差重抽样？</li></ol>
+<details><summary>参考答案要点</summary><p>它保留解释变量和拟合均值结构，通过随机权重扰动残差，常用于异方差或非标准统计量的有限样本分布近似。</p></details>
+<ol start="55"><li>★★★ 外部扩展：阅读 Zheng (1997) 相关 DOI 页面，说明条件均值距离检验为什么不需要指定具体非线性备择。来源：<a href="https://doi.org/10.1017/S0266466600006141">doi.org/10.1017/S0266466600006141</a></li></ol>
+<details><summary>参考答案要点</summary><p>检验基于原假设下残差条件均值为零的普遍矩条件，而不是某个特定备择模型，因此对广泛函数偏离有功效。</p></details>
+<h2 id="§12-案例-美国失业率">§12 案例：美国失业率 ★★</h2>
+<h3 id="脉络梳理-12">脉络梳理</h3>
+<p>案例使用 1948 年 1 月到 2019 年 12 月美国月度失业率。先进行 X-13 季节调整，再令</p>
+<div class="math-block">$$
+y_t=\Delta x_t=x_t-x_{t-1}
+$$</div>
+<p>表示季调失业率变化。建模对象不是失业率水平，而是变化率。</p>
+<h3 id="重点内容申明-12">重点内容申明</h3>
+<p>课件给出线性基准 ARMA(2,3)：</p>
+<div class="math-block">$$
+y_t+0.7358y_{t-1}-0.2038y_{t-2}
+=
+e_t-1.8551e_{t-1}+1.0227e_{t-2}-0.1623e_{t-3}.
+$$</div>
+<p>随后进行门限效应似然比检验：对 $p=2,\ldots,6$，线性 AR($p$) 假设均被拒绝。因此案例进入非线性模型比较。</p>
+<p>模型设定如下：</p>
+<div class="table-wrap"><table>
+<thead><tr>
+<th>模型</th>
+<th>设定要点</th>
+</tr></thead>
+<tbody>
+<tr>
+<td>ARMA</td>
+<td>线性基准</td>
+</tr>
+<tr>
+<td>SETAR</td>
+<td>单门限，延迟 $d=6$，门限 $\hat r=-0.1088$</td>
+</tr>
+<tr>
+<td>Markov</td>
+<td>AR 阶数与 SETAR 保持一致</td>
+</tr>
+<tr>
+<td>Kernel</td>
+<td>四阶滞后，Gaussian 核，局部线性，CV 选窗宽</td>
+</tr>
+<tr>
+<td>Sieve</td>
+<td>以 $y_{t-1}$ 为自变量，多项式基，GCV 选到 $k=5$</td>
+</tr>
+</tbody></table></div>
+<p>二十期向前预测比较里，课件结论是：Bias 都较小，Markov 稍有偏差；RMSE 和 MAE 上 SETAR 与核回归表现较好，Markov 与筛分次之，线性 ARMA 最差。</p>
+<p>这说明一个重要考试点：<strong>非线性模型不保证永远预测最好，但当线性假设被系统拒绝时，能更贴近数据的状态依赖或函数形状。</strong> 在失业率这种强不对称变量上，SETAR 的“急升慢降”解释特别自然；核回归则用数据驱动方式捕捉非线性关系。</p>
+<p>预测指标复习：</p>
+<div class="math-block">$$
+Bias=\frac{1}{H}\sum_{h=1}^{H}(\hat y_{T+h}-y_{T+h}),
+$$</div>
+<div class="math-block">$$
+RMSE=
+\sqrt{
+\frac{1}{H}\sum_{h=1}^{H}(\hat y_{T+h}-y_{T+h})^2
+},
+$$</div>
+<div class="math-block">$$
+MAE=
+\frac{1}{H}\sum_{h=1}^{H}|\hat y_{T+h}-y_{T+h}|.
+$$</div>
+<p>Bias 反映平均方向偏差，RMSE 对大误差惩罚更重，MAE 更稳健。若一个模型 Bias 小但 RMSE 大，说明它平均不偏，但个别预测误差很大。</p>
+<p><strong>Stata 可运行思路：用模拟失业率变化比较线性、门限和筛分</strong></p>
+<pre><code class="language-stata">clear all
+set seed 202604
+set obs 900
+gen t = _n
+tsset t
+
+gen e = rnormal(0, .08)
+gen y = .
+replace y = e in 1/6
+forvalues i = 7/900 {
+    if y[`i&#x27;-6] &lt; -0.10 {
+        replace y = 0.25*y[`i&#x27;-1] + e[`i&#x27;] in `i&#x27;
+    }
+    else {
+        replace y = -0.55*y[`i&#x27;-1] + 0.20*y[`i&#x27;-2] + e[`i&#x27;] in `i&#x27;
+    }
+}
+
+gen train = _n &lt;= 850
+
+reg y L(1/2).y if train
+predict yhat_ar if !train, xb
+
+gen q = L6.y
+reg y L(1/2).y if train &amp; q &lt; -0.10
+predict yhat_low if !train &amp; q &lt; -0.10, xb
+reg y L(1/2).y if train &amp; q &gt;= -0.10 &amp; !missing(q)
+predict yhat_high if !train &amp; q &gt;= -0.10, xb
+gen yhat_setar = yhat_low
+replace yhat_setar = yhat_high if missing(yhat_setar)
+
+gen x1 = L.y
+gen x2 = x1^2
+gen x3 = x1^3
+gen x4 = x1^4
+gen x5 = x1^5
+reg y x1-x5 if train
+predict yhat_sieve if !train, xb
+
+foreach m in ar setar sieve {
+    gen err_`m&#x27; = yhat_`m&#x27; - y if !train
+    gen abserr_`m&#x27; = abs(err_`m&#x27;)
+    gen sqerr_`m&#x27; = err_`m&#x27;^2
+    quietly summ err_`m&#x27;
+    display &quot;`m&#x27; Bias = &quot; %8.4f r(mean)
+    quietly summ sqerr_`m&#x27;
+    display &quot;`m&#x27; RMSE = &quot; %8.4f sqrt(r(mean))
+    quietly summ abserr_`m&#x27;
+    display &quot;`m&#x27; MAE  = &quot; %8.4f r(mean)
+}</code></pre>
+<p>这段模拟代码对应案例逻辑：先保留后 50 期做伪样本外预测，再比较 Bias、RMSE、MAE。</p>
+<h3 id="习题-12">习题</h3>
+<ol start="56"><li>★ 为什么案例先对失业率做季节调整？</li></ol>
+<details><summary>参考答案要点</summary><p>月度失业率含季节性，如果不处理，模型可能把季节规律误当作动态非线性或状态转换。</p></details>
+<ol start="57"><li>★ 案例为什么建模 $y_t=\Delta x_t$ 而不是直接建模失业率水平 $x_t$？</li></ol>
+<details><summary>参考答案要点</summary><p>变化率更接近平稳，也更直接刻画失业率上升/下降的短期动态；水平序列可能具有持久趋势或结构变化。</p></details>
+<ol start="58"><li>★★ SETAR 中门限值 $\hat r=-0.1088$ 可以如何解释？</li></ol>
+<details><summary>参考答案要点</summary><p>当六期前失业率变化低于该值和高于该值时，当前变化率使用不同 AR 动态；它把样本分为两种调整机制。</p></details>
+<ol start="59"><li>★★ 若一个模型 Bias 接近 0 但 RMSE 很大，应怎样解释？</li></ol>
+<details><summary>参考答案要点</summary><p>平均方向不偏，但误差波动大或偶尔出现大错。RMSE 对大误差敏感，因此预测稳定性不好。</p></details>
+<ol start="60"><li>★★★ 外部扩展：从 FRED 下载 UNRATE 后，设计一个复现实证流程：季调、差分、线性检验、非线性模型比较、预测评价。来源：<a href="https://fred.stlouisfed.org/series/UNRATE">FRED UNRATE</a> 与 <a href="https://www.census.gov/data/software/x13as.html">U.S. Census X-13</a></li></ol>
+<details><summary>参考答案要点</summary><p>流程：获取月度失业率；季调或使用已季调序列；构造差分；估计 ARMA 基准；做 RESET/门限检验；估计 SETAR/MSM/kernel/sieve；留出预测期；报告 Bias、RMSE、MAE。</p></details>
+<h2 id="外部来源汇总">外部来源汇总</h2>
+<ul><li><a href="https://www.nber.org/research/business-cycle-dating">NBER Business Cycle Dating</a></li><li><a href="https://doi.org/10.2307/1912559">Hamilton (1989), Econometrica DOI</a></li><li><a href="https://www.stata.com/manuals/tsarima.pdf">Stata ARIMA manual</a></li><li><a href="https://www.stata.com/manuals/tsthreshold.pdf">Stata threshold manual</a></li><li><a href="https://www.stata.com/manuals/rnpregress.pdf">Stata npregress manual</a></li><li><a href="https://cran.r-project.org/package=np">CRAN np package</a></li><li><a href="https://doi.org/10.1111/j.2517-6161.1969.tb00796.x">Ramsey RESET DOI</a></li><li><a href="https://doi.org/10.1017/S0266466600006141">Zheng (1997) DOI</a></li><li><a href="https://fred.stlouisfed.org/series/UNRATE">FRED UNRATE</a></li><li><a href="https://www.census.gov/data/software/x13as.html">U.S. Census X-13ARIMA-SEATS</a></li></ul>
+<h2 id="外部来源汇总-2">外部来源汇总</h2>
+<ul><li><a href="https://www.nber.org/research/business-cycle-dating">NBER Business Cycle Dating</a></li><li><a href="https://doi.org/10.2307/1912559">Hamilton (1989), Econometrica DOI</a></li><li><a href="https://www.stata.com/manuals/tsarima.pdf">Stata ARIMA manual</a></li><li><a href="https://www.stata.com/manuals/tsthreshold.pdf">Stata threshold manual</a></li><li><a href="https://www.stata.com/manuals/rnpregress.pdf">Stata npregress manual</a></li><li><a href="https://cran.r-project.org/package=np">CRAN np package</a></li><li><a href="https://doi.org/10.1111/j.2517-6161.1969.tb00796.x">Ramsey RESET DOI</a></li><li><a href="https://doi.org/10.1017/S0266466600006141">Zheng (1997) DOI</a></li><li><a href="https://fred.stlouisfed.org/series/UNRATE">FRED UNRATE</a></li><li><a href="https://www.census.gov/data/software/x13as.html">U.S. Census X-13ARIMA-SEATS</a></li></ul>
+<h2 id="质量检查记录">质量检查记录</h2>
+<ul><li>覆盖范围：12 个复习单元对应课件 44 页内容。</li><li>三段结构：每节包含 <code>脉络梳理</code>、<code>重点内容申明</code>、<code>习题</code>。</li><li>公式处理：PPTX Office Math 已重写为 LaTeX；重要公式给出推导或解释。</li><li>练习数量：60 题，含基础、进阶和外部扩展；答案要点使用折叠块。</li><li>Stata：提供线性 AR、SETAR 网格搜索、核回归、筛分、RESET、bootstrap、预测评价等可运行骨架。</li><li>原始抽取文件字符数：12696。</li></ul>
+</article>
+</main>
+</div>
+<script>
+const root = document.documentElement;
+const saved = localStorage.getItem("review-theme");
+if (saved) root.dataset.theme = saved;
+document.getElementById("themeBtn").addEventListener("click", () => {
+  root.dataset.theme = root.dataset.theme === "dark" ? "" : "dark";
+  localStorage.setItem("review-theme", root.dataset.theme);
+});
+window.addEventListener("DOMContentLoaded", () => {
+  if (window.renderMathInElement) {
+    renderMathInElement(document.body, {
+      delimiters: [
+        {left: "$$", right: "$$", display: true},
+        {left: "$", right: "$", display: false},
+        {left: "\\(", right: "\\)", display: false},
+        {left: "\\[", right: "\\]", display: true}
+      ],
+      throwOnError: false
+    });
+  }
+});
+</script>
+</body>
+</html>

@@ -1,0 +1,1514 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>第2章 线性时间序列模型复习资料</title>
+  <style>
+    :root {
+      --bg: #f7f4ee;
+      --paper: #fffdf8;
+      --ink: #24211d;
+      --muted: #6d665c;
+      --line: #ded6c8;
+      --accent: #0f766e;
+      --accent-strong: #0b5c55;
+      --code-bg: #f0eadf;
+      --toc-bg: #eee7da;
+      --shadow: rgba(36, 33, 29, 0.08);
+    }
+    [data-theme="dark"] {
+      --bg: #151719;
+      --paper: #1f2325;
+      --ink: #ece7dc;
+      --muted: #b8afa1;
+      --line: #3a3f41;
+      --accent: #5eead4;
+      --accent-strong: #99f6e4;
+      --code-bg: #111416;
+      --toc-bg: #191d1f;
+      --shadow: rgba(0, 0, 0, 0.28);
+    }
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      background: var(--bg);
+      color: var(--ink);
+      font-family: "Noto Serif SC", "Songti SC", "STSong", Georgia, serif;
+      line-height: 1.78;
+    }
+    a { color: var(--accent-strong); text-decoration-thickness: 0.08em; text-underline-offset: 0.18em; }
+    .layout { display: grid; grid-template-columns: 280px minmax(0, 1fr); min-height: 100vh; }
+    aside {
+      position: sticky;
+      top: 0;
+      align-self: start;
+      height: 100vh;
+      overflow: auto;
+      padding: 22px 18px;
+      background: var(--toc-bg);
+      border-right: 1px solid var(--line);
+    }
+    .brand { font-size: 0.95rem; font-weight: 700; margin-bottom: 14px; color: var(--ink); }
+    .tools { display: flex; gap: 8px; margin-bottom: 16px; }
+    button {
+      border: 1px solid var(--line);
+      background: var(--paper);
+      color: var(--ink);
+      border-radius: 6px;
+      padding: 7px 10px;
+      cursor: pointer;
+      font: inherit;
+      line-height: 1;
+    }
+    button:hover { border-color: var(--accent); color: var(--accent-strong); }
+    nav a {
+      display: block;
+      color: var(--muted);
+      text-decoration: none;
+      border-left: 2px solid transparent;
+      padding: 5px 8px;
+      margin: 1px 0;
+      border-radius: 0 4px 4px 0;
+      line-height: 1.35;
+      overflow-wrap: anywhere;
+    }
+    nav a:hover { color: var(--accent-strong); border-left-color: var(--accent); background: color-mix(in srgb, var(--accent) 8%, transparent); }
+    .toc-h2 { font-size: 0.9rem; font-weight: 700; }
+    .toc-h3 { font-size: 0.82rem; padding-left: 18px; }
+    main {
+      width: min(100%, 980px);
+      padding: 48px 48px 88px;
+    }
+    article {
+      background: var(--paper);
+      border: 1px solid var(--line);
+      box-shadow: 0 18px 44px var(--shadow);
+      padding: 48px;
+      border-radius: 8px;
+      overflow-wrap: anywhere;
+    }
+    h1, h2, h3, h4 { line-height: 1.28; letter-spacing: 0; }
+    h1 { font-size: 2.2rem; margin: 0 0 24px; }
+    h2 { font-size: 1.55rem; margin: 48px 0 18px; padding-top: 12px; border-top: 1px solid var(--line); }
+    h3 { font-size: 1.18rem; margin: 28px 0 10px; color: var(--accent-strong); }
+    h4 { font-size: 1.02rem; margin: 22px 0 8px; }
+    p, li { font-size: 1rem; }
+    blockquote {
+      margin: 0 0 24px;
+      padding: 12px 16px;
+      border-left: 4px solid var(--accent);
+      background: color-mix(in srgb, var(--accent) 7%, transparent);
+      color: var(--muted);
+    }
+    pre {
+      overflow-x: auto;
+      padding: 14px 16px;
+      border-radius: 8px;
+      background: var(--code-bg);
+      border: 1px solid var(--line);
+      line-height: 1.55;
+    }
+    code {
+      font-family: "SFMono-Regular", Consolas, Menlo, monospace;
+      font-size: 0.92em;
+    }
+    p code, li code {
+      background: var(--code-bg);
+      border: 1px solid var(--line);
+      border-radius: 4px;
+      padding: 0.08rem 0.28rem;
+    }
+    .math.display {
+      overflow-x: auto;
+      display: block;
+      padding: 0.2rem 0;
+    }
+    mjx-container {
+      max-width: 100%;
+      overflow-x: auto;
+      overflow-y: hidden;
+    }
+    mjx-container[display="true"] {
+      display: block;
+      padding: 0.15rem 0;
+    }
+    details {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 10px 14px;
+      margin: 8px 0 16px;
+      background: color-mix(in srgb, var(--paper) 88%, var(--accent) 12%);
+    }
+    summary { cursor: pointer; font-weight: 700; color: var(--accent-strong); }
+    table { border-collapse: collapse; width: 100%; overflow-wrap: anywhere; }
+    th, td { border: 1px solid var(--line); padding: 8px 10px; }
+    @media (max-width: 900px) {
+      .layout { display: block; }
+      aside { position: static; height: auto; max-height: 45vh; border-right: 0; border-bottom: 1px solid var(--line); }
+      main { padding: 22px 14px 54px; }
+      article { padding: 26px 18px; }
+      h1 { font-size: 1.65rem; }
+      h2 { font-size: 1.25rem; }
+    }
+    @media print {
+      body { background: white; color: black; }
+      aside, .tools { display: none; }
+      .layout { display: block; }
+      main { width: 100%; padding: 0; }
+      article { border: 0; box-shadow: none; padding: 0; }
+      h2 { break-after: avoid; }
+      pre, details, blockquote { break-inside: avoid; }
+      a { color: black; text-decoration: none; }
+    }
+  </style>
+  <script>
+    window.MathJax = {
+      tex: {
+        inlineMath: [['\\(', '\\)'], ['$', '$']],
+        displayMath: [['\\[', '\\]'], ['$$', '$$']],
+        processEscapes: true
+      },
+      options: { skipHtmlTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code'] }
+    };
+  </script>
+  <script defer src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+</head>
+<body>
+  <div class="layout">
+    <aside>
+      <div class="brand">第2章复习导航</div>
+      <div class="tools">
+        <button type="button" id="theme-toggle" title="切换深色模式">◐</button>
+        <button type="button" onclick="window.print()" title="打印或导出 PDF">⎙</button>
+      </div>
+      <nav><a class="toc-h2" href="#开篇这章到底在解决什么问题">开篇：这章到底在解决什么问题？</a>
+<a class="toc-h2" href="#线性过程与-wold-表示-核心">§1 线性过程与 Wold 表示 ★★★ 核心</a>
+<a class="toc-h3" href="#脉络梳理">脉络梳理</a>
+<a class="toc-h3" href="#重点内容申明">重点内容申明</a>
+<a class="toc-h3" href="#习题">习题</a>
+<a class="toc-h2" href="#自回归模型-ar定义平稳性与矩-核心">§2 自回归模型 AR：定义、平稳性与矩 ★★★ 核心</a>
+<a class="toc-h3" href="#脉络梳理-1">脉络梳理</a>
+<a class="toc-h3" href="#重点内容申明-1">重点内容申明</a>
+<a class="toc-h3" href="#习题-1">习题</a>
+<a class="toc-h2" href="#pacf-与-ar-定阶">§3 PACF 与 AR 定阶 ★★</a>
+<a class="toc-h3" href="#脉络梳理-2">脉络梳理</a>
+<a class="toc-h3" href="#重点内容申明-2">重点内容申明</a>
+<a class="toc-h3" href="#习题-2">习题</a>
+<a class="toc-h2" href="#信息准则与残差诊断-核心">§4 信息准则与残差诊断 ★★★ 核心</a>
+<a class="toc-h3" href="#脉络梳理-3">脉络梳理</a>
+<a class="toc-h3" href="#重点内容申明-3">重点内容申明</a>
+<a class="toc-h3" href="#习题-3">习题</a>
+<a class="toc-h2" href="#ar-预测与预测误差">§5 AR 预测与预测误差 ★★</a>
+<a class="toc-h3" href="#脉络梳理-4">脉络梳理</a>
+<a class="toc-h3" href="#重点内容申明-4">重点内容申明</a>
+<a class="toc-h3" href="#习题-4">习题</a>
+<a class="toc-h2" href="#滑动平均模型-ma定义acf-截断与可逆性-核心">§6 滑动平均模型 MA：定义、ACF 截断与可逆性 ★★★ 核心</a>
+<a class="toc-h3" href="#脉络梳理-5">脉络梳理</a>
+<a class="toc-h3" href="#重点内容申明-5">重点内容申明</a>
+<a class="toc-h3" href="#习题-5">习题</a>
+<a class="toc-h2" href="#ma-定阶与预测">§7 MA 定阶与预测 ★★</a>
+<a class="toc-h3" href="#脉络梳理-6">脉络梳理</a>
+<a class="toc-h3" href="#重点内容申明-6">重点内容申明</a>
+<a class="toc-h3" href="#习题-6">习题</a>
+<a class="toc-h2" href="#arma-模型与-eacf-定阶-核心">§8 ARMA 模型与 EACF 定阶 ★★★ 核心</a>
+<a class="toc-h3" href="#脉络梳理-7">脉络梳理</a>
+<a class="toc-h3" href="#重点内容申明-7">重点内容申明</a>
+<a class="toc-h3" href="#习题-7">习题</a>
+<a class="toc-h2" href="#box-jenkins-建模流程与-stata-操作">§9 Box-Jenkins 建模流程与 Stata 操作 ★★</a>
+<a class="toc-h3" href="#脉络梳理-8">脉络梳理</a>
+<a class="toc-h3" href="#重点内容申明-8">重点内容申明</a>
+<a class="toc-h3" href="#习题-8">习题</a>
+<a class="toc-h2" href="#极大似然估计-mlear1-与-ma1">§10 极大似然估计 MLE：AR(1) 与 MA(1) ★★</a>
+<a class="toc-h3" href="#脉络梳理-9">脉络梳理</a>
+<a class="toc-h3" href="#重点内容申明-9">重点内容申明</a>
+<a class="toc-h3" href="#习题-9">习题</a>
+<a class="toc-h2" href="#中国-cpi-案例预测比较与复习总图">§11 中国 CPI 案例、预测比较与复习总图 ★★</a>
+<a class="toc-h3" href="#脉络梳理-10">脉络梳理</a>
+<a class="toc-h3" href="#重点内容申明-10">重点内容申明</a>
+<a class="toc-h3" href="#习题-10">习题</a>
+<a class="toc-h2" href="#外部资料来源">外部资料来源</a></nav>
+    </aside>
+    <main>
+      <article><h1 id="第2章-线性时间序列模型超级详细复习资料">第2章 线性时间序列模型：超级详细复习资料</h1>
+<blockquote>
+<p>来源：根据 <code>第2章 线性时间序列模型.pptx</code> 的 56 页课件文本与 Office Math 公式抽取结果整理，并按考试复习逻辑重写。公式和叙述为复习讲义式表达，不逐句复制课件。</p>
+</blockquote>
+<h2 id="开篇这章到底在解决什么问题">开篇：这章到底在解决什么问题？</h2>
+<p>金融时间序列最烦人的地方是：均值看起来很小，图像看起来像随机游走的影子，但收益率、通胀率、波动率变化、利差变化又常常不是完全独立的。今天高一点，明天可能仍高一点；今天出现冲击，未来几期可能还会残留影响。线性时间序列模型就是把这种“短期记忆”写成一套可以估计、检验和预测的方程。</p>
+<p>本章可以用一句话记住：<strong>把可观测序列看成白噪声冲击经过线性滤波后的结果；AR 用过去的观测解释现在，MA 用过去的冲击解释现在，ARMA 用少数参数逼近一般平稳线性过程。</strong></p>
+<pre class="text"><code>白噪声冲击 a_t
+  -&gt; 线性滤波 r_t = μ + Σ ψ_i a_{t-i}
+  -&gt; AR(p)：过去的 r_t 负责传播冲击
+  -&gt; MA(q)：过去的 a_t 负责残留冲击
+  -&gt; ARMA(p,q)：两种传播机制合并
+  -&gt; 定阶、估计、诊断、预测</code></pre>
+<p>考试时不要把本章当成一堆模型名称。真正的抓手是三个问题：</p>
+<ol type="1">
+<li>这个模型如何让冲击在时间上扩散？</li>
+<li>这个扩散是否会收敛，也就是是否平稳或可逆？</li>
+<li>数据中的相关性是否已经被模型残差“吃干净”？</li>
+</ol>
+<h2 id="线性过程与-wold-表示-核心">§1 线性过程与 Wold 表示 ★★★ 核心</h2>
+<h3 id="脉络梳理">脉络梳理</h3>
+<p>本节是整章的地基。我们先不急着说 AR 或 MA，而是问一个更大的问题：如果一个平稳序列有短期记忆，它最一般可以怎样表示？答案是线性过程：</p>
+<p><span class="math display">\[
+r_t=\mu+\sum_{i=0}^{\infty}\psi_i a_{t-i},\qquad \psi_0=1.
+\]</span></p>
+<p>这里 <span class="math inline">\(a_t\)</span> 是白噪声，<span class="math inline">\(\psi_i\)</span> 是第 <span class="math inline">\(i\)</span> 期以前的冲击对今天的影响权重。这个式子的口语翻译是：<strong>今天的变量 = 长期中心 + 今天冲击 + 过去冲击的残留影响</strong>。</p>
+<h3 id="重点内容申明">重点内容申明</h3>
+<h4 id="为什么要从白噪声开始">1. 为什么要从白噪声开始？</h4>
+<p>白噪声是“不可预测的新消息”。如果 <span class="math inline">\(a_t\)</span> 满足</p>
+<p><span class="math display">\[
+E(a_t)=0,\qquad Var(a_t)=\sigma_a^2,\qquad Cov(a_t,a_{t-j})=0\ (j\ne0),
+\]</span></p>
+<p>那么它没有可利用的线性序列相关。金融里可以把它理解为市场在 <span class="math inline">\(t\)</span> 时刻收到的真正新信息。线性时间序列模型不是说金融变量没有随机性，而是说随机性进入系统以后，会被一套线性规则传播到未来。</p>
+<h4 id="均值和方差从哪里来">2. 均值和方差从哪里来？</h4>
+<p>对线性过程取期望：</p>
+<p><span class="math display">\[
+E(r_t)=E\left(\mu+\sum_{i=0}^{\infty}\psi_i a_{t-i}\right)
+=\mu+\sum_{i=0}^{\infty}\psi_i E(a_{t-i})
+=\mu.
+\]</span></p>
+<p>方差利用白噪声不同期不相关：</p>
+<p><span class="math display">\[
+\begin{aligned}
+Var(r_t)
+&amp;=Var\left(\sum_{i=0}^{\infty}\psi_i a_{t-i}\right)\\
+&amp;=\sum_{i=0}^{\infty}\psi_i^2 Var(a_{t-i})
++2\sum_{i&lt;j}\psi_i\psi_j Cov(a_{t-i},a_{t-j})\\
+&amp;=\sigma_a^2\sum_{i=0}^{\infty}\psi_i^2.
+\end{aligned}
+\]</span></p>
+<p>所以平方可和条件</p>
+<p><span class="math display">\[
+\sum_{i=0}^{\infty}\psi_i^2&lt;\infty
+\]</span></p>
+<p>不是数学装饰，而是在说：过去冲击的影响必须衰减得足够快，否则方差会爆炸，序列就不是协方差平稳的。</p>
+<h4 id="wold-表示的意义">3. Wold 表示的意义</h4>
+<p>Wold 定理告诉我们：任何零均值协方差平稳序列，都可以分解为线性创新部分和确定性部分：</p>
+<p><span class="math display">\[
+Y_t=\sum_{j=0}^{\infty}\psi_j\varepsilon_{t-j}+\kappa_t,\qquad \psi_0=1,\quad \sum_{j=0}^{\infty}\psi_j^2&lt;\infty.
+\]</span></p>
+<p>其中 <span class="math inline">\(\varepsilon_t\)</span> 是用历史信息预测 <span class="math inline">\(Y_t\)</span> 时无法预测的创新项，<span class="math inline">\(\kappa_t\)</span> 是可以由过去线性预测出来的部分。对大多数金融计量应用，我们重点处理创新项形成的线性部分。</p>
+<p>Wold 定理给 ARMA 的合法性背书：如果一般平稳过程可以写成无限阶 MA，那么我们可以尝试用有限阶多项式比值来近似：</p>
+<p><span class="math display">\[
+\psi(L)=\sum_{j=0}^{\infty}\psi_jL^j
+=\frac{\theta(L)}{\phi(L)}
+=\frac{1+\theta_1L+\cdots+\theta_qL^q}
+{1-\phi_1L-\cdots-\phi_pL^p}.
+\]</span></p>
+<p>这就是 ARMA 的思想来源：不是凭空发明，而是用有限参数去逼近无限维的冲击传播函数。</p>
+<h4 id="本节常见易错点">4. 本节常见易错点</h4>
+<ul>
+<li>线性过程的“线性”是对白噪声及其滞后项线性，不等于变量图像是一条直线。</li>
+<li>白噪声不等于正态白噪声。正态是更强假设，MLE 常用；ACF/PACF 的基本直觉不一定要求正态。</li>
+<li>平稳性不是“图像横着走”这么粗糙，而是均值、方差、自协方差结构不随时间位置改变。</li>
+<li><span class="math inline">\(\sum\psi_i^2&lt;\infty\)</span> 控制二阶矩，<span class="math inline">\(\sum|\psi_i|&lt;\infty\)</span> 更强，常用于保证更多收敛性质。</li>
+</ul>
+<h3 id="习题">习题</h3>
+<ol type="1">
+<li>★ 解释为什么 <span class="math inline">\(r_t=\mu+\sum_{i=0}^{\infty}\psi_i a_{t-i}\)</span> 中必须要求 <span class="math inline">\(\sum \psi_i^2&lt;\infty\)</span>。</li>
+</ol>
+<details>
+<summary>
+参考答案要点
+</summary>
+方差为 <span class="math inline">\(\sigma_a^2\sum \psi_i^2\)</span>。若平方和发散，二阶矩不存在或无穷大，无法作为协方差平稳过程处理。
+</details>
+<ol start="2" type="1">
+<li>★ 给出白噪声、独立同分布白噪声、正态白噪声的区别。</li>
+</ol>
+<details>
+<summary>
+参考答案要点
+</summary>
+白噪声只要求零均值、同方差、不同期不相关；iid 更强，要求独立且同分布；正态白噪声再要求分布为正态，常用于 MLE。
+</details>
+<ol start="3" type="1">
+<li>★★ 从线性过程出发推导 <span class="math inline">\(E(r_t)\)</span> 与 <span class="math inline">\(Var(r_t)\)</span>。</li>
+</ol>
+<details>
+<summary>
+参考答案要点
+</summary>
+利用 <span class="math inline">\(E(a_t)=0\)</span> 得均值 <span class="math inline">\(\mu\)</span>；利用不同期白噪声协方差为 0 得方差 <span class="math inline">\(\sigma_a^2\sum\psi_i^2\)</span>。
+</details>
+<ol start="4" type="1">
+<li>★★ 为什么 Wold 表示支持用 ARMA 建模平稳序列？</li>
+</ol>
+<details>
+<summary>
+参考答案要点
+</summary>
+Wold 表示说明平稳序列可由创新项的无限线性组合表示；ARMA 用有限阶多项式比值近似无限权重序列，降低参数维度。
+</details>
+<ol start="5" type="1">
+<li>★★★ 外部延伸：阅读 Forecasting: Principles and Practice 中 ARIMA 章节，说明 ARIMA 与本章 ARMA 的关系。来源：<a href="https://otexts.com/fpp3/arima.html" class="uri">https://otexts.com/fpp3/arima.html</a></li>
+</ol>
+<details>
+<summary>
+参考答案要点
+</summary>
+ARMA 适合平稳序列；ARIMA 在 ARMA 前加入差分阶 <span class="math inline">\(d\)</span>，用于把非平稳序列转化为平稳序列后建模。
+</details>
+<h2 id="自回归模型-ar定义平稳性与矩-核心">§2 自回归模型 AR：定义、平稳性与矩 ★★★ 核心</h2>
+<h3 id="脉络梳理-1">脉络梳理</h3>
+<p>AR 的核心句式是：<strong>今天的 <span class="math inline">\(r_t\)</span> 由过去的 <span class="math inline">\(r_t\)</span> 加上新冲击决定</strong>。如果昨天高，今天也容易高，这种持续性由 AR 系数负责。AR 模型特别适合讲“均值回复”：冲击不会永远留在系统里，只要平稳条件成立，它会一轮轮衰减。</p>
+<h3 id="重点内容申明-1">重点内容申明</h3>
+<h4 id="ar1所有复杂-ar-的入口">1. AR(1)：所有复杂 AR 的入口</h4>
+<p>课件中的 AR(1) 写作：</p>
+<p><span class="math display">\[
+r_t=\phi_0+\phi_1r_{t-1}+a_t.
+\]</span></p>
+<p>直觉上，<span class="math inline">\(\phi_0\)</span> 给出长期中心的位置，<span class="math inline">\(\phi_1\)</span> 决定过去状态被带到今天的比例，<span class="math inline">\(a_t\)</span> 是今天新消息。如果 <span class="math inline">\(\phi_1=0.8\)</span>，今天冲击对明天还有 80% 的影响；对后天还有 <span class="math inline">\(0.8^2\)</span>；再往后是 <span class="math inline">\(0.8^h\)</span>。所以平稳条件自然是：</p>
+<p><span class="math display">\[
+|\phi_1|&lt;1.
+\]</span></p>
+<p>均值推导不能跳。若平稳，<span class="math inline">\(E(r_t)=E(r_{t-1})=\mu_r\)</span>，于是</p>
+<p><span class="math display">\[
+\mu_r=\phi_0+\phi_1\mu_r
+\quad\Rightarrow\quad
+\mu_r(1-\phi_1)=\phi_0
+\quad\Rightarrow\quad
+E(r_t)=\frac{\phi_0}{1-\phi_1}.
+\]</span></p>
+<p>方差推导也很常考。减去均值，令 <span class="math inline">\(x_t=r_t-\mu_r\)</span>，得到</p>
+<p><span class="math display">\[
+x_t=\phi_1x_{t-1}+a_t.
+\]</span></p>
+<p>因为 <span class="math inline">\(a_t\)</span> 与 <span class="math inline">\(x_{t-1}\)</span> 不相关，</p>
+<p><span class="math display">\[
+Var(x_t)=\phi_1^2Var(x_{t-1})+\sigma_a^2.
+\]</span></p>
+<p>平稳时左右方差相同，记为 <span class="math inline">\(\gamma_0\)</span>：</p>
+<p><span class="math display">\[
+\gamma_0=\phi_1^2\gamma_0+\sigma_a^2
+\quad\Rightarrow\quad
+Var(r_t)=\gamma_0=\frac{\sigma_a^2}{1-\phi_1^2}.
+\]</span></p>
+<h4 id="ar2根条件比背三角不等式更可靠">2. AR(2)：根条件比背三角不等式更可靠</h4>
+<p>AR(2)：</p>
+<p><span class="math display">\[
+r_t=\phi_0+\phi_1r_{t-1}+\phi_2r_{t-2}+a_t.
+\]</span></p>
+<p>平稳均值：</p>
+<p><span class="math display">\[
+E(r_t)=\frac{\phi_0}{1-\phi_1-\phi_2}.
+\]</span></p>
+<p>课件给出的方差为：</p>
+<p><span class="math display">\[
+Var(r_t)=
+\frac{(1-\phi_2)\sigma_a^2}
+{(1+\phi_2)\left[(1-\phi_2)^2-\phi_1^2\right]}.
+\]</span></p>
+<p>这个方差式不建议死记。考试更高频的是根条件：特征多项式</p>
+<p><span class="math display">\[
+1-\phi_1z-\phi_2z^2=0
+\]</span></p>
+<p>的根必须落在单位圆之外。注意“根在单位圆之外”和“系数小于 1”不是一回事。AR(2) 的两个滞后会互相作用，可能产生振荡式均值回复。</p>
+<h4 id="arp-的一般形式">3. AR(p) 的一般形式</h4>
+<p><span class="math display">\[
+r_t=\phi_0+\phi_1r_{t-1}+\cdots+\phi_pr_{t-p}+a_t.
+\]</span></p>
+<p>若平稳，</p>
+<p><span class="math display">\[
+E(r_t)=\frac{\phi_0}{1-\phi_1-\cdots-\phi_p}.
+\]</span></p>
+<p>平稳条件写成滞后多项式最清楚：</p>
+<p><span class="math display">\[
+\phi(L)r_t=\phi_0+a_t,\qquad
+\phi(L)=1-\phi_1L-\cdots-\phi_pL^p.
+\]</span></p>
+<p>特征方程</p>
+<p><span class="math display">\[
+1-\phi_1z-\cdots-\phi_pz^p=0
+\]</span></p>
+<p>的所有根都要在单位圆之外。为什么是“之外”？因为把 AR 展开成 MA(<span class="math inline">\(\infty\)</span>) 时，冲击权重必须衰减；根越靠近单位圆，衰减越慢，序列越持久。</p>
+<h4 id="经济含义">4. 经济含义</h4>
+<ul>
+<li><span class="math inline">\(\phi_1&gt;0\)</span>：冲击同向延续，收益率或通胀率有惯性。</li>
+<li><span class="math inline">\(\phi_1&lt;0\)</span>：冲击反向修正，常见于过度反应后的反转。</li>
+<li><span class="math inline">\(|\phi_1|\)</span> 接近 1：高持续性，预测会慢慢回到长期均值。</li>
+<li>特征根带复数：动态可能振荡，适合解释周期性调整。</li>
+</ul>
+<h4 id="stata模拟并估计-ar1">5. Stata：模拟并估计 AR(1)</h4>
+<div class="sourceCode" id="cb2"><pre class="sourceCode stata"><code class="sourceCode stata"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="kw">clear</span> <span class="ot">all</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="kw">set</span> <span class="kw">more</span> <span class="kw">off</span></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="kw">set</span> <span class="dv">seed</span> 20260626</span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a><span class="kw">set</span> <span class="kw">obs</span> 260</span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a><span class="kw">gen</span> t = <span class="dt">_n</span></span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a><span class="kw">tsset</span> t</span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a><span class="kw">gen</span> <span class="fu">e</span> = rnormal()</span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a><span class="kw">gen</span> <span class="fu">y</span> = .</span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a><span class="kw">replace</span> <span class="fu">y</span> = 0 <span class="kw">in</span> 1</span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a><span class="kw">forvalues</span> i = 2/260 {</span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a>    <span class="kw">replace</span> <span class="fu">y</span> = 0.65*<span class="fu">y</span>[<span class="ot">`i&#39;</span>-1] + <span class="fu">e</span>[<span class="ot">`i&#39;</span>] <span class="kw">in</span> <span class="ot">`i&#39;</span></span>
+<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a><span class="kw">tsline</span> <span class="fu">y</span></span>
+<span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a><span class="kw">ac</span> <span class="fu">y</span>, lags(24)</span>
+<span id="cb2-17"><a href="#cb2-17" aria-hidden="true" tabindex="-1"></a><span class="kw">pac</span> <span class="fu">y</span>, lags(24)</span>
+<span id="cb2-18"><a href="#cb2-18" aria-hidden="true" tabindex="-1"></a><span class="kw">arima</span> <span class="fu">y</span>, <span class="kw">arima</span>(1,0,0)</span>
+<span id="cb2-19"><a href="#cb2-19" aria-hidden="true" tabindex="-1"></a><span class="kw">estat</span> <span class="kw">ic</span></span>
+<span id="cb2-20"><a href="#cb2-20" aria-hidden="true" tabindex="-1"></a><span class="kw">predict</span> uhat, residuals</span>
+<span id="cb2-21"><a href="#cb2-21" aria-hidden="true" tabindex="-1"></a><span class="kw">wntestq</span> uhat, lags(20)</span></code></pre></div>
+<h3 id="习题-1">习题</h3>
+<ol type="1">
+<li>★ 写出 AR(1) 的长期均值，并说明 <span class="math inline">\(\phi_0\)</span> 与长期均值的区别。</li>
+</ol>
+<details>
+<summary>
+参考答案要点
+</summary>
+长期均值为 <span class="math inline">\(\phi_0/(1-\phi_1)\)</span>。<span class="math inline">\(\phi_0\)</span> 是截距，不是均值；只有 <span class="math inline">\(\phi_1=0\)</span> 时二者相等。
+</details>
+<ol start="2" type="1">
+<li>★★ 推导 AR(1) 的方差 <span class="math inline">\(\sigma_a^2/(1-\phi_1^2)\)</span>。</li>
+</ol>
+<details>
+<summary>
+参考答案要点
+</summary>
+减均值得 <span class="math inline">\(x_t=\phi_1x_{t-1}+a_t\)</span>，平稳下 <span class="math inline">\(Var(x_t)=Var(x_{t-1})=\gamma_0\)</span>，所以 <span class="math inline">\(\gamma_0=\phi_1^2\gamma_0+\sigma_a^2\)</span>。
+</details>
+<ol start="3" type="1">
+<li>★ 判断：<span class="math inline">\(|\phi_1|&lt;1\)</span> 是 AR(2) 平稳的充分必要条件。说明理由。</li>
+</ol>
+<details>
+<summary>
+参考答案要点
+</summary>
+错误。AR(2) 要看 <span class="math inline">\(1-\phi_1z-\phi_2z^2=0\)</span> 的两个根是否都在单位圆之外，不能只看单个系数。
+</details>
+<ol start="4" type="1">
+<li>★★ 若 AR(1) 的 <span class="math inline">\(\phi_1=-0.6\)</span>，冲击响应有什么特征？</li>
+</ol>
+<details>
+<summary>
+参考答案要点
+</summary>
+绝对值小于 1，冲击会衰减；符号为负，所以响应正负交替，呈振荡式均值回复。
+</details>
+<ol start="5" type="1">
+<li>★★★ 外部延伸：参考 NIST 时间序列建模材料，比较自回归模型与指数平滑在预测思想上的差异。来源：<a href="https://www.itl.nist.gov/div898/handbook/pmc/section4/pmc4.htm" class="uri">https://www.itl.nist.gov/div898/handbook/pmc/section4/pmc4.htm</a></li>
+</ol>
+<details>
+<summary>
+参考答案要点
+</summary>
+AR 明确刻画滞后变量和误差结构，可做诊断；指数平滑以递推加权平均为核心，更偏预测算法，结构解释较弱。
+</details>
+<h2 id="pacf-与-ar-定阶">§3 PACF 与 AR 定阶 ★★</h2>
+<h3 id="脉络梳理-2">脉络梳理</h3>
+<p>ACF 看的是 <span class="math inline">\(r_t\)</span> 和 <span class="math inline">\(r_{t-k}\)</span> 的总相关，里面混着中间路径。例如 <span class="math inline">\(r_t\)</span> 和 <span class="math inline">\(r_{t-2}\)</span> 相关，可能只是因为 <span class="math inline">\(r_t\leftarrow r_{t-1}\leftarrow r_{t-2}\)</span>。PACF 的想法是：把中间滞后项控制住以后，<span class="math inline">\(r_{t-k}\)</span> 对 <span class="math inline">\(r_t\)</span> 是否还有直接解释力？</p>
+<h3 id="重点内容申明-2">重点内容申明</h3>
+<h4 id="pacf-的定义">1. PACF 的定义</h4>
+<p>对任意 <span class="math inline">\(k\ge1\)</span>，考虑线性投影：</p>
+<p><span class="math display">\[
+r_t=\phi_{k0}+\phi_{k1}r_{t-1}+\cdots+\phi_{kk}r_{t-k}+e_{kt}.
+\]</span></p>
+<p>最后一个系数 <span class="math inline">\(\phi_{kk}\)</span> 就是 <span class="math inline">\(k\)</span> 阶偏自相关系数。它回答的问题是：在已经控制 <span class="math inline">\(r_{t-1},\ldots,r_{t-k+1}\)</span> 后，<span class="math inline">\(r_{t-k}\)</span> 还剩多少边际信息？</p>
+<h4 id="为什么-arp-的-pacf-会在-p-阶截断">2. 为什么 AR(p) 的 PACF 会在 p 阶截断？</h4>
+<p>如果真实模型是 AR(p)，那么 <span class="math inline">\(r_t\)</span> 只直接依赖到 <span class="math inline">\(r_{t-p}\)</span>。当你做 <span class="math inline">\(k&gt;p\)</span> 阶投影时，多加的 <span class="math inline">\(r_{t-k}\)</span> 没有新的直接贡献，所以理论上：</p>
+<p><span class="math display">\[
+\phi_{kk}=0,\qquad k&gt;p.
+\]</span></p>
+<p>这叫 PACF 截断。它是 AR 定阶最直观的工具：<strong>AR 看 PACF 截断，MA 看 ACF 截断，ARMA 通常都拖尾。</strong></p>
+<h4 id="样本-pacf-的阈值">3. 样本 PACF 的阈值</h4>
+<p>样本中不会精确等于 0。课件给出的常用近似是：若理论 <span class="math inline">\(\phi_{kk}=0\)</span>，则</p>
+<p><span class="math display">\[
+\sqrt{T}\hat{\phi}_{kk}\Rightarrow N(0,1).
+\]</span></p>
+<p>于是显著性带可以写成：</p>
+<p><span class="math display">\[
+|\hat{\phi}_{kk}|&lt;\frac{1.96}{\sqrt T}.
+\]</span></p>
+<p>经验定阶：</p>
+<p><span class="math display">\[
+\hat p=\arg\max\left\{k:|\hat{\phi}_{kk}|\ge\frac{1.96}{\sqrt T},\ k\le P_0\right\}.
+\]</span></p>
+<h4 id="为什么-pacf-会误判">4. 为什么 PACF 会误判？</h4>
+<ul>
+<li>样本太小，置信带宽，真正相关可能检不出。</li>
+<li>模型接近单位根，低阶相关拖得很长。</li>
+<li>数据有异方差或结构突变，PACF 图会出现假峰。</li>
+<li>真实过程是 ARMA，PACF 不会干净截断。</li>
+</ul>
+<p>因此 PACF 是“候选阶生成器”，不是最终裁判。最终还要看信息准则与残差诊断。</p>
+<h3 id="习题-2">习题</h3>
+<ol type="1">
+<li>★ 用一句话解释 PACF。</li>
+</ol>
+<details>
+<summary>
+参考答案要点
+</summary>
+PACF 是在控制中间滞后项之后，<span class="math inline">\(r_{t-k}\)</span> 对 <span class="math inline">\(r_t\)</span> 的边际线性相关。
+</details>
+<ol start="2" type="1">
+<li>★ 为什么 AR(p) 的 PACF 在 p 阶后截断？</li>
+</ol>
+<details>
+<summary>
+参考答案要点
+</summary>
+真实 AR(p) 只直接依赖到 <span class="math inline">\(p\)</span> 阶滞后；控制前 <span class="math inline">\(k-1\)</span> 个滞后后，<span class="math inline">\(k&gt;p\)</span> 的滞后没有新增直接解释力。
+</details>
+<ol start="3" type="1">
+<li>★★ 样本量 <span class="math inline">\(T=400\)</span> 时，PACF 零假设近似 95% 置信带是多少？</li>
+</ol>
+<details>
+<summary>
+参考答案要点
+</summary>
+<span class="math inline">\(1.96/\sqrt{400}=0.098\)</span>。若绝对值小于约 0.098，可视为不显著。
+</details>
+<ol start="4" type="1">
+<li>★★ 为什么仅凭 PACF 可能把 ARMA 误判成高阶 AR？</li>
+</ol>
+<details>
+<summary>
+参考答案要点
+</summary>
+ARMA 的 PACF 通常拖尾，不会干净截断；样本图上可能出现多个显著峰，让人误以为需要很多 AR 滞后。
+</details>
+<ol start="5" type="1">
+<li>★★★ 外部延伸：用 statsmodels 的 ACF/PACF 绘图思想设计一个识别 AR(2) 的模拟实验。来源：<a href="https://www.statsmodels.org/stable/generated/statsmodels.tsa.stattools.pacf.html" class="uri">https://www.statsmodels.org/stable/generated/statsmodels.tsa.stattools.pacf.html</a></li>
+</ol>
+<details>
+<summary>
+参考答案要点
+</summary>
+模拟 AR(2)，画 ACF/PACF；预期 PACF 在 2 阶后基本落入置信带，ACF 拖尾；重复多次观察样本误差。
+</details>
+<h2 id="信息准则与残差诊断-核心">§4 信息准则与残差诊断 ★★★ 核心</h2>
+<h3 id="脉络梳理-3">脉络梳理</h3>
+<p>模型阶数增加，残差平方和通常会下降；但这可能只是把噪声也拟合进去了。信息准则负责惩罚复杂度，残差诊断负责检查剩下的东西是否还包含可利用结构。它们合起来构成定阶的第二和第三道门。</p>
+<h3 id="重点内容申明-3">重点内容申明</h3>
+<h4 id="信息准则的共同逻辑">1. 信息准则的共同逻辑</h4>
+<p>一般形式：</p>
+<p><span class="math display">\[
+IC(S)=Loss(S)+Penalty(S).
+\]</span></p>
+<p>在时间序列定阶中，课件采用：</p>
+<p><span class="math display">\[
+IC(k)=\log\frac{SSR(k)}{T}+C_T\frac{k}{T}.
+\]</span></p>
+<p>AR 定阶时：</p>
+<p><span class="math display">\[
+\hat p=\arg\min_{k\le P_0}IC(k).
+\]</span></p>
+<p>MA 定阶时：</p>
+<p><span class="math display">\[
+\hat q=\arg\min_{q\le Q_0}IC(q).
+\]</span></p>
+<p>ARMA 定阶时：</p>
+<p><span class="math display">\[
+(\hat p,\hat q)=\arg\min_{p\le P_0,\ q\le Q_0}
+\left[
+\log\frac{SSR(p,q)}{T}+C_T\frac{p+q}{T}
+\right].
+\]</span></p>
+<p>其中 AIC 取 <span class="math inline">\(C_T=2\)</span>，BIC 取 <span class="math inline">\(C_T=\log T\)</span>。当 <span class="math inline">\(T&gt;e^2\approx7.39\)</span> 时，BIC 惩罚通常比 AIC 更重，所以 BIC 往往选择更简洁的模型。</p>
+<h4 id="aic-与-bic-怎么取舍">2. AIC 与 BIC 怎么取舍？</h4>
+<ul>
+<li>AIC 更偏预测，愿意多放一些参数，降低遗漏动态结构的风险。</li>
+<li>BIC 更偏一致选择，在真模型位于候选集合且样本足够大时，更倾向选中真阶数。</li>
+<li>金融数据噪声强、样本有限时，不要只迷信某一个准则。课件模拟中 BIC 和模型诊断表现较稳，但实际数据仍要结合残差。</li>
+</ul>
+<h4 id="ljung-box-检验">3. Ljung-Box 检验</h4>
+<p>对拟合残差计算样本自相关 <span class="math inline">\(\hat\rho_l\)</span>，Ljung-Box 统计量为：</p>
+<p><span class="math display">\[
+Q_{LB}(m)=T(T+2)\sum_{l=1}^{m}\frac{\hat\rho_l^2}{T-l}.
+\]</span></p>
+<p>原假设是：残差到 <span class="math inline">\(m\)</span> 阶为止没有序列相关。对于已估计参数的模型，自由度要扣掉参数个数。课件给出：</p>
+<p><span class="math display">\[
+Q_{LB}(m)\approx\chi^2(m-k)\quad\text{for AR(k)},
+\]</span></p>
+<p><span class="math display">\[
+Q_{LB}(m)\approx\chi^2(m-q)\quad\text{for MA(q)},
+\]</span></p>
+<p><span class="math display">\[
+Q_{LB}(m)\approx\chi^2(m-p-q)\quad\text{for ARMA(p,q)}.
+\]</span></p>
+<p>判断方式：如果 <span class="math inline">\(Q_{LB}\)</span> 大于对应卡方分布上 5% 分位数，拒绝白噪声残差，说明模型还没有吸收完序列相关，需要重新设定。</p>
+<h4 id="定阶的实际顺序">4. 定阶的实际顺序</h4>
+<pre class="text"><code>先画 ACF/PACF -&gt; 给出候选 p,q
+再跑 AIC/BIC -&gt; 得到一组较优候选
+再看残差 Ljung-Box -&gt; 不通过就提高阶数或改模型
+最后看参数显著性、可解释性、预测表现</code></pre>
+<p>这就是为什么课件中的模拟例子不只比较 PACF/ACF，也比较 AIC、BIC 和模型诊断。</p>
+<h3 id="习题-3">习题</h3>
+<ol type="1">
+<li>★ 为什么增加阶数通常会降低 SSR，却不一定提高模型质量？</li>
+</ol>
+<details>
+<summary>
+参考答案要点
+</summary>
+更多参数会机械地拟合样本噪声，导致过拟合；样本内 SSR 降低不等于样本外预测或真实结构更好。
+</details>
+<ol start="2" type="1">
+<li>★★ 在 <span class="math inline">\(T=100\)</span> 时，AIC 和 BIC 的复杂度惩罚哪个更大？</li>
+</ol>
+<details>
+<summary>
+参考答案要点
+</summary>
+AIC 的 <span class="math inline">\(C_T=2\)</span>，BIC 的 <span class="math inline">\(C_T=\log 100\approx4.605\)</span>，BIC 惩罚更大。
+</details>
+<ol start="3" type="1">
+<li>★ 写出 Ljung-Box 检验的原假设。</li>
+</ol>
+<details>
+<summary>
+参考答案要点
+</summary>
+残差到指定 <span class="math inline">\(m\)</span> 阶为止没有序列相关，即残差可视为白噪声。
+</details>
+<ol start="4" type="1">
+<li>★★ 若 AR(2) 残差的 Ljung-Box 在 20 阶显著，应该如何处理？</li>
+</ol>
+<details>
+<summary>
+参考答案要点
+</summary>
+说明残差仍有序列相关。可提高 AR 阶数、加入 MA 部分、检查差分/季节性/结构突变，再重新估计与诊断。
+</details>
+<ol start="5" type="1">
+<li>★★★ 外部延伸：阅读 Stata <code>arima</code> 手册，说明 <code>estat ic</code> 与残差白噪声检验在工作流中的不同作用。来源：<a href="https://www.stata.com/manuals/tsarima.pdf" class="uri">https://www.stata.com/manuals/tsarima.pdf</a></li>
+</ol>
+<details>
+<summary>
+参考答案要点
+</summary>
+<code>estat ic</code> 用于比较候选模型拟合与复杂度；残差检验用于检查最终模型是否遗漏动态结构。前者选模型，后者验模型。
+</details>
+<h2 id="ar-预测与预测误差">§5 AR 预测与预测误差 ★★</h2>
+<h3 id="脉络梳理-4">脉络梳理</h3>
+<p>预测的核心是条件期望。未来冲击 <span class="math inline">\(a_{h+1}\)</span> 在 <span class="math inline">\(h\)</span> 时刻不可预测，所以条件期望为 0；已经观测到的历史值可以直接使用；超过一步以后，未来的滞后项还没出现，就用前一步预测值替代。</p>
+<h3 id="重点内容申明-4">重点内容申明</h3>
+<h4 id="arp-一步预测">1. AR(p) 一步预测</h4>
+<p>AR(p)：</p>
+<p><span class="math display">\[
+r_{h+1}=\phi_0+\phi_1r_h+\cdots+\phi_pr_{h+1-p}+a_{h+1}.
+\]</span></p>
+<p>给定 <span class="math inline">\(F_h\)</span>，所有 <span class="math inline">\(r_h,r_{h-1},\ldots\)</span> 都已知，而</p>
+<p><span class="math display">\[
+E(a_{h+1}|F_h)=0.
+\]</span></p>
+<p>所以一步预测：</p>
+<p><span class="math display">\[
+\hat r_h(1)=E(r_{h+1}|F_h)
+=\phi_0+\sum_{i=1}^{p}\phi_i r_{h+1-i}.
+\]</span></p>
+<p>预测误差：</p>
+<p><span class="math display">\[
+e_h(1)=r_{h+1}-\hat r_h(1)=a_{h+1},
+\]</span></p>
+<p>因此</p>
+<p><span class="math display">\[
+Var[e_h(1)]=\sigma_a^2.
+\]</span></p>
+<h4 id="多步预测的递归">2. 多步预测的递归</h4>
+<p>对 <span class="math inline">\(l&gt;1\)</span>，有些滞后项已经变成未来值。规则是：</p>
+<p><span class="math display">\[
+\hat r_h(l)=
+\phi_0+\sum_{i=1}^{p}\phi_i \tilde r_h(l-i),
+\]</span></p>
+<p>其中</p>
+<p><span class="math display">\[
+\tilde r_h(l-i)=
+\begin{cases}
+r_{h+l-i}, &amp; l-i\le0,\\
+\hat r_h(l-i), &amp; l-i&gt;0.
+\end{cases}
+\]</span></p>
+<p>直觉：已经发生的用真实值，尚未发生的用预测值。平稳 AR 的长期预测会回到无条件均值。</p>
+<h4 id="ar1-的闭式预测">3. AR(1) 的闭式预测</h4>
+<p>对</p>
+<p><span class="math display">\[
+r_t=\phi_0+\phi_1r_{t-1}+a_t,
+\]</span></p>
+<p><span class="math inline">\(l\)</span> 步预测为：</p>
+<p><span class="math display">\[
+\hat r_h(l)=\mu_r+\phi_1^l(r_h-\mu_r),
+\qquad \mu_r=\frac{\phi_0}{1-\phi_1}.
+\]</span></p>
+<p>这个式子特别适合解释均值回复：如果 <span class="math inline">\(|\phi_1|&lt;1\)</span>，<span class="math inline">\(\phi_1^l\to0\)</span>，预测逐步回到 <span class="math inline">\(\mu_r\)</span>。</p>
+<h3 id="习题-4">习题</h3>
+<ol type="1">
+<li>★ AR(p) 一步预测中为什么未来冲击项消失？</li>
+</ol>
+<details>
+<summary>
+参考答案要点
+</summary>
+因为在当前信息集下，未来白噪声冲击的条件期望为 0。
+</details>
+<ol start="2" type="1">
+<li>★★ 对 AR(1) 推导 <span class="math inline">\(\hat r_h(l)=\mu+\phi^l(r_h-\mu)\)</span>。</li>
+</ol>
+<details>
+<summary>
+参考答案要点
+</summary>
+先写一步预测，再递归代入；每多一步，偏离均值的部分乘一次 <span class="math inline">\(\phi\)</span>，得到 <span class="math inline">\(\phi^l\)</span>。
+</details>
+<ol start="3" type="1">
+<li>★ 若 <span class="math inline">\(\phi=0.9\)</span>，长期预测回均值快还是慢？为什么？</li>
+</ol>
+<details>
+<summary>
+参考答案要点
+</summary>
+慢。因为 <span class="math inline">\(0.9^l\)</span> 衰减较慢，冲击持续性强。
+</details>
+<ol start="4" type="1">
+<li>★★ AR(1) 一步预测误差方差是多少？两步误差方差会更大吗？</li>
+</ol>
+<details>
+<summary>
+参考答案要点
+</summary>
+一步为 <span class="math inline">\(\sigma_a^2\)</span>。两步包含 <span class="math inline">\(a_{h+2}+\phi a_{h+1}\)</span>，方差为 <span class="math inline">\(\sigma_a^2(1+\phi^2)\)</span>，通常更大。
+</details>
+<ol start="5" type="1">
+<li>★★★ 外部延伸：参考 Forecasting: Principles and Practice，说明动态预测与一步滚动预测的区别。来源：<a href="https://otexts.com/fpp3/arima.html" class="uri">https://otexts.com/fpp3/arima.html</a></li>
+</ol>
+<details>
+<summary>
+参考答案要点
+</summary>
+一步滚动预测每期都用最新真实值更新；动态多步预测在预测区间内用前期预测值递归，因此误差会累积。
+</details>
+<h2 id="滑动平均模型-ma定义acf-截断与可逆性-核心">§6 滑动平均模型 MA：定义、ACF 截断与可逆性 ★★★ 核心</h2>
+<h3 id="脉络梳理-5">脉络梳理</h3>
+<p>MA 模型容易被误解成技术分析里的“移动平均线”。这里的 MA 是 Moving Average of shocks：今天的变量由今天冲击和过去若干期冲击构成。它的关键特征是：有限阶 MA 天然协方差平稳，ACF 在阶数之后截断。</p>
+<h3 id="重点内容申明-5">重点内容申明</h3>
+<h4 id="ma1">1. MA(1)</h4>
+<p>课件写作：</p>
+<p><span class="math display">\[
+r_t=c_0+a_t-\theta_1a_{t-1}.
+\]</span></p>
+<p>均值：</p>
+<p><span class="math display">\[
+E(r_t)=c_0.
+\]</span></p>
+<p>方差：</p>
+<p><span class="math display">\[
+Var(r_t)=Var(a_t-\theta_1a_{t-1})
+=(1+\theta_1^2)\sigma_a^2.
+\]</span></p>
+<p>一阶自协方差：</p>
+<p><span class="math display">\[
+\gamma_1=Cov(r_t,r_{t-1})
+=Cov(a_t-\theta_1a_{t-1},a_{t-1}-\theta_1a_{t-2})
+=-\theta_1\sigma_a^2.
+\]</span></p>
+<p>二阶及以上没有共同冲击，所以为 0：</p>
+<p><span class="math display">\[
+\gamma_l=0,\qquad l&gt;1.
+\]</span></p>
+<p>这就是 MA(1) 的 ACF 在 1 阶截断。</p>
+<h4 id="maq">2. MA(q)</h4>
+<p><span class="math display">\[
+r_t=c_0+a_t-\theta_1a_{t-1}-\cdots-\theta_qa_{t-q}.
+\]</span></p>
+<p>均值与方差：</p>
+<p><span class="math display">\[
+E(r_t)=c_0,\qquad
+Var(r_t)=(1+\theta_1^2+\cdots+\theta_q^2)\sigma_a^2.
+\]</span></p>
+<p>对 <span class="math inline">\(1\le l\le q\)</span>，自协方差为：</p>
+<p><span class="math display">\[
+\gamma_l=
+\left(-\theta_l+\theta_1\theta_{l+1}+\cdots+\theta_{q-l}\theta_q\right)\sigma_a^2,
+\]</span></p>
+<p>对 <span class="math inline">\(l&gt;q\)</span>：</p>
+<p><span class="math display">\[
+\gamma_l=0.
+\]</span></p>
+<p>标准化后：</p>
+<p><span class="math display">\[
+\rho_l=
+\frac{-\theta_l+\theta_1\theta_{l+1}+\cdots+\theta_{q-l}\theta_q}
+{1+\theta_1^2+\cdots+\theta_q^2},\quad 1\le l\le q,
+\]</span></p>
+<p>且 <span class="math inline">\(\rho_l=0\)</span> for <span class="math inline">\(l&gt;q\)</span>。这就是 ACF 截断。</p>
+<h4 id="ma-为什么天然平稳">3. MA 为什么天然平稳？</h4>
+<p>有限阶 MA 只包含有限个白噪声冲击。只要白噪声方差有限，均值、方差、自协方差都不会随 <span class="math inline">\(t\)</span> 改变。因此 MA(q) 天然协方差平稳。</p>
+<h4 id="可逆性为什么重要">4. 可逆性为什么重要？</h4>
+<p>MA(1)：</p>
+<p><span class="math display">\[
+r_t-c_0=a_t-\theta a_{t-1}.
+\]</span></p>
+<p>如果 <span class="math inline">\(|\theta|&lt;1\)</span>，可以把它反解成无限阶 AR：</p>
+<p><span class="math display">\[
+a_t=(r_t-c_0)+\theta(r_{t-1}-c_0)+\theta^2(r_{t-2}-c_0)+\cdots.
+\]</span></p>
+<p>这叫可逆。可逆性保证冲击可以由历史观测稳定恢复，也避免不同参数产生同样的自协方差结构。估计 MA/ARMA 时通常要施加可逆性约束。</p>
+<h3 id="习题-5">习题</h3>
+<ol type="1">
+<li>★ 为什么有限阶 MA(q) 天然协方差平稳？</li>
+</ol>
+<details>
+<summary>
+参考答案要点
+</summary>
+它只由有限个同方差白噪声线性组合构成，均值、方差和自协方差不依赖具体时间 <span class="math inline">\(t\)</span>。
+</details>
+<ol start="2" type="1">
+<li>★★ 推导 MA(1) 的一阶自协方差。</li>
+</ol>
+<details>
+<summary>
+参考答案要点
+</summary>
+<span class="math inline">\(r_t=c+a_t-\theta a_{t-1}\)</span>，<span class="math inline">\(r_{t-1}=c+a_{t-1}-\theta a_{t-2}\)</span>。共同项只有 <span class="math inline">\(a_{t-1}\)</span>，协方差为 <span class="math inline">\(-\theta\sigma_a^2\)</span>。
+</details>
+<ol start="3" type="1">
+<li>★ 判断：MA(q) 的 PACF 在 q 阶截断。说明理由。</li>
+</ol>
+<details>
+<summary>
+参考答案要点
+</summary>
+错误。MA(q) 是 ACF 在 q 阶截断；PACF 通常拖尾。
+</details>
+<ol start="4" type="1">
+<li>★★ 可逆性为什么不是平稳性？</li>
+</ol>
+<details>
+<summary>
+参考答案要点
+</summary>
+平稳性关心 <span class="math inline">\(r_t\)</span> 二阶矩是否稳定；可逆性关心能否从观测序列稳定恢复冲击。有限 MA 可平稳但不可逆。
+</details>
+<ol start="5" type="1">
+<li>★★★ 外部延伸：阅读 statsmodels ARIMA 文档，说明软件估计 MA 参数时为什么常设置 enforce_invertibility。来源：<a href="https://www.statsmodels.org/stable/generated/statsmodels.tsa.arima.model.ARIMA.html" class="uri">https://www.statsmodels.org/stable/generated/statsmodels.tsa.arima.model.ARIMA.html</a></li>
+</ol>
+<details>
+<summary>
+参考答案要点
+</summary>
+为了避免不可逆参数导致非唯一表示或不稳定误差递归，使估计结果具有标准解释。
+</details>
+<h2 id="ma-定阶与预测">§7 MA 定阶与预测 ★★</h2>
+<h3 id="脉络梳理-6">脉络梳理</h3>
+<p>MA 定阶主要看 ACF 截断：如果真实是 MA(q)，那么 <span class="math inline">\(q\)</span> 阶之后的理论自相关为 0。预测时，MA 与 AR 的差别更明显：MA 的冲击记忆只有有限期，所以多步预测很快回到均值。</p>
+<h3 id="重点内容申明-6">重点内容申明</h3>
+<h4 id="样本-acf-定阶">1. 样本 ACF 定阶</h4>
+<p>若理论 <span class="math inline">\(\rho_l=0\)</span>，大样本下：</p>
+<p><span class="math display">\[
+\sqrt T\hat\rho_l\Rightarrow N(0,1).
+\]</span></p>
+<p>所以可用阈值：</p>
+<p><span class="math display">\[
+|\hat\rho_l|&lt;\frac{1.96}{\sqrt T}.
+\]</span></p>
+<p>MA 阶数估计：</p>
+<p><span class="math display">\[
+\hat q=\arg\max\left\{l:|\hat\rho_l|\ge \frac{1.96}{\sqrt T},\ l\le Q_0\right\}.
+\]</span></p>
+<h4 id="ma1-的一步预测">2. MA(1) 的一步预测</h4>
+<p>MA(1)：</p>
+<p><span class="math display">\[
+r_{h+1}=c_0+a_{h+1}-\theta_1a_h.
+\]</span></p>
+<p>在 <span class="math inline">\(F_h\)</span> 下，<span class="math inline">\(a_h\)</span> 可由估计残差近似得到，而 <span class="math inline">\(a_{h+1}\)</span> 不可预测，因此：</p>
+<p><span class="math display">\[
+\hat r_h(1)=E(r_{h+1}|F_h)=c_0-\theta_1a_h.
+\]</span></p>
+<p>误差：</p>
+<p><span class="math display">\[
+e_h(1)=a_{h+1},\qquad Var[e_h(1)]=\sigma_a^2.
+\]</span></p>
+<h4 id="ma1-的多步预测">3. MA(1) 的多步预测</h4>
+<p>两步以后，<span class="math inline">\(r_{h+2}\)</span> 只含未来冲击 <span class="math inline">\(a_{h+2},a_{h+1}\)</span>，它们在 <span class="math inline">\(F_h\)</span> 下期望都为 0：</p>
+<p><span class="math display">\[
+\hat r_h(l)=c_0,\qquad l\ge2.
+\]</span></p>
+<p>这就是 MA 的“有限记忆”。MA(q) 最多记住 <span class="math inline">\(q\)</span> 期冲击，超过 <span class="math inline">\(q\)</span> 步后预测回到均值。</p>
+<h4 id="stata模拟-ma2-并检查-acf-截断">4. Stata：模拟 MA(2) 并检查 ACF 截断</h4>
+<div class="sourceCode" id="cb4"><pre class="sourceCode stata"><code class="sourceCode stata"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="kw">clear</span> <span class="ot">all</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="kw">set</span> <span class="kw">more</span> <span class="kw">off</span></span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a><span class="kw">set</span> <span class="dv">seed</span> 20260626</span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a><span class="kw">set</span> <span class="kw">obs</span> 300</span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a><span class="kw">gen</span> t = <span class="dt">_n</span></span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a><span class="kw">tsset</span> t</span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a><span class="kw">gen</span> <span class="fu">e</span> = rnormal()</span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a><span class="kw">gen</span> <span class="fu">y</span> = <span class="fu">e</span> + 0.5*L.<span class="fu">e</span> + 0.4*L2.<span class="fu">e</span></span>
+<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a><span class="kw">replace</span> <span class="fu">y</span> = <span class="fu">e</span> <span class="kw">in</span> 1</span>
+<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a><span class="kw">replace</span> <span class="fu">y</span> = <span class="fu">e</span> + 0.5*L.<span class="fu">e</span> <span class="kw">in</span> 2</span>
+<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a><span class="kw">tsline</span> <span class="fu">y</span></span>
+<span id="cb4-14"><a href="#cb4-14" aria-hidden="true" tabindex="-1"></a><span class="kw">ac</span> <span class="fu">y</span>, lags(24)</span>
+<span id="cb4-15"><a href="#cb4-15" aria-hidden="true" tabindex="-1"></a><span class="kw">pac</span> <span class="fu">y</span>, lags(24)</span>
+<span id="cb4-16"><a href="#cb4-16" aria-hidden="true" tabindex="-1"></a><span class="kw">arima</span> <span class="fu">y</span>, <span class="kw">arima</span>(0,0,2)</span>
+<span id="cb4-17"><a href="#cb4-17" aria-hidden="true" tabindex="-1"></a><span class="kw">estat</span> <span class="kw">ic</span></span>
+<span id="cb4-18"><a href="#cb4-18" aria-hidden="true" tabindex="-1"></a><span class="kw">predict</span> uhat, residuals</span>
+<span id="cb4-19"><a href="#cb4-19" aria-hidden="true" tabindex="-1"></a><span class="kw">wntestq</span> uhat, lags(20)</span></code></pre></div>
+<h3 id="习题-6">习题</h3>
+<ol type="1">
+<li>★ MA(1) 的两步及以上预测为什么等于均值？</li>
+</ol>
+<details>
+<summary>
+参考答案要点
+</summary>
+MA(1) 只含今天和上一期冲击。两步以后相关冲击都属于未来，条件期望为 0，只剩均值。
+</details>
+<ol start="2" type="1">
+<li>★★ 样本量 <span class="math inline">\(T=100\)</span> 时，ACF 显著性带约为多少？</li>
+</ol>
+<details>
+<summary>
+参考答案要点
+</summary>
+<span class="math inline">\(\pm1.96/\sqrt{100}=\pm0.196\)</span>。
+</details>
+<ol start="3" type="1">
+<li>★ 若样本 ACF 在 1、2 阶显著，3 阶以后不显著，可以初步猜什么模型？</li>
+</ol>
+<details>
+<summary>
+参考答案要点
+</summary>
+可初步猜 MA(2)，但仍需用 AIC/BIC 和残差诊断确认。
+</details>
+<ol start="4" type="1">
+<li>★★ MA 模型预测时为什么需要估计残差？</li>
+</ol>
+<details>
+<summary>
+参考答案要点
+</summary>
+MA 右侧包含过去冲击 <span class="math inline">\(a_{t-i}\)</span>，冲击不可直接观测，实际预测要用拟合残差近似。
+</details>
+<ol start="5" type="1">
+<li>★★★ 外部延伸：参考 Stata <code>arima</code> 手册，写出用 Stata 估计 MA(2) 并做残差检验的命令。来源：<a href="https://www.stata.com/manuals/tsarima.pdf" class="uri">https://www.stata.com/manuals/tsarima.pdf</a></li>
+</ol>
+<details>
+<summary>
+参考答案要点
+</summary>
+核心命令为 <code>arima y, arima(0,0,2)</code>、<code>predict uhat, residuals</code>、<code>wntestq uhat, lags(20)</code>，还可加 <code>estat ic</code>。
+</details>
+<h2 id="arma-模型与-eacf-定阶-核心">§8 ARMA 模型与 EACF 定阶 ★★★ 核心</h2>
+<h3 id="脉络梳理-7">脉络梳理</h3>
+<p>ARMA 是 AR 和 MA 的合体。它的目的不是炫技，而是用少量参数同时描述“观测值自身的惯性”和“冲击的短期残留”。一般平稳过程可用 MA(<span class="math inline">\(\infty\)</span>) 表示，但无限参数不可估；ARMA 用有限多项式比值近似它。</p>
+<h3 id="重点内容申明-7">重点内容申明</h3>
+<h4 id="armapq-定义">1. ARMA(p,q) 定义</h4>
+<p>课件写作：</p>
+<p><span class="math display">\[
+r_t=\phi_0+\sum_{i=1}^{p}\phi_ir_{t-i}+a_t-\sum_{i=1}^{q}\theta_ia_{t-i}.
+\]</span></p>
+<p>其中</p>
+<p><span class="math display">\[
+\sum_{i=1}^{p}\phi_ir_{t-i}
+\]</span></p>
+<p>是 AR 部分，</p>
+<p><span class="math display">\[
+\sum_{i=1}^{q}\theta_ia_{t-i}
+\]</span></p>
+<p>是 MA 部分。用滞后算子写：</p>
+<p><span class="math display">\[
+\phi(L)r_t=\phi_0+\theta(L)a_t.
+\]</span></p>
+<p>平稳性主要看 AR 多项式根；可逆性主要看 MA 多项式根。</p>
+<h4 id="为什么-acfpacf-都不够">2. 为什么 ACF/PACF 都不够？</h4>
+<ul>
+<li>AR(p)：PACF 截断，ACF 拖尾。</li>
+<li>MA(q)：ACF 截断，PACF 拖尾。</li>
+<li>ARMA(p,q)：ACF 和 PACF 通常都拖尾。</li>
+</ul>
+<p>因此 ARMA 定阶不能只靠 ACF/PACF 图。图可以帮助判断是否有拖尾，但不能直接给出 <span class="math inline">\(p,q\)</span>。</p>
+<h4 id="eacf-的直觉">3. EACF 的直觉</h4>
+<p>课件介绍 Tsay 和 Tiao (1984) 的拓展自相关系数 EACF。它把候选 AR 阶放在行、候选 MA 阶放在列。表中：</p>
+<ul>
+<li><code>X</code> 表示对应拓展相关显著不为 0；</li>
+<li><code>O</code> 表示接近 0；</li>
+<li><code>*</code> 表示不确定。</li>
+</ul>
+<p>理论上，对 ARMA(p,q)，<code>O</code> 会形成一个以 <span class="math inline">\((p,q)\)</span> 为顶点的三角形区域。考试不一定要求手算 EACF，但要知道它解决的是：ARMA 的 ACF/PACF 都不截断时如何找二维阶数。</p>
+<h4 id="信息准则和诊断">4. 信息准则和诊断</h4>
+<p>ARMA 的信息准则：</p>
+<p><span class="math display">\[
+IC(p,q)=\log\frac{SSR(p,q)}{T}+C_T\frac{p+q}{T}.
+\]</span></p>
+<p>选择：</p>
+<p><span class="math display">\[
+(\hat p,\hat q)=\arg\min_{p\le P_0,\ q\le Q_0}IC(p,q).
+\]</span></p>
+<p>残差诊断：</p>
+<p><span class="math display">\[
+Q_{LB}(m)\approx\chi^2(m-p-q).
+\]</span></p>
+<p>如果残差仍显著相关，说明 ARMA(p,q) 没有吸收完动态结构；如果参数不满足平稳/可逆，也不能接受。</p>
+<h4 id="stata二维搜索-arma-阶数">5. Stata：二维搜索 ARMA 阶数</h4>
+<div class="sourceCode" id="cb5"><pre class="sourceCode stata"><code class="sourceCode stata"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="kw">clear</span> <span class="ot">all</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="kw">set</span> <span class="kw">more</span> <span class="kw">off</span></span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a><span class="kw">set</span> <span class="dv">seed</span> 20260626</span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a><span class="kw">set</span> <span class="kw">obs</span> 320</span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a><span class="kw">gen</span> t = <span class="dt">_n</span></span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a><span class="kw">tsset</span> t</span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a><span class="kw">gen</span> <span class="fu">e</span> = rnormal()</span>
+<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a><span class="kw">gen</span> <span class="fu">y</span> = .</span>
+<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a><span class="kw">replace</span> <span class="fu">y</span> = <span class="fu">e</span> <span class="kw">in</span> 1</span>
+<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a><span class="kw">forvalues</span> i = 2/320 {</span>
+<span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a>    <span class="kw">replace</span> <span class="fu">y</span> = 0.55*<span class="fu">y</span>[<span class="ot">`i&#39;</span>-1] + <span class="fu">e</span>[<span class="ot">`i&#39;</span>] + 0.35*<span class="fu">e</span>[<span class="ot">`i&#39;</span>-1] <span class="kw">in</span> <span class="ot">`i&#39;</span></span>
+<span id="cb5-13"><a href="#cb5-13" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb5-14"><a href="#cb5-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-15"><a href="#cb5-15" aria-hidden="true" tabindex="-1"></a><span class="kw">forvalues</span> <span class="kw">p</span> = 0/3 {</span>
+<span id="cb5-16"><a href="#cb5-16" aria-hidden="true" tabindex="-1"></a>    <span class="kw">forvalues</span> <span class="fu">q</span> = 0/3 {</span>
+<span id="cb5-17"><a href="#cb5-17" aria-hidden="true" tabindex="-1"></a>        <span class="kw">quietly</span> <span class="kw">capture</span> <span class="kw">arima</span> <span class="fu">y</span>, <span class="kw">arima</span>(<span class="ot">`p&#39;</span>,0,<span class="ot">`q&#39;</span>)</span>
+<span id="cb5-18"><a href="#cb5-18" aria-hidden="true" tabindex="-1"></a>        <span class="kw">if</span> <span class="dt">_rc</span> == 0 {</span>
+<span id="cb5-19"><a href="#cb5-19" aria-hidden="true" tabindex="-1"></a>            <span class="kw">di</span> <span class="st">&quot;candidate ARMA(`p&#39;,`q&#39;)&quot;</span></span>
+<span id="cb5-20"><a href="#cb5-20" aria-hidden="true" tabindex="-1"></a>            <span class="kw">estat</span> <span class="kw">ic</span></span>
+<span id="cb5-21"><a href="#cb5-21" aria-hidden="true" tabindex="-1"></a>        }</span>
+<span id="cb5-22"><a href="#cb5-22" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb5-23"><a href="#cb5-23" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb5-24"><a href="#cb5-24" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-25"><a href="#cb5-25" aria-hidden="true" tabindex="-1"></a><span class="kw">arima</span> <span class="fu">y</span>, <span class="kw">arima</span>(1,0,1)</span>
+<span id="cb5-26"><a href="#cb5-26" aria-hidden="true" tabindex="-1"></a><span class="kw">predict</span> uhat, residuals</span>
+<span id="cb5-27"><a href="#cb5-27" aria-hidden="true" tabindex="-1"></a><span class="kw">wntestq</span> uhat, lags(20)</span></code></pre></div>
+<h3 id="习题-7">习题</h3>
+<ol type="1">
+<li>★ 写出 ARMA(p,q) 的一般形式，并指出 AR 与 MA 部分。</li>
+</ol>
+<details>
+<summary>
+参考答案要点
+</summary>
+<span class="math inline">\(r_t=\phi_0+\sum_{i=1}^p\phi_ir_{t-i}+a_t-\sum_{i=1}^q\theta_ia_{t-i}\)</span>。前一求和是 AR，后一求和是 MA。
+</details>
+<ol start="2" type="1">
+<li>★ 为什么 ARMA 的 ACF 和 PACF 通常都拖尾？</li>
+</ol>
+<details>
+<summary>
+参考答案要点
+</summary>
+AR 部分会让 ACF 拖尾，MA 部分会让 PACF 拖尾；二者组合后通常没有简单截断。
+</details>
+<ol start="3" type="1">
+<li>★★ EACF 表中 O 三角形顶点意味着什么？</li>
+</ol>
+<details>
+<summary>
+参考答案要点
+</summary>
+理论上 O 区域顶点对应候选 <span class="math inline">\((p,q)\)</span>，表示从该阶开始拓展相关接近 0。
+</details>
+<ol start="4" type="1">
+<li>★★ 为什么 ARMA 定阶常限制 <span class="math inline">\(p,q\le3\)</span> 或类似小范围？</li>
+</ol>
+<details>
+<summary>
+参考答案要点
+</summary>
+金融样本噪声大，高阶参数难解释且容易过拟合；Wold 近似通常用低阶模型已可捕捉主要短期动态。
+</details>
+<ol start="5" type="1">
+<li>★★★ 外部延伸：参考 statsmodels SARIMAX FAQ，说明同一 ARMA 模型在不同软件中参数符号可能不同，复现时应注意什么。来源：<a href="https://www.statsmodels.org/stable/examples/notebooks/generated/statespace_sarimax_faq.html" class="uri">https://www.statsmodels.org/stable/examples/notebooks/generated/statespace_sarimax_faq.html</a></li>
+</ol>
+<details>
+<summary>
+参考答案要点
+</summary>
+不同软件对 MA 符号、截距和趋势项参数化可能不同；应先核对模型写法，再比较数值。
+</details>
+<h2 id="box-jenkins-建模流程与-stata-操作">§9 Box-Jenkins 建模流程与 Stata 操作 ★★</h2>
+<h3 id="脉络梳理-8">脉络梳理</h3>
+<p>Box-Jenkins 不是某一个模型，而是一套循环工作流。它把“猜模型”变成有证据的迭代：先让数据接近平稳，再识别候选阶数，估计模型，诊断残差。如果残差还不是白噪声，就回头修改。</p>
+<h3 id="重点内容申明-8">重点内容申明</h3>
+<h4 id="五步流程">1. 五步流程</h4>
+<ol type="1">
+<li>对数据进行变换，使其近似满足平稳性假设。</li>
+<li>对变换后的数据猜测 <span class="math inline">\(p,q\)</span> 的合理范围。</li>
+<li>估计 ARMA(p,q) 参数。</li>
+<li>做模型诊断，尤其是残差白噪声检验。</li>
+<li>不通过诊断就重新设定 <span class="math inline">\(p,q\)</span>，重复估计与诊断。</li>
+</ol>
+<h4 id="常见平稳化处理">2. 常见平稳化处理</h4>
+<ul>
+<li>差分：</li>
+</ul>
+<p><span class="math display">\[
+\Delta Y_t=Y_t-Y_{t-1}.
+\]</span></p>
+<ul>
+<li>对数差分：</li>
+</ul>
+<p><span class="math display">\[
+\Delta\log Y_t=\log Y_t-\log Y_{t-1}.
+\]</span></p>
+<p>对价格指数、资产价格、货币数量等正值变量，对数差分通常可解释为近似增长率或收益率。</p>
+<ul>
+<li>季节调整：月度 CPI、工业产出等常带季节性，课件案例使用 X-13 思想去除季节性。</li>
+<li>去确定性趋势：如果序列有线性或多项式趋势，可先对时间趋势回归并取残差。</li>
+</ul>
+<h4 id="实证解释模板">3. 实证解释模板</h4>
+<p>一段合格的模型说明应包含：</p>
+<pre class="text"><code>变量经过何种变换 -&gt; 变换后为何近似平稳
+候选 p,q 如何设定 -&gt; ACF/PACF/EACF 或信息准则依据
+最终模型参数 -&gt; 是否满足平稳/可逆
+残差诊断 -&gt; Ljung-Box 是否拒绝白噪声
+预测表现 -&gt; 与基准模型相比 RMSE/MAE/偏差如何
+经济解释 -&gt; 冲击持续性或均值回复含义</code></pre>
+<h4 id="stata完整-box-jenkins-小流程">4. Stata：完整 Box-Jenkins 小流程</h4>
+<p>下面用内置思路生成一条带趋势和季节成分的正值序列，演示从对数差分到 ARMA 诊断的完整流程。</p>
+<div class="sourceCode" id="cb7"><pre class="sourceCode stata"><code class="sourceCode stata"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="kw">clear</span> <span class="ot">all</span></span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a><span class="kw">set</span> <span class="kw">more</span> <span class="kw">off</span></span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a><span class="kw">set</span> <span class="dv">seed</span> 20260626</span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a><span class="kw">set</span> <span class="kw">obs</span> 240</span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a><span class="kw">gen</span> <span class="fu">m</span> = tm(2000m1) + <span class="dt">_n</span> - 1</span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a><span class="kw">format</span> <span class="fu">m</span> %tm</span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a><span class="kw">tsset</span> <span class="fu">m</span></span>
+<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a><span class="kw">gen</span> seasonal = 0.02*<span class="fu">sin</span>(2*<span class="dt">_pi</span>*<span class="fu">mod</span>(<span class="dt">_n</span>,12)/12)</span>
+<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a><span class="kw">gen</span> shock = rnormal(0,0.01)</span>
+<span id="cb7-11"><a href="#cb7-11" aria-hidden="true" tabindex="-1"></a><span class="kw">gen</span> loglevel = 4 + 0.002*<span class="dt">_n</span> + seasonal + shock</span>
+<span id="cb7-12"><a href="#cb7-12" aria-hidden="true" tabindex="-1"></a><span class="kw">gen</span> cpi_like = <span class="fu">exp</span>(loglevel)</span>
+<span id="cb7-13"><a href="#cb7-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-14"><a href="#cb7-14" aria-hidden="true" tabindex="-1"></a><span class="kw">gen</span> lcpi = <span class="fu">ln</span>(cpi_like)</span>
+<span id="cb7-15"><a href="#cb7-15" aria-hidden="true" tabindex="-1"></a><span class="kw">gen</span> infl = D.lcpi*100</span>
+<span id="cb7-16"><a href="#cb7-16" aria-hidden="true" tabindex="-1"></a><span class="kw">drop</span> <span class="kw">if</span> <span class="fu">missing</span>(infl)</span>
+<span id="cb7-17"><a href="#cb7-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-18"><a href="#cb7-18" aria-hidden="true" tabindex="-1"></a><span class="kw">tsline</span> infl</span>
+<span id="cb7-19"><a href="#cb7-19" aria-hidden="true" tabindex="-1"></a><span class="kw">ac</span> infl, lags(36)</span>
+<span id="cb7-20"><a href="#cb7-20" aria-hidden="true" tabindex="-1"></a><span class="kw">pac</span> infl, lags(36)</span>
+<span id="cb7-21"><a href="#cb7-21" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-22"><a href="#cb7-22" aria-hidden="true" tabindex="-1"></a><span class="kw">arima</span> infl, <span class="kw">arima</span>(1,0,0)</span>
+<span id="cb7-23"><a href="#cb7-23" aria-hidden="true" tabindex="-1"></a><span class="kw">estat</span> <span class="kw">ic</span></span>
+<span id="cb7-24"><a href="#cb7-24" aria-hidden="true" tabindex="-1"></a><span class="kw">predict</span> e_ar, residuals</span>
+<span id="cb7-25"><a href="#cb7-25" aria-hidden="true" tabindex="-1"></a><span class="kw">wntestq</span> e_ar, lags(24)</span>
+<span id="cb7-26"><a href="#cb7-26" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-27"><a href="#cb7-27" aria-hidden="true" tabindex="-1"></a><span class="kw">arima</span> infl, <span class="kw">arima</span>(0,0,1)</span>
+<span id="cb7-28"><a href="#cb7-28" aria-hidden="true" tabindex="-1"></a><span class="kw">estat</span> <span class="kw">ic</span></span>
+<span id="cb7-29"><a href="#cb7-29" aria-hidden="true" tabindex="-1"></a><span class="kw">predict</span> e_ma, residuals</span>
+<span id="cb7-30"><a href="#cb7-30" aria-hidden="true" tabindex="-1"></a><span class="kw">wntestq</span> e_ma, lags(24)</span>
+<span id="cb7-31"><a href="#cb7-31" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-32"><a href="#cb7-32" aria-hidden="true" tabindex="-1"></a><span class="kw">arima</span> infl, <span class="kw">arima</span>(1,0,1)</span>
+<span id="cb7-33"><a href="#cb7-33" aria-hidden="true" tabindex="-1"></a><span class="kw">estat</span> <span class="kw">ic</span></span>
+<span id="cb7-34"><a href="#cb7-34" aria-hidden="true" tabindex="-1"></a><span class="kw">predict</span> e_arma, residuals</span>
+<span id="cb7-35"><a href="#cb7-35" aria-hidden="true" tabindex="-1"></a><span class="kw">wntestq</span> e_arma, lags(24)</span></code></pre></div>
+<h3 id="习题-8">习题</h3>
+<ol type="1">
+<li>★ Box-Jenkins 流程中为什么第一步是平稳化？</li>
+</ol>
+<details>
+<summary>
+参考答案要点
+</summary>
+ARMA 的基本理论建立在平稳序列上。非平稳水平序列会造成伪相关和错误预测。
+</details>
+<ol start="2" type="1">
+<li>★ 对价格指数为什么常用对数差分？</li>
+</ol>
+<details>
+<summary>
+参考答案要点
+</summary>
+价格指数为正，对数差分近似增长率或通胀率，也常能削弱趋势并稳定方差。
+</details>
+<ol start="3" type="1">
+<li>★★ 写出一组 Stata 命令：画 ACF/PACF、估计 ARMA(1,1)、查看信息准则。</li>
+</ol>
+<details>
+<summary>
+参考答案要点
+</summary>
+<code>ac y, lags(24)</code>；<code>pac y, lags(24)</code>；<code>arima y, arima(1,0,1)</code>；<code>estat ic</code>。
+</details>
+<ol start="4" type="1">
+<li>★★ 若残差 Ljung-Box 不显著，但残差平方有明显相关，说明什么？</li>
+</ol>
+<details>
+<summary>
+参考答案要点
+</summary>
+均值方程可能吸收了线性相关，但存在条件异方差，需考虑 ARCH/GARCH 等波动模型。
+</details>
+<ol start="5" type="1">
+<li>★★★ 外部延伸：基于国家统计局数据平台说明如何获取 CPI 数据并接入建模流程。来源：<a href="https://data.stats.gov.cn/" class="uri">https://data.stats.gov.cn/</a></li>
+</ol>
+<details>
+<summary>
+参考答案要点
+</summary>
+下载月度 CPI，整理年月变量，生成时间索引，取对数差分或同比变化，季调后进入 ACF/PACF、定阶、估计和预测流程。
+</details>
+<h2 id="极大似然估计-mlear1-与-ma1">§10 极大似然估计 MLE：AR(1) 与 MA(1) ★★</h2>
+<h3 id="脉络梳理-9">脉络梳理</h3>
+<p>AR 模型的滞后因变量是可观测的，所以条件在初始值上时，估计很像回归。MA 模型的滞后冲击不可观测，需要根据参数递归算出来；这就是为什么 MA 和 ARMA 通常要用 MLE 数值优化。</p>
+<h3 id="重点内容申明-9">重点内容申明</h3>
+<h4 id="ar1-的条件分布">1. AR(1) 的条件分布</h4>
+<p>考虑：</p>
+<p><span class="math display">\[
+y_t=\alpha+\phi y_{t-1}+\varepsilon_t,\qquad
+\varepsilon_t\sim N(0,\sigma_\varepsilon^2),\quad |\phi|&lt;1.
+\]</span></p>
+<p>无条件均值和方差：</p>
+<p><span class="math display">\[
+E(y_t)=\frac{\alpha}{1-\phi},\qquad
+Var(y_t)=\frac{\sigma_\varepsilon^2}{1-\phi^2}.
+\]</span></p>
+<p>所以第一个观测值的边际分布可写成：</p>
+<p><span class="math display">\[
+y_1\sim N\left(\frac{\alpha}{1-\phi},
+\frac{\sigma_\varepsilon^2}{1-\phi^2}\right).
+\]</span></p>
+<p>给定 <span class="math inline">\(y_{t-1}\)</span> 时：</p>
+<p><span class="math display">\[
+y_t|y_{t-1}\sim N(\alpha+\phi y_{t-1},\sigma_\varepsilon^2).
+\]</span></p>
+<p>于是样本联合密度可以分解为：</p>
+<p><span class="math display">\[
+f(y_T,\ldots,y_1;\theta)
+=f(y_1;\theta)\prod_{t=2}^{T}f(y_t|y_{t-1};\theta).
+\]</span></p>
+<p>对数似然：</p>
+<p><span class="math display">\[
+\ell(\theta)=\log f(y_1;\theta)+
+\sum_{t=2}^{T}\log f(y_t|y_{t-1};\theta).
+\]</span></p>
+<h4 id="条件似然与-ols-的关系">2. 条件似然与 OLS 的关系</h4>
+<p>如果把 <span class="math inline">\(y_1\)</span> 视为固定值，不写 <span class="math inline">\(f(y_1;\theta)\)</span>，条件对数似然中与 <span class="math inline">\(\alpha,\phi\)</span> 有关的核心项是：</p>
+<p><span class="math display">\[
+-\sum_{t=2}^{T}
+\frac{(y_t-\alpha-\phi y_{t-1})^2}{2\sigma_\varepsilon^2}.
+\]</span></p>
+<p>最大化它等价于最小化：</p>
+<p><span class="math display">\[
+\sum_{t=2}^{T}(y_t-\alpha-\phi y_{t-1})^2.
+\]</span></p>
+<p>这就是 OLS。结论：在正态 AR(1) 的条件似然设定下，<span class="math inline">\(\alpha,\phi\)</span> 的 MLE 与 OLS 估计密切对应。</p>
+<h4 id="ma1-为什么不能-ols">3. MA(1) 为什么不能 OLS？</h4>
+<p>考虑：</p>
+<p><span class="math display">\[
+y_t=\mu+\varepsilon_t+\theta\varepsilon_{t-1}.
+\]</span></p>
+<p>如果给定 <span class="math inline">\(\varepsilon_{t-1}\)</span>，则：</p>
+<p><span class="math display">\[
+y_t|\varepsilon_{t-1}\sim
+N(\mu+\theta\varepsilon_{t-1},\sigma_\varepsilon^2).
+\]</span></p>
+<p>问题是 <span class="math inline">\(\varepsilon_{t-1}\)</span> 不可观测。给定初始值 <span class="math inline">\(\varepsilon_0=0\)</span> 后，需要递归：</p>
+<p><span class="math display">\[
+\varepsilon_t=y_t-\mu-\theta\varepsilon_{t-1}.
+\]</span></p>
+<p>对数似然核心项为：</p>
+<p><span class="math display">\[
+\ell(\theta)=-\frac{T}{2}\log(2\pi)
+-\frac{T}{2}\log(\sigma_\varepsilon^2)
+-\sum_{t=1}^{T}
+\frac{(y_t-\mu-\theta\varepsilon_{t-1})^2}
+{2\sigma_\varepsilon^2}.
+\]</span></p>
+<p>因为 <span class="math inline">\(\varepsilon_{t-1}\)</span> 本身依赖 <span class="math inline">\(\mu,\theta\)</span>，这不是普通线性回归，只能数值优化。</p>
+<h4 id="条件似然与可逆性">4. 条件似然与可逆性</h4>
+<p>递归展开：</p>
+<p><span class="math display">\[
+\varepsilon_t=(y_t-\mu)-\theta(y_{t-1}-\mu)+\theta^2(y_{t-2}-\mu)-\cdots+(-1)^t\theta^t\varepsilon_0.
+\]</span></p>
+<p>若 <span class="math inline">\(|\theta|&lt;1\)</span>，初始值 <span class="math inline">\(\varepsilon_0\)</span> 的影响会逐渐消失；若 <span class="math inline">\(|\theta|&gt;1\)</span>，初始值影响会放大，条件似然近似不可靠。这就是课件强调数值估计结果若超过可逆区域需要重新处理的原因。</p>
+<h3 id="习题-9">习题</h3>
+<ol type="1">
+<li>★ AR(1) 的条件密度 <span class="math inline">\(f(y_t|y_{t-1})\)</span> 的均值和方差是什么？</li>
+</ol>
+<details>
+<summary>
+参考答案要点
+</summary>
+均值为 <span class="math inline">\(\alpha+\phi y_{t-1}\)</span>，方差为 <span class="math inline">\(\sigma_\varepsilon^2\)</span>。
+</details>
+<ol start="2" type="1">
+<li>★★ 为什么 AR(1) 条件 MLE 与 OLS 有密切关系？</li>
+</ol>
+<details>
+<summary>
+参考答案要点
+</summary>
+条件对数似然中关于 <span class="math inline">\(\alpha,\phi\)</span> 的核心是残差平方和的负值，最大化似然等价于最小化平方残差。
+</details>
+<ol start="3" type="1">
+<li>★ 为什么 MA(1) 不能直接 OLS？</li>
+</ol>
+<details>
+<summary>
+参考答案要点
+</summary>
+解释变量里包含滞后冲击 <span class="math inline">\(\varepsilon_{t-1}\)</span>，冲击不可观测且依赖参数递归生成。
+</details>
+<ol start="4" type="1">
+<li>★★ MA(1) 条件似然中设置 <span class="math inline">\(\varepsilon_0=0\)</span> 的影响何时会消失？</li>
+</ol>
+<details>
+<summary>
+参考答案要点
+</summary>
+当 <span class="math inline">\(|\theta|&lt;1\)</span> 时，初始冲击影响按 <span class="math inline">\(|\theta|^t\)</span> 衰减，样本足够大时影响可忽略。
+</details>
+<ol start="5" type="1">
+<li>★★★ 外部延伸：参考 Stata <code>arima</code> 手册，解释为什么 ARMA 估计通常报告数值优化迭代信息。来源：<a href="https://www.stata.com/manuals/tsarima.pdf" class="uri">https://www.stata.com/manuals/tsarima.pdf</a></li>
+</ol>
+<details>
+<summary>
+参考答案要点
+</summary>
+ARMA/MA 的似然不是简单 OLS 闭式解，需要数值优化；迭代信息反映似然最大化过程是否收敛。
+</details>
+<h2 id="中国-cpi-案例预测比较与复习总图">§11 中国 CPI 案例、预测比较与复习总图 ★★</h2>
+<h3 id="脉络梳理-10">脉络梳理</h3>
+<p>课件案例用 1993 年 1 月到 2020 年 12 月的中国 CPI 月度数据。处理流程是：先对 CPI 取对数差分，再做季节性处理；季调后的序列看起来更接近平稳；随后用 BIC 分别选择 AR、MA、ARMA 模型，并比较 20 期向前预测。</p>
+<h3 id="重点内容申明-10">重点内容申明</h3>
+<h4 id="课件中的三个模型">1. 课件中的三个模型</h4>
+<p>AR 模型用 BIC 选为 AR(5)：</p>
+<p><span class="math display">\[
+y_t=-0.14y_{t-1}-0.20y_{t-2}-0.25y_{t-3}
+-0.15y_{t-4}-0.19y_{t-5}+e_t.
+\]</span></p>
+<p>MA 模型用 BIC 选为 MA(3)：</p>
+<p><span class="math display">\[
+y_t=e_t-0.15e_{t-1}-0.19e_{t-2}-0.22e_{t-3}.
+\]</span></p>
+<p>ARMA 模型用 BIC 选为 ARMA(2,2)：</p>
+<p><span class="math display">\[
+y_t-1.27y_{t-1}+0.62y_{t-2}
+=e_t-1.43e_{t-1}+0.59e_{t-2}.
+\]</span></p>
+<p>这里 <span class="math inline">\(y_t\)</span> 是经过平稳化、季节处理后的 CPI 变化序列。解释时要注意：这些系数描述的是处理后通胀变化的短期动态，不是原始 CPI 水平的长期趋势。</p>
+<h4 id="预测比较该怎么看">2. 预测比较该怎么看？</h4>
+<p>课件比较了均值预测、朴素预测、滑动平均、指数平滑、AR、MA、ARMA 等模型的 20 期向前预测。结论是：</p>
+<ul>
+<li>各模型样本外预测精度非常接近。</li>
+<li>滑动平均预测的偏差最小。</li>
+<li>AR、MA、ARMA 的 RMSE 最小。</li>
+<li>AR、MA、ARMA 与均值预测的 MAE 最小，且明显优于朴素预测。</li>
+</ul>
+<p>这说明一件重要的事：<strong>模型更复杂不一定带来压倒性预测优势</strong>。对平稳化后的宏观月度数据，简单基准模型可能已经很强；ARMA 的优势常体现在解释动态结构和系统诊断，而不一定在每个样本中显著降低预测误差。</p>
+<h4 id="预测指标">3. 预测指标</h4>
+<p>偏差 Bias：</p>
+<p><span class="math display">\[
+Bias=\frac{1}{H}\sum_{h=1}^{H}(y_{T+h}-\hat y_{T+h}).
+\]</span></p>
+<p>均方根误差 RMSE：</p>
+<p><span class="math display">\[
+RMSE=\sqrt{\frac{1}{H}\sum_{h=1}^{H}(y_{T+h}-\hat y_{T+h})^2}.
+\]</span></p>
+<p>平均绝对误差 MAE：</p>
+<p><span class="math display">\[
+MAE=\frac{1}{H}\sum_{h=1}^{H}|y_{T+h}-\hat y_{T+h}|.
+\]</span></p>
+<p>RMSE 对大误差更敏感，MAE 更稳健，Bias 看系统性高估或低估。</p>
+<h4 id="总复习图">4. 总复习图</h4>
+<pre class="text"><code>线性时间序列
+├─ 线性过程：r_t = μ + Σψ_i a_{t-i}
+├─ AR(p)：过去观测值传播冲击
+│  ├─ 平稳：AR 根在单位圆外
+│  ├─ 定阶：PACF 截断 + IC + Ljung-Box
+│  └─ 预测：递归，长期回均值
+├─ MA(q)：过去冲击残留
+│  ├─ 天然平稳
+│  ├─ 可逆：MA 根在单位圆外
+│  ├─ 定阶：ACF 截断 + IC + Ljung-Box
+│  └─ 预测：q 步后回均值
+├─ ARMA(p,q)：有限参数逼近 Wold 表示
+│  ├─ ACF/PACF 都拖尾
+│  ├─ EACF + 二维 IC 搜索
+│  └─ MLE 估计
+└─ Box-Jenkins：变换 -&gt; 定阶 -&gt; 估计 -&gt; 诊断 -&gt; 预测</code></pre>
+<h4 id="最后一页速记">5. 最后一页速记</h4>
+<ul>
+<li>AR：看 PACF 截断。</li>
+<li>MA：看 ACF 截断。</li>
+<li>ARMA：ACF/PACF 都拖尾，看 EACF、IC 和残差。</li>
+<li>AIC 惩罚轻，BIC 惩罚重。</li>
+<li>Ljung-Box 显著：残差不是白噪声，模型没建完。</li>
+<li>AR 平稳看 AR 根；MA 可逆看 MA 根。</li>
+<li>AR 多步预测递归回均值；MA(q) 超过 q 步回均值。</li>
+<li>AR 条件 MLE 接近 OLS；MA/ARMA 通常需要数值 MLE。</li>
+</ul>
+<h3 id="习题-10">习题</h3>
+<ol type="1">
+<li>★ 课件 CPI 案例为什么先对数据取对数再差分？</li>
+</ol>
+<details>
+<summary>
+参考答案要点
+</summary>
+原始 CPI 水平有趋势；对数差分近似通胀变化率，可削弱趋势，使序列更接近平稳。
+</details>
+<ol start="2" type="1">
+<li>★ 预测评价中 Bias、RMSE、MAE 分别看什么？</li>
+</ol>
+<details>
+<summary>
+参考答案要点
+</summary>
+Bias 看平均高估/低估；RMSE 对大误差敏感；MAE 衡量平均绝对偏差，更稳健。
+</details>
+<ol start="3" type="1">
+<li>★★ 若两个模型 RMSE 很接近，但一个模型更简单，应如何选择？</li>
+</ol>
+<details>
+<summary>
+参考答案要点
+</summary>
+倾向简单模型，除非复杂模型有明显诊断或解释优势；可结合 MAE、Bias 和稳定性判断。
+</details>
+<ol start="4" type="1">
+<li>★★ 课件 CPI 中 ARMA(2,2) 相比均值预测没有压倒性优势，这是否说明 ARMA 无用？</li>
+</ol>
+<details>
+<summary>
+参考答案要点
+</summary>
+不是。ARMA 仍提供动态结构解释和诊断框架；预测优势取决于样本、变量处理和评价区间。
+</details>
+<ol start="5" type="1">
+<li>★★★ 综合题：给定一条月度金融变量序列，从原始数据到最终预测报告，列出完整操作步骤。</li>
+</ol>
+<details>
+<summary>
+参考答案要点
+</summary>
+整理时间索引；画图；必要时对数/差分/季调；画 ACF/PACF；设候选阶；估计 AR/MA/ARMA；比较 AIC/BIC；做 Ljung-Box 和残差图；滚动或留出样本预测；比较 RMSE/MAE/Bias；写经济解释。
+</details>
+<h2 id="外部资料来源">外部资料来源</h2>
+<ul>
+<li>Forecasting: Principles and Practice, ARIMA models: <a href="https://otexts.com/fpp3/arima.html" class="uri">https://otexts.com/fpp3/arima.html</a></li>
+<li>Stata Time-Series Reference Manual, ARIMA: <a href="https://www.stata.com/manuals/tsarima.pdf" class="uri">https://www.stata.com/manuals/tsarima.pdf</a></li>
+<li>statsmodels ARIMA documentation: <a href="https://www.statsmodels.org/stable/generated/statsmodels.tsa.arima.model.ARIMA.html" class="uri">https://www.statsmodels.org/stable/generated/statsmodels.tsa.arima.model.ARIMA.html</a></li>
+<li>statsmodels PACF documentation: <a href="https://www.statsmodels.org/stable/generated/statsmodels.tsa.stattools.pacf.html" class="uri">https://www.statsmodels.org/stable/generated/statsmodels.tsa.stattools.pacf.html</a></li>
+<li>statsmodels SARIMAX FAQ: <a href="https://www.statsmodels.org/stable/examples/notebooks/generated/statespace_sarimax_faq.html" class="uri">https://www.statsmodels.org/stable/examples/notebooks/generated/statespace_sarimax_faq.html</a></li>
+<li>NIST/SEMATECH e-Handbook, time series: <a href="https://www.itl.nist.gov/div898/handbook/pmc/section4/pmc4.htm" class="uri">https://www.itl.nist.gov/div898/handbook/pmc/section4/pmc4.htm</a></li>
+<li>国家统计局数据平台: <a href="https://data.stats.gov.cn/" class="uri">https://data.stats.gov.cn/</a></li>
+</ul>
+</article>
+    </main>
+  </div>
+  <script>
+    const root = document.documentElement;
+    const saved = localStorage.getItem('review-theme');
+    if (saved) root.dataset.theme = saved;
+    document.getElementById('theme-toggle').addEventListener('click', () => {
+      const next = root.dataset.theme === 'dark' ? '' : 'dark';
+      if (next) {
+        root.dataset.theme = next;
+        localStorage.setItem('review-theme', next);
+      } else {
+        delete root.dataset.theme;
+        localStorage.removeItem('review-theme');
+      }
+    });
+  </script>
+</body>
+</html>

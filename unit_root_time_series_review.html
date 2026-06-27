@@ -1,0 +1,1524 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>第3章 单位根时间序列模型：超级详细复习材料</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"></script>
+  <style>
+    :root {
+      color-scheme: light dark;
+      --bg: #f6f7f4;
+      --paper: #ffffff;
+      --ink: #202328;
+      --muted: #5f6874;
+      --line: #d8ded8;
+      --accent: #0f766e;
+      --accent-2: #9a3412;
+      --code: #edf2ef;
+      --shadow: 0 18px 50px rgba(35, 45, 55, .08);
+    }
+    body.dark {
+      --bg: #151a1d;
+      --paper: #1f2529;
+      --ink: #eceff1;
+      --muted: #b7c0c6;
+      --line: #3b464b;
+      --accent: #5eead4;
+      --accent-2: #fdba74;
+      --code: #111719;
+      --shadow: none;
+    }
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      background: var(--bg);
+      color: var(--ink);
+      font-family: "Noto Serif SC", "Songti SC", "STSong", Georgia, serif;
+      line-height: 1.76;
+      letter-spacing: 0;
+    }
+    .layout {
+      display: grid;
+      grid-template-columns: 284px minmax(0, 1fr);
+      min-height: 100vh;
+    }
+    aside {
+      position: sticky;
+      top: 0;
+      height: 100vh;
+      overflow: auto;
+      border-right: 1px solid var(--line);
+      background: color-mix(in srgb, var(--paper) 88%, var(--bg));
+      padding: 22px 18px;
+    }
+    .brand {
+      font-family: "Noto Sans SC", system-ui, sans-serif;
+      font-size: 15px;
+      font-weight: 800;
+      line-height: 1.35;
+      margin-bottom: 16px;
+    }
+    .controls {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 18px;
+    }
+    button {
+      border: 1px solid var(--line);
+      background: var(--paper);
+      color: var(--ink);
+      border-radius: 8px;
+      padding: 7px 10px;
+      cursor: pointer;
+      font-size: 13px;
+      font-family: "Noto Sans SC", system-ui, sans-serif;
+    }
+    nav a {
+      display: block;
+      color: var(--muted);
+      text-decoration: none;
+      font-size: 13px;
+      line-height: 1.42;
+      padding: 8px 6px;
+      border-left: 3px solid transparent;
+      font-family: "Noto Sans SC", system-ui, sans-serif;
+    }
+    nav a:hover {
+      color: var(--accent);
+      border-left-color: var(--accent);
+      background: color-mix(in srgb, var(--accent) 10%, transparent);
+    }
+    main {
+      width: min(100%, 1120px);
+      padding: 42px clamp(18px, 5vw, 68px) 80px;
+      min-width: 0;
+    }
+    article {
+      background: var(--paper);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      box-shadow: var(--shadow);
+      padding: clamp(24px, 4vw, 56px);
+      max-width: 100%;
+      min-width: 0;
+      overflow-x: hidden;
+      overflow-wrap: break-word;
+    }
+    h1, h2, h3, h4 {
+      font-family: "Noto Sans SC", "PingFang SC", system-ui, sans-serif;
+      line-height: 1.25;
+      letter-spacing: 0;
+      scroll-margin-top: 20px;
+    }
+    h1 {
+      font-size: 32px;
+      margin: 0 0 22px;
+      border-bottom: 2px solid var(--line);
+      padding-bottom: 18px;
+    }
+    h2 {
+      font-size: 24px;
+      margin: 46px 0 18px;
+      padding-top: 18px;
+      border-top: 1px solid var(--line);
+      color: var(--accent);
+    }
+    h3 {
+      font-size: 18px;
+      margin: 28px 0 12px;
+      color: var(--accent-2);
+    }
+    h4 { font-size: 16px; margin: 20px 0 10px; }
+    p, li { font-size: 16px; }
+    p { margin: 12px 0; }
+    ul { padding-left: 1.25rem; margin: 10px 0 16px; }
+    li { margin: 7px 0; }
+    blockquote {
+      margin: 16px 0;
+      border-left: 4px solid var(--accent);
+      padding: 10px 16px;
+      background: color-mix(in srgb, var(--accent) 9%, transparent);
+      color: var(--muted);
+      overflow-wrap: anywhere;
+    }
+    .math-block {
+      overflow-x: auto;
+      overflow-y: hidden;
+      max-width: 100%;
+      padding: 10px 0;
+    }
+    .katex-display {
+      max-width: 100%;
+      overflow-x: auto;
+      overflow-y: hidden;
+      padding-bottom: 2px;
+    }
+    pre {
+      overflow-x: auto;
+      max-width: 100%;
+      background: var(--code);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 16px;
+      line-height: 1.55;
+    }
+    code {
+      font-family: "SFMono-Regular", Consolas, monospace;
+      font-size: .92em;
+      background: var(--code);
+      padding: .12em .35em;
+      border-radius: 5px;
+      overflow-wrap: anywhere;
+      word-break: break-word;
+    }
+    pre code { padding: 0; background: transparent; }
+    details {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 10px 14px;
+      margin: 8px 0 18px;
+      background: color-mix(in srgb, var(--paper) 82%, var(--bg));
+    }
+    summary {
+      cursor: pointer;
+      font-family: "Noto Sans SC", system-ui, sans-serif;
+      font-weight: 700;
+      color: var(--accent);
+    }
+    .table-wrap { overflow-x: auto; margin: 14px 0 20px; }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 15px;
+      font-family: "Noto Sans SC", system-ui, sans-serif;
+    }
+    th, td {
+      border: 1px solid var(--line);
+      padding: 10px 12px;
+      vertical-align: top;
+    }
+    th { background: color-mix(in srgb, var(--accent) 12%, transparent); }
+    a { color: var(--accent); }
+    @media (max-width: 900px) {
+      .layout { display: block; }
+      aside {
+        position: relative;
+        height: auto;
+        border-right: 0;
+        border-bottom: 1px solid var(--line);
+      }
+      nav {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+        gap: 2px 8px;
+      }
+      main { padding: 18px 12px 48px; }
+      article { padding: 20px 16px; }
+      h1 { font-size: 25px; }
+      h2 { font-size: 21px; }
+    }
+    @media print {
+      body { background: #fff; color: #000; }
+      .layout { display: block; }
+      aside { display: none; }
+      main { width: 100%; padding: 0; }
+      article { border: 0; box-shadow: none; padding: 0; }
+      h2, h3 { break-after: avoid; }
+      details { break-inside: avoid; }
+      a { color: #000; text-decoration: underline; }
+    }
+  </style>
+</head>
+<body>
+  <div class="layout">
+    <aside>
+      <div class="brand">第3章<br>单位根时间序列模型</div>
+      <div class="controls">
+        <button type="button" onclick="document.body.classList.toggle('dark')" title="切换深色模式">◐</button>
+        <button type="button" onclick="window.print()" title="打印或保存 PDF">⌘P</button>
+      </div>
+      <nav><a href="#section-0">§0 开场总览：本章到底在解决什么问题？ ★★★ 核心</a>
+<a href="#section-1">§1 时间趋势模型：确定性趋势也会改变 OLS 收敛速度 ★★</a>
+<a href="#section-2">§2 随机游走与单位根：随机趋势的经济直觉 ★★★ 核心</a>
+<a href="#section-3">§3 AR(1) 推断：平稳、单位根与爆炸的分水岭 ★★★</a>
+<a href="#section-4">§4 标准布朗运动与泛函中心极限定理 ★★★ 核心</a>
+<a href="#section-5">§5 随机游走的五个核心泛函极限 ★★★</a>
+<a href="#section-6">§6 Dickey-Fuller 极限分布：为什么不能查普通 t 表？ ★★★ 核心</a>
+<a href="#section-7">§7 单位根检验四种情形：截距、漂移和趋势如何选择 ★★★</a>
+<a href="#section-8">§8 扰动项相关时的修正：Phillips-Perron 与 ADF ★★★</a>
+<a href="#section-9">§9 其他单位根检验：高阶自相关与 Portmanteau 思路 ★</a>
+<a href="#section-10">§10 实证流程：以 S&amp;P500 对数指数为例 ★★★</a>
+<a href="#section-11">§11 爆炸过程：$\rho&gt;1$ 时为什么会出现柯西极限 ★★</a></nav>
+    </aside>
+    <main>
+      <article><h1 id="3">第3章 单位根时间序列模型：超级无敌详细版复习材料</h1>
+<p>开场谜题：为什么同样是 OLS，平稳 AR(1) 中 $\sqrt{T}(\hat\rho-\rho)$ 服从正态分布；一旦 $\rho=1$，却要看 $T(\hat\rho-1)$，而且极限分布还变成了布朗运动泛函？</p>
+<p>章节主线一句话：本章的核心不是“背几个单位根检验命令”，而是理解随机趋势会改变样本矩阵的阶数、估计量收敛速度和检验统计量分布，因此单位根检验必须使用专门的临界值与建模情形。</p>
+<p>方法谱系：</p>
+<div class="math-block">$$
+\text{白噪声/鞅差}
+\rightarrow \text{随机游走}
+\rightarrow \text{布朗运动与 FCLT}
+\rightarrow \text{DF 非标准极限}
+\rightarrow \text{ADF/PP 修正}
+\rightarrow \text{实证单位根判断}
+$$</div>
+<blockquote>依据：<code>intermediates/unit_root_time_series/chapter_md/unit_root_time_series.md</code> 的 PPTX 文本抽取稿。抽取稿中有若干公式因 PPTX XML 转换而连写，本稿重新排成 LaTeX，并用原意重讲，不复制课件原文。</blockquote>
+<h2 id="section-0">§0 开场总览：本章到底在解决什么问题？ ★★★ 核心</h2>
+<h3 id="h-7">脉络梳理</h3>
+<p>本章看起来在讲“单位根检验”，但真正的主线是：时间序列只要带有强持续性，传统回归里熟悉的 $\sqrt{T}$ 正态近似就会失效。一个最小二乘估计量的极限分布，取决于样本矩阵 $\sum x_t x_t&#x27;$ 的增长速度，也取决于误差项累计之后是不是变成了随机游走。单位根模型的难点，不在于写出 $y_t=y_{t-1}+u_t$，而在于理解为什么这个模型让分母从 $O_p(T)$ 变成 $O_p(T^2)$，让分子从 $O_p(\sqrt{T})$ 变成 $O_p(T)$，于是 $\hat\rho-1$ 的速度从 $T^{-1/2}$ 改成 $T^{-1}$。</p>
+<p>本章可以按四层来记。第一层是确定性趋势：哪怕误差是白噪声，只要回归里有时间趋势 $t$，截距和斜率的收敛速度就不同。第二层是随机趋势：随机游走的方差随时间线性增加，序列没有固定均值，冲击具有永久效应。第三层是极限工具：部分和过程收敛到布朗运动，所以估计量极限不再是普通正态，而是布朗运动的函数。第四层是检验落地：DF、ADF、PP 以及四种截距/趋势情形，都是为了在不同数据生成机制下正确检验 $H_0:\rho=1$。</p>
+<h3 id="h-10">重点内容申明</h3>
+<p>最重要的一句话：单位根检验不是检验“序列看起来有没有趋势”，而是检验“序列中的冲击是否具有永久影响”。确定性趋势和随机趋势都能让图形上升，但含义完全不同。若</p>
+<div class="math-block">$$
+y_t=\alpha+\delta t+\varepsilon_t,
+$$</div>
+<p>冲击 $\varepsilon_t$ 只影响当期，偏离趋势后会回到趋势线；若</p>
+<div class="math-block">$$
+y_t=y_{t-1}+u_t,
+$$</div>
+<p>则</p>
+<div class="math-block">$$
+y_t=y_0+\sum_{j=1}^t u_j,
+$$</div>
+<p>每一次冲击都会进入之后所有时期的水平值。前者是确定性趋势，后者是随机趋势。单位根检验的本质就是区分这两种趋势来源。</p>
+<p>本章所有推导都围绕一个 OLS 分式：</p>
+<div class="math-block">$$
+\hat\rho-\rho
+=
+\frac{\sum_{t=1}^T y_{t-1}u_t}
+{\sum_{t=1}^T y_{t-1}^2}.
+$$</div>
+<p>若 $|\rho|&lt;1$，$y_{t-1}$ 是平稳变量，$\sum y_{t-1}^2$ 大约是 $T$ 倍常数，$\sum y_{t-1}u_t$ 大约是 $\sqrt{T}$，所以 $\hat\rho-\rho=O_p(T^{-1/2})$。若 $\rho=1$，$y_{t-1}$ 是随机游走，典型大小是 $\sqrt{t}$，于是 $\sum y_{t-1}^2$ 大约是 $T^2$，$\sum y_{t-1}u_t$ 大约是 $T$，所以 $\hat\rho-1=O_p(T^{-1})$。这个“分子分母阶数变化”就是全章的发动机。</p>
+<p>考试高频误区有四个。第一，把“拒绝单位根”误读成“序列没有趋势”。拒绝单位根只说明随机趋势证据不足，仍可能有确定性趋势。第二，把 ADF 的 p 值当普通 t 检验 p 值理解。ADF 的临界值来自 Dickey-Fuller 非标准分布，不是 Student t 表。第三，看到 ACF 缓慢衰减就直接说单位根。确定性趋势也会造成样本 ACF 高持续，必须结合趋势项、差分和残差诊断。第四，在实证里随便选“无截距/有截距/有趋势”。不同情形的临界值不同，选择错误会改变检验结论。</p>
+<h3 id="h-22">习题</h3>
+<ul>
+<li>★ 用一句话区分“确定性趋势”和“随机趋势”，并各写一个模型。</li>
+</ul>
+<details><summary>参考答案要点</summary>
+<p>确定性趋势如 $y_t=\alpha+\delta t+\varepsilon_t$，冲击只造成暂时偏离；随机趋势如 $y_t=y_{t-1}+u_t$，冲击进入之后所有水平值。关键是冲击是否具有永久效应。</p>
+</details>
+<ul>
+<li>★ 为什么单位根检验不能只看时间序列图？</li>
+</ul>
+<details><summary>参考答案要点</summary>
+<p>上升图形既可能来自确定性趋势，也可能来自带漂移随机游走；ACF 缓慢衰减也可能受趋势项影响。必须结合模型设定、检验统计量和残差诊断。</p>
+</details>
+<ul>
+<li>★★ 说明为什么 $\hat\rho-\rho=(\sum y_{t-1}u_t)/(\sum y_{t-1}^2)$ 是本章最核心的分式。</li>
+</ul>
+<details><summary>参考答案要点</summary>
+<p>所有渐近差异来自分子、分母阶数变化。平稳时分母 $O_p(T)$、分子 $O_p(\sqrt T)$；单位根时分母 $O_p(T^2)$、分子 $O_p(T)$。</p>
+</details>
+<ul>
+<li>★★ 若一个变量未拒绝单位根，能否说它“一定不平稳”？请给出严谨表述。</li>
+</ul>
+<details><summary>参考答案要点</summary>
+<p>不能。严谨表述是：在给定确定性项、滞后阶和检验方法下，样本证据不足以拒绝单位根原假设。检验功效、样本长度和模型设定都会影响结论。</p>
+</details>
+<ul>
+<li>★★★ 外部题源扩展：阅读 Dickey-Fuller 经典论文摘要，解释它为什么要给出新的分布表，而不是使用普通 t 表。来源：https://www.jstor.org/stable/2286348</li>
+</ul>
+<details><summary>参考答案要点</summary>
+<p>因为原假设下解释变量为单位根过程，OLS t 统计量极限是布朗运动泛函，不是普通 t/正态分布；新临界值服务于单位根原假设下的非标准分布。</p>
+</details>
+<h2 id="section-1">§1 时间趋势模型：确定性趋势也会改变 OLS 收敛速度 ★★</h2>
+<h3 id="h-54">脉络梳理</h3>
+<p>PPT 一开始先补充时间趋势模型，是为了让你提前接受一个观念：非平稳问题不是从单位根才开始的。即便误差是最简单的白噪声，只要解释变量含有 $t$，样本矩阵就不再像平稳回归那样以同一个速度增长。时间趋势项的平方和是 $\sum t^2=O(T^3)$，而截距项的平方和只有 $O(T)$。因此，同一个回归中的两个参数会有不同的收敛速度。</p>
+<p>考虑</p>
+<div class="math-block">$$
+y_t=\alpha+\delta t+\varepsilon_t,\qquad E(\varepsilon_t)=0,\quad Var(\varepsilon_t)=\sigma^2.
+$$</div>
+<p>写成矩阵形式，令 $x_t=(1,t)&#x27;$、$\beta=(\alpha,\delta)&#x27;$，则</p>
+<div class="math-block">$$
+\hat\beta-\beta
+=
+\left(\sum_{t=1}^T x_tx_t'\right)^{-1}
+\sum_{t=1}^T x_t\varepsilon_t.
+$$</div>
+<p>这里的关键不是会不会写 OLS，而是看清楚 $\sum x_tx_t&#x27;$ 的阶数结构。</p>
+<h3 id="h-61">重点内容申明</h3>
+<p>先算样本矩阵：</p>
+<div class="math-block">$$
+\sum_{t=1}^T x_tx_t'
+=
+\begin{pmatrix}
+\sum 1 & \sum t\\
+\sum t & \sum t^2
+\end{pmatrix}
+=
+\begin{pmatrix}
+T & T(T+1)/2\\
+T(T+1)/2 & T(T+1)(2T+1)/6
+\end{pmatrix}.
+$$</div>
+<p>如果用 $T$ 去除整个矩阵，右下角仍然发散；如果用 $T^3$ 去除整个矩阵，左上角又退化为 0。解决方法是对不同参数分别缩放。令</p>
+<div class="math-block">$$
+D_T=
+\begin{pmatrix}
+T^{1/2} & 0\\
+0 & T^{3/2}
+\end{pmatrix}.
+$$</div>
+<p>则</p>
+<div class="math-block">$$
+D_T^{-1}\left(\sum_{t=1}^T x_tx_t'\right)D_T^{-1}
+\rightarrow
+Q
+=
+\begin{pmatrix}
+1 & 1/2\\
+1/2 & 1/3
+\end{pmatrix}.
+$$</div>
+<p>再看随机项：</p>
+<div class="math-block">$$
+D_T^{-1}\sum_{t=1}^T x_t\varepsilon_t
+=
+\begin{pmatrix}
+T^{-1/2}\sum_{t=1}^T\varepsilon_t\\
+T^{-3/2}\sum_{t=1}^T t\varepsilon_t
+\end{pmatrix}.
+$$</div>
+<p>第一项由普通中心极限定理给出正态极限。第二项看起来多了权重 $t$，但把 $t/T$ 看成 $[0,1]$ 上的确定性权重，就能用鞅差中心极限定理处理：</p>
+<div class="math-block">$$
+T^{-3/2}\sum_{t=1}^T t\varepsilon_t
+=
+T^{-1/2}\sum_{t=1}^T \frac{t}{T}\varepsilon_t
+\Rightarrow N(0,\sigma^2/3).
+$$</div>
+<p>两项的协方差极限是</p>
+<div class="math-block">$$
+Cov\left(T^{-1/2}\sum\varepsilon_t,\,
+T^{-3/2}\sum t\varepsilon_t\right)
+=
+\sigma^2 T^{-2}\sum t
+\rightarrow \sigma^2/2.
+$$</div>
+<p>所以向量极限为</p>
+<div class="math-block">$$
+D_T(\hat\beta-\beta)
+\Rightarrow
+N\left(0,\sigma^2 Q^{-1}\right),
+\qquad
+Q^{-1}=
+\begin{pmatrix}
+4 & -6\\
+-6 & 12
+\end{pmatrix}.
+$$</div>
+<p>直觉解释：斜率 $\delta$ 有更多信息，因为 $t$ 的范围从 1 拉到 $T$，后期观测对趋势斜率的识别力很强，所以 $\hat\delta-\delta=O_p(T^{-3/2})$，比普通回归快；截距仍是 $O_p(T^{-1/2})$。这就是“超一致”这个词在趋势斜率里的含义：不是魔法，而是解释变量本身随着样本量扩大而变得越来越分散。</p>
+<p>常考推导链如下：</p>
+<ul>
+<li>写 OLS：$\hat\beta-\beta=(X&#x27;X)^{-1}X&#x27;\varepsilon$。</li>
+<li>识别阶数：$\sum 1=O(T)$、$\sum t=O(T^2)$、$\sum t^2=O(T^3)$。</li>
+<li>设置缩放矩阵：$D_T=diag(T^{1/2},T^{3/2})$。</li>
+<li>得到非退化矩阵极限：$D_T^{-1}X&#x27;XD_T^{-1}\to Q$。</li>
+<li>对随机项用 CLT/鞅差 CLT。</li>
+<li>用 Slutsky 定理合成极限分布。</li>
+</ul>
+<p>这节为后面铺路：单位根模型的困难也是样本矩阵阶数异常，只不过异常来自随机趋势，而不是确定性时间趋势。</p>
+<h3 id="h-87">习题</h3>
+<ul>
+<li>★ 计算 $\sum_{t=1}^T t$ 与 $\sum_{t=1}^T t^2$ 的阶数。</li>
+</ul>
+<details><summary>参考答案要点</summary>
+<p>$\sum t=T(T+1)/2=O(T^2)$；$\sum t^2=T(T+1)(2T+1)/6=O(T^3)$。</p>
+</details>
+<ul>
+<li>★ 写出 $y_t=\alpha+\delta t+\varepsilon_t$ 的 $X&#x27;X$ 矩阵。</li>
+</ul>
+<details><summary>参考答案要点</summary>
+<p>$X&#x27;X=\begin{pmatrix}T&amp;\sum t\\ \sum t&amp;\sum t^2\end{pmatrix}$，代入求和公式即可。</p>
+</details>
+<ul>
+<li>★★ 为什么不能用同一个 $T$ 去标准化整个 $X&#x27;X$？</li>
+</ul>
+<details><summary>参考答案要点</summary>
+<p>左上角是 $O(T)$，右下角是 $O(T^3)$，同除以 $T$ 会让右下角发散；同除以 $T^3$ 会让左上角退化。需要参数分别缩放。</p>
+</details>
+<ul>
+<li>★★ 推导 $D_T^{-1}X&#x27;XD_T^{-1}\to Q$，其中 $D_T=diag(T^{1/2},T^{3/2})$。</li>
+</ul>
+<details><summary>参考答案要点</summary>
+<p>分别计算：$T^{-1}\sum1\to1$、$T^{-2}\sum t\to1/2$、$T^{-3}\sum t^2\to1/3$，组成 $Q=\begin{pmatrix}1&amp;1/2\\1/2&amp;1/3\end{pmatrix}$。</p>
+</details>
+<ul>
+<li>★★★ 解释为什么趋势斜率估计量比截距估计量收敛更快。</li>
+</ul>
+<details><summary>参考答案要点</summary>
+<p>时间趋势 $t$ 的样本离散度随 $T$ 增大而快速扩大，$\sum(t-\bar t)^2=O(T^3)$，因此斜率方差为 $O(T^{-3})$；截距仍主要是 $O(T^{-1})$。</p>
+</details>
+<ul>
+<li>★★★ 外部题源扩展：用 Stata 模拟 $y_t=1+0.02t+\varepsilon_t$，比较 $T=100$ 与 $T=1000$ 时斜率标准误变化。参考 <code>regress</code>/时间序列基础命令：https://www.stata.com/manuals/ts.pdf</li>
+</ul>
+<details><summary>参考答案要点</summary>
+<p>可循环模拟或手动两次设定样本量。预期斜率标准误大约按 $T^{-3/2}$ 缩小，比普通均值型参数更快。</p>
+</details>
+<h2 id="section-2">§2 随机游走与单位根：随机趋势的经济直觉 ★★★ 核心</h2>
+<h3 id="h-125">脉络梳理</h3>
+<p>单位根最简单的形式是随机游走：</p>
+<div class="math-block">$$
+y_t=y_{t-1}+u_t.
+$$</div>
+<p>它像一个位置不断被随机冲击推动的过程。如果 $u_t$ 是正的，今天的水平上升；而明天是在今天水平的基础上继续变化，所以今天的冲击会永久留在未来路径中。这与平稳 AR(1)</p>
+<div class="math-block">$$
+y_t=\rho y_{t-1}+u_t,\qquad |\rho|<1
+$$</div>
+<p>完全不同。平稳时一次冲击的影响是 $1,\rho,\rho^2,\ldots$，会几何衰减；单位根时 $\rho=1$，影响是 $1,1,1,\ldots$，不会衰减。</p>
+<h3 id="h-131">重点内容申明</h3>
+<p>随机游走可以展开为</p>
+<div class="math-block">$$
+y_t=y_0+\sum_{j=1}^t u_j.
+$$</div>
+<p>若 $u_j$ 是均值为 0、方差为 $\sigma^2$ 的独立白噪声，则</p>
+<div class="math-block">$$
+E(y_t)=y_0,\qquad Var(y_t)=t\sigma^2.
+$$</div>
+<p>方差随时间增长，说明序列没有固定的长期波动范围。它不是围绕某个均值上下波动，而是越走越散。换句话说，单位根过程没有均值回复。</p>
+<p>带漂移的随机游走是</p>
+<div class="math-block">$$
+y_t=\mu+y_{t-1}+u_t,
+$$</div>
+<p>展开后为</p>
+<div class="math-block">$$
+y_t=y_0+\mu t+\sum_{j=1}^t u_j.
+$$</div>
+<p>这时图形上会出现平均向上的线性趋势，但这条趋势并不是普通确定性趋势的全部。它由两部分组成：确定性的 $\mu t$ 和随机趋势 $\sum u_j$。实证中若只看图，确定性趋势和带漂移随机游走都可能像“上涨曲线”，所以必须用单位根检验、趋势项检验和残差诊断共同判断。</p>
+<p>经济含义可以这样记：</p>
+<ul>
+<li>股票价格近似随机游走：若收益率在给定信息下不可预测，则价格水平是鞅或近似鞅。</li>
+<li>消费随机游走假说：若理性预期和永久收入假说成立，消费变化不可由过去信息系统预测。</li>
+<li>宏观总量如 GDP、货币供给、价格指数常表现出强持续性，需要检验是否含单位根。</li>
+</ul>
+<p>单位根也可以用滞后算子理解。令 $L y_t=y_{t-1}$，AR(1) 写作</p>
+<div class="math-block">$$
+(1-\rho L)y_t=u_t.
+$$</div>
+<p>特征根视角中，平稳要求 $1-\rho z=0$ 的根在单位圆外，即 $z=1/\rho$ 满足 $|z|&gt;1$。当 $\rho=1$ 时，根正好等于 1，所以叫单位根。对随机游走做一阶差分：</p>
+<div class="math-block">$$
+\Delta y_t=y_t-y_{t-1}=u_t.
+$$</div>
+<p>差分后变成白噪声，因此随机游走是 $I(1)$；白噪声是 $I(0)$。考试里常把“单位根”“一阶单整”“差分平稳”联系起来考。</p>
+<h3 id="h-153">习题</h3>
+<ul>
+<li>★ 展开 $y_t=y_{t-1}+u_t$，并写出 $Var(y_t)$。</li>
+</ul>
+<details><summary>参考答案要点</summary>
+<p>$y_t=y_0+\sum_{j=1}^t u_j$；若 $u_j$ 独立同方差 $\sigma^2$，则 $Var(y_t)=t\sigma^2$。</p>
+</details>
+<ul>
+<li>★ 什么叫“冲击具有永久效应”？</li>
+</ul>
+<details><summary>参考答案要点</summary>
+<p>某期冲击进入 $y_t$ 后不会衰减，未来所有水平值都包含该冲击。随机游走中冲击系数序列为 $1,1,1,\ldots$。</p>
+</details>
+<ul>
+<li>★★ 比较 $y_t=0.8y_{t-1}+u_t$ 与 $y_t=y_{t-1}+u_t$ 的冲击响应。</li>
+</ul>
+<details><summary>参考答案要点</summary>
+<p>前者影响为 $1,0.8,0.8^2,\ldots$，逐渐消失；后者影响始终为 1，永久保留。</p>
+</details>
+<ul>
+<li>★★ 为什么带漂移随机游走和确定性趋势模型都可能画出上升曲线？</li>
+</ul>
+<details><summary>参考答案要点</summary>
+<p>带漂移随机游走含 $\mu t+\sum u_j$，确定性趋势模型含 $\delta t+\varepsilon_t$。二者都有线性上升成分，但前者还含随机趋势。</p>
+</details>
+<ul>
+<li>★★★ 若 $\Delta y_t$ 平稳而 $y_t$ 不平稳，应如何用 $I(d)$ 记号表达？</li>
+</ul>
+<details><summary>参考答案要点</summary>
+<p>$y_t$ 是一阶单整 $I(1)$，$\Delta y_t$ 是 $I(0)$。随机游走就是典型 $I(1)$ 过程。</p>
+</details>
+<ul>
+<li>★★★ 外部题源扩展：结合 Phillips-Perron 论文，说明为什么金融价格水平经常用单位根模型作为基准。来源：https://doi.org/10.1093/biomet/75.2.335</li>
+</ul>
+<details><summary>参考答案要点</summary>
+<p>金融价格常表现为高持续性，收益近似不可预测；价格水平可能含随机趋势。PP 的贡献是允许更一般的扰动项相关结构。</p>
+</details>
+<h2 id="section-3">§3 AR(1) 推断：平稳、单位根与爆炸的分水岭 ★★★</h2>
+<h3 id="h-191">脉络梳理</h3>
+<p>本章的核心模型是</p>
+<div class="math-block">$$
+y_t=\rho y_{t-1}+u_t,\qquad u_t\sim iid(0,\sigma^2).
+$$</div>
+<p>同一个公式因为 $\rho$ 的位置不同，会产生三种完全不同的世界：</p>
+<div class="math-block">$$
+|\rho|<1:\text{平稳};\qquad
+\rho=1:\text{单位根};\qquad
+\rho>1:\text{爆炸}.
+$$</div>
+<p>OLS 估计量为</p>
+<div class="math-block">$$
+\hat\rho
+=
+\frac{\sum_{t=1}^T y_{t-1}y_t}
+{\sum_{t=1}^T y_{t-1}^2}
+=
+\rho+
+\frac{\sum_{t=1}^T y_{t-1}u_t}
+{\sum_{t=1}^T y_{t-1}^2}.
+$$</div>
+<p>接下来所有推断都在比较分子和分母的数量级。</p>
+<h3 id="h-199">重点内容申明</h3>
+<p>平稳情形 $|\rho|&lt;1$ 下，$y_t$ 有有限方差：</p>
+<div class="math-block">$$
+Var(y_t)=\frac{\sigma^2}{1-\rho^2}.
+$$</div>
+<p>因此</p>
+<div class="math-block">$$
+\frac{1}{T}\sum y_{t-1}^2
+\xrightarrow{p}
+\frac{\sigma^2}{1-\rho^2},
+$$</div>
+<p>而</p>
+<div class="math-block">$$
+\frac{1}{\sqrt{T}}\sum y_{t-1}u_t
+\Rightarrow
+N\left(0,\frac{\sigma^4}{1-\rho^2}\right).
+$$</div>
+<p>所以</p>
+<div class="math-block">$$
+\sqrt{T}(\hat\rho-\rho)
+\Rightarrow
+N(0,1-\rho^2).
+$$</div>
+<p>单位根情形 $\rho=1$ 下，$y_t=\sum_{j=1}^t u_j$，典型大小是 $O_p(\sqrt{t})$。分母的期望阶数变成</p>
+<div class="math-block">$$
+E\left(\sum_{t=1}^T y_{t-1}^2\right)
+=
+\sigma^2\sum_{t=1}^T(t-1)
+=
+O(T^2).
+$$</div>
+<p>分子可用恒等式处理：</p>
+<div class="math-block">$$
+y_t^2=(y_{t-1}+u_t)^2
+=y_{t-1}^2+2y_{t-1}u_t+u_t^2.
+$$</div>
+<p>移项得</p>
+<div class="math-block">$$
+y_{t-1}u_t
+=\frac{1}{2}(y_t^2-y_{t-1}^2-u_t^2).
+$$</div>
+<p>求和后望文生义地“望远镜相消”：</p>
+<div class="math-block">$$
+\sum_{t=1}^T y_{t-1}u_t
+=
+\frac{1}{2}(y_T^2-y_0^2)
+-\frac{1}{2}\sum_{t=1}^T u_t^2.
+$$</div>
+<p>若 $y_0=0$，两项都是 $O_p(T)$，所以分子是 $O_p(T)$。最终</p>
+<div class="math-block">$$
+\hat\rho-1=O_p(T^{-1}),
+$$</div>
+<p>速度比平稳情形更快，但极限分布不是正态。这个“更快但更怪”的组合特别容易考：单位根下估计量对 1 是超一致的，但常规 t 检验无效。</p>
+<p>爆炸情形 $\rho&gt;1$ 暂时只需记直觉：$y_t$ 近似按 $\rho^t$ 增长，样本后端观测支配整个估计量，极限中会出现两个正态变量之比，因此出现柯西分布。它是本章“仅作了解”的部分，但能帮助你理解 AR 根的位置为何重要。</p>
+<h3 id="h-220">习题</h3>
+<ul>
+<li>★ 写出 AR(1) 的 OLS 估计量 $\hat\rho$。</li>
+</ul>
+<details><summary>参考答案要点</summary>
+<p>$\hat\rho=\frac{\sum y_{t-1}y_t}{\sum y_{t-1}^2}$，代入 $y_t=\rho y_{t-1}+u_t$ 得误差分式。</p>
+</details>
+<ul>
+<li>★ 平稳 AR(1) 中 $\sqrt T(\hat\rho-\rho)$ 的极限方差是什么？</li>
+</ul>
+<details><summary>参考答案要点</summary>
+<p>在无截距、iid 同方差设定下，$\sqrt T(\hat\rho-\rho)\Rightarrow N(0,1-\rho^2)$。</p>
+</details>
+<ul>
+<li>★★ 用阶数解释为什么单位根下 $\hat\rho-1=O_p(T^{-1})$。</li>
+</ul>
+<details><summary>参考答案要点</summary>
+<p>单位根下 $y_t=O_p(\sqrt t)$，因此 $\sum y_{t-1}^2=O_p(T^2)$；由恒等式可知 $\sum y_{t-1}u_t=O_p(T)$，所以比值为 $O_p(T^{-1})$。</p>
+</details>
+<ul>
+<li>★★ 推导 $\sum y_{t-1}u_t=\frac12(y_T^2-y_0^2)-\frac12\sum u_t^2$。</li>
+</ul>
+<details><summary>参考答案要点</summary>
+<p>从 $y_t=y_{t-1}+u_t$ 平方开始，移项得到 $2y_{t-1}u_t=y_t^2-y_{t-1}^2-u_t^2$，再对 $t$ 求和。</p>
+</details>
+<ul>
+<li>★★★ 为什么“单位根下估计量收敛更快”不代表“普通推断更可靠”？</li>
+</ul>
+<details><summary>参考答案要点</summary>
+<p>虽然速度是 $T^{-1}$，但极限分布是非标准布朗运动泛函，普通标准误和 t 临界值不适用。</p>
+</details>
+<ul>
+<li>★★★ 外部题源扩展：用 Stata 模拟 $\rho=0.8,1,1.02$ 三种 AR(1)，比较路径图。参考 Stata 时间序列手册：https://www.stata.com/manuals/ts.pdf</li>
+</ul>
+<details><summary>参考答案要点</summary>
+<p>$0.8$ 围绕均值波动；$1$ 漫游且方差扩大；$1.02$ 后期爆炸增长。图形对应平稳、单位根、爆炸三类。</p>
+</details>
+<h2 id="section-4">§4 标准布朗运动与泛函中心极限定理 ★★★ 核心</h2>
+<h3 id="h-258">脉络梳理</h3>
+<p>为什么单位根极限分布会出现布朗运动？因为随机游走是误差项的部分和，而部分和过程在适当标准化后会整体收敛到布朗运动。普通中心极限定理只告诉你终点 $\sum_{t=1}^T u_t$ 的分布；单位根回归需要整个路径，因为分母包含 $\sum y_{t-1}^2$，相当于把随机游走路径在 $[0,1]$ 上平方后积分。</p>
+<h3 id="h-260">重点内容申明</h3>
+<p>标准布朗运动 $W(r)$，$0\le r\le 1$，满足三件事：</p>
+<ul>
+<li>$W(0)=0$。</li>
+<li>对 $0\le r&lt;s\le1$，增量 $W(s)-W(r)\sim N(0,s-r)$，不重叠区间的增量相互独立。</li>
+<li>路径连续。</li>
+</ul>
+<p>它可以看成越来越细的随机游走极限。把一个时期的冲击拆成 $N$ 个独立小冲击，每个方差是 $1/N$，总方差仍是 1；当 $N\to\infty$，离散路径变成连续路径。</p>
+<p>泛函中心极限定理可以写成：</p>
+<div class="math-block">$$
+S_T(r)
+=
+\frac{1}{\sigma\sqrt{T}}
+\sum_{t=1}^{\lfloor Tr\rfloor}u_t
+\Rightarrow W(r),\qquad 0\le r\le1.
+$$</div>
+<p>这里的 $\Rightarrow$ 不是单点收敛，而是函数路径的弱收敛。普通 CLT 是它在 $r=1$ 的特例：</p>
+<div class="math-block">$$
+S_T(1)=\frac{1}{\sigma\sqrt{T}}\sum_{t=1}^T u_t
+\Rightarrow W(1)\sim N(0,1).
+$$</div>
+<p>泛函连续映射定理说：如果 $S_T(\cdot)\Rightarrow W(\cdot)$，而 $g$ 是连续泛函，则</p>
+<div class="math-block">$$
+g(S_T)\Rightarrow g(W).
+$$</div>
+<p>本章最常用的泛函有三个：</p>
+<div class="math-block">$$
+g_1(x)=x(1)^2,\qquad
+g_2(x)=\int_0^1 x(r)\,dr,\qquad
+g_3(x)=\int_0^1 x(r)^2\,dr.
+$$</div>
+<p>所以单位根推断中的奇怪形式，例如 $\int_0^1W(r)^2dr$、$W(1)^2-1$，都不是凭空冒出来的，而是随机游走路径经过平方、积分、终点取值等操作后产生的。</p>
+<p>记忆建议：布朗运动在本章里不是随机过程课的独立知识点，而是“随机游走标准化后的极限记号”。看到 $\sum y_{t-1}$、$\sum y_{t-1}^2$、$\sum y_{t-1}u_t$，就要想到它们分别对应 $\int W$、$\int W^2$、$\frac12(W(1)^2-1)$。</p>
+<h3 id="h-278">习题</h3>
+<ul>
+<li>★ 写出标准布朗运动的三个定义性质。</li>
+</ul>
+<details><summary>参考答案要点</summary>
+<p>$W(0)=0$；独立正态增量，$W(s)-W(r)\sim N(0,s-r)$；路径连续。</p>
+</details>
+<ul>
+<li>★ 普通 CLT 和 FCLT 的区别是什么？</li>
+</ul>
+<details><summary>参考答案要点</summary>
+<p>普通 CLT 看终点的样本和；FCLT 看整个部分和路径在函数空间中的收敛。</p>
+</details>
+<ul>
+<li>★★ 解释 $S_T(r)=\frac{1}{\sigma\sqrt T}\sum_{t=1}^{\lfloor Tr\rfloor}u_t\Rightarrow W(r)$ 的含义。</li>
+</ul>
+<details><summary>参考答案要点</summary>
+<p>任意样本前 $r$ 比例的累计冲击，经过标准化后形成一条阶跃路径；这条路径整体收敛为布朗运动。</p>
+</details>
+<ul>
+<li>★★ 为什么 $\int_0^1W(r)^2dr$ 会出现在单位根回归中？</li>
+</ul>
+<details><summary>参考答案要点</summary>
+<p>因为分母 $\sum y_{t-1}^2$ 是随机游走路径平方的求和，标准化后变成布朗运动平方的积分。</p>
+</details>
+<ul>
+<li>★★★ 用连续映射定理说明 $S_T(\cdot)\Rightarrow W(\cdot)$ 如何推出 $\int S_T(r)^2dr\Rightarrow\int W(r)^2dr$。</li>
+</ul>
+<details><summary>参考答案要点</summary>
+<p>平方积分是路径空间上的连续泛函，在适当拓扑和连续极限路径下可使用连续映射定理。</p>
+</details>
+<ul>
+<li>★★★ 外部题源扩展：查阅任意一本时间序列教材的 Brownian motion/FCLT 章节，解释为什么单位根理论常使用 $[0,1]$ 区间而不是 $[0,T]$。可参考 Hamilton 教材页面信息：https://press.princeton.edu/books/hardcover/9780691042893/time-series-analysis</li>
+</ul>
+<details><summary>参考答案要点</summary>
+<p>将日历时间缩放为样本比例 $r=t/T$，使不同样本量的路径都落在固定区间 $[0,1]$，便于讨论函数极限。</p>
+</details>
+<h2 id="section-5">§5 随机游走的五个核心泛函极限 ★★★</h2>
+<h3 id="h-316">脉络梳理</h3>
+<p>这一节是连接 FCLT 和 DF 分布的桥。设</p>
+<div class="math-block">$$
+y_t=y_{t-1}+u_t,\qquad y_0=0,\qquad E(u_t)=0,\quad Var(u_t)=\sigma^2.
+$$</div>
+<p>因为</p>
+<div class="math-block">$$
+\frac{y_{\lfloor Tr\rfloor}}{\sigma\sqrt{T}}
+=
+\frac{1}{\sigma\sqrt{T}}\sum_{j=1}^{\lfloor Tr\rfloor}u_j
+\Rightarrow W(r),
+$$</div>
+<p>所以 $y_t$ 的求和、平方求和、与 $u_t$ 的乘积都可以被翻译成布朗运动泛函。</p>
+<h3 id="h-322">重点内容申明</h3>
+<p>结论一：路径本身的极限。</p>
+<div class="math-block">$$
+\frac{y_{\lfloor Tr\rfloor}}{\sigma\sqrt{T}}
+\Rightarrow W(r).
+$$</div>
+<p>这说明 $y_t$ 的自然尺度是 $\sqrt{T}$。</p>
+<p>结论二：一次求和对应布朗运动积分。</p>
+<div class="math-block">$$
+T^{-3/2}\sum_{t=1}^T y_{t-1}
+\Rightarrow
+\sigma\int_0^1 W(r)\,dr.
+$$</div>
+<p>为什么是 $T^{-3/2}$？因为每个 $y_{t-1}$ 大小约为 $\sqrt{T}$，一共 $T$ 项，所以总量是 $T^{3/2}$。积分来自 Riemann 和：</p>
+<div class="math-block">$$
+T^{-3/2}\sum y_{t-1}
+=
+\sigma\frac{1}{T}\sum
+\frac{y_{t-1}}{\sigma\sqrt{T}}
+\approx
+\sigma\int_0^1W(r)\,dr.
+$$</div>
+<p>结论三：带时间权重的误差和。</p>
+<p>由恒等式</p>
+<div class="math-block">$$
+\sum_{t=1}^T y_{t-1}
+=
+\sum_{t=1}^T (T-t)u_t
+=
+T\sum u_t-\sum t u_t
+$$</div>
+<p>可得</p>
+<div class="math-block">$$
+T^{-3/2}\sum_{t=1}^T t u_t
+\Rightarrow
+\sigma W(1)-\sigma\int_0^1W(r)\,dr.
+$$</div>
+<p>这解释了时间趋势模型里加权误差和为什么也有非普通形式。</p>
+<p>结论四：平方和对应 $\int W^2$。</p>
+<div class="math-block">$$
+T^{-2}\sum_{t=1}^T y_{t-1}^2
+\Rightarrow
+\sigma^2\int_0^1 W(r)^2\,dr.
+$$</div>
+<p>这是 DF 分布分母的来源。注意分母不是收敛到常数，而是收敛到随机变量，所以估计量极限会是“随机变量除以随机变量”。</p>
+<p>结论五：交叉和对应终点平方。</p>
+<p>利用</p>
+<div class="math-block">$$
+y_{t-1}u_t=\frac12(y_t^2-y_{t-1}^2-u_t^2),
+$$</div>
+<p>求和并除以 $T$：</p>
+<div class="math-block">$$
+T^{-1}\sum_{t=1}^T y_{t-1}u_t
+=
+\frac12\frac{y_T^2}{T}
+-\frac12\frac{1}{T}\sum_{t=1}^T u_t^2
++o_p(1).
+$$</div>
+<p>由 FCLT 与大数定律，</p>
+<div class="math-block">$$
+\frac{y_T^2}{T}\Rightarrow \sigma^2W(1)^2,\qquad
+\frac1T\sum u_t^2\xrightarrow{p}\sigma^2.
+$$</div>
+<p>因此</p>
+<div class="math-block">$$
+T^{-1}\sum_{t=1}^T y_{t-1}u_t
+\Rightarrow
+\frac{\sigma^2}{2}\{W(1)^2-1\}.
+$$</div>
+<p>这五个结论背下来很有用，但更重要的是知道每个式子为什么要这样缩放。考推导时不要直接从结果跳到结果，要先说明 $y_t$ 的尺度是 $\sqrt{T}$，再把求和写成 Riemann 和或望远镜恒等式。</p>
+<h3 id="h-349">习题</h3>
+<ul>
+<li>★ 为什么 $y_t$ 的自然尺度是 $\sqrt T$？</li>
+</ul>
+<details><summary>参考答案要点</summary>
+<p>随机游走是 $t$ 个冲击的和，方差为 $t\sigma^2$，样本末端标准差约为 $\sigma\sqrt T$。</p>
+</details>
+<ul>
+<li>★★ 推导 $T^{-3/2}\sum y_{t-1}\Rightarrow\sigma\int W$ 的缩放理由。</li>
+</ul>
+<details><summary>参考答案要点</summary>
+<p>每项 $y_{t-1}=O_p(\sqrt T)$，共有 $T$ 项，所以总和 $O_p(T^{3/2})$；再把求和看成 Riemann 和。</p>
+</details>
+<ul>
+<li>★★ 推导 $T^{-2}\sum y_{t-1}^2\Rightarrow\sigma^2\int W^2$。</li>
+</ul>
+<details><summary>参考答案要点</summary>
+<p>$y_{t-1}^2$ 典型大小 $O_p(T)$，总和 $O_p(T^2)$；标准化后为 $\sigma^2 T^{-1}\sum (y_{t-1}/\sigma\sqrt T)^2$，收敛到平方积分。</p>
+</details>
+<ul>
+<li>★★★ 使用望远镜恒等式推导 $T^{-1}\sum y_{t-1}u_t$ 的极限。</li>
+</ul>
+<details><summary>参考答案要点</summary>
+<p>写成 $\frac12 y_T^2/T-\frac12T^{-1}\sum u_t^2+o_p(1)$，分别收敛到 $\frac12\sigma^2W(1)^2$ 和 $\frac12\sigma^2$。</p>
+</details>
+<ul>
+<li>★★★ 若 $u_t$ 方差为 4，写出 $T^{-2}\sum y_{t-1}^2$ 的极限。</li>
+</ul>
+<details><summary>参考答案要点</summary>
+<p>$\sigma^2=4$，所以极限为 $4\int_0^1W(r)^2dr$。</p>
+</details>
+<ul>
+<li>★★★ 外部题源扩展：基于 Dickey-Fuller 论文中的思想，说明为什么临界值可通过模拟布朗运动泛函得到。来源：https://www.jstor.org/stable/2286348</li>
+</ul>
+<details><summary>参考答案要点</summary>
+<p>DF 统计量极限完全由布朗运动路径决定；反复模拟标准正态增量近似布朗路径，计算相应泛函即可得到分位数。</p>
+</details>
+<h2 id="section-6">§6 Dickey-Fuller 极限分布：为什么不能查普通 t 表？ ★★★ 核心</h2>
+<h3 id="h-387">脉络梳理</h3>
+<p>Dickey-Fuller 检验从最简单的 AR(1) 出发：</p>
+<div class="math-block">$$
+y_t=\rho y_{t-1}+u_t.
+$$</div>
+<p>检验单位根就是检验</p>
+<div class="math-block">$$
+H_0:\rho=1
+\quad\text{vs}\quad
+H_1:\rho<1.
+$$</div>
+<p>也常写成差分回归</p>
+<div class="math-block">$$
+\Delta y_t=\gamma y_{t-1}+u_t,\qquad \gamma=\rho-1,
+$$</div>
+<p>检验 $H_0:\gamma=0$。形式很像普通 t 检验，但在 $H_0$ 下 $y_{t-1}$ 是随机游走，回归解释变量非平稳，所以 t 统计量不服从普通 t 分布。</p>
+<h3 id="h-395">重点内容申明</h3>
+<p>先看 $\hat\rho$ 的极限：</p>
+<div class="math-block">$$
+T(\hat\rho-1)
+=
+\frac{T^{-1}\sum y_{t-1}u_t}
+{T^{-2}\sum y_{t-1}^2}.
+$$</div>
+<p>代入上一节两个核心极限：</p>
+<div class="math-block">$$
+T^{-1}\sum y_{t-1}u_t
+\Rightarrow
+\frac{\sigma^2}{2}\{W(1)^2-1\},
+$$</div>
+<div class="math-block">$$
+T^{-2}\sum y_{t-1}^2
+\Rightarrow
+\sigma^2\int_0^1W(r)^2\,dr.
+$$</div>
+<p>约去 $\sigma^2$：</p>
+<div class="math-block">$$
+T(\hat\rho-1)
+\Rightarrow
+\frac{\frac12\{W(1)^2-1\}}
+{\int_0^1W(r)^2\,dr}.
+$$</div>
+<p>再看 t 统计量。OLS 标准误大致为</p>
+<div class="math-block">$$
+se(\hat\rho)
+=
+\left(
+\frac{s_T^2}{\sum y_{t-1}^2}
+\right)^{1/2},
+\qquad
+s_T^2\xrightarrow{p}\sigma^2.
+$$</div>
+<p>所以</p>
+<div class="math-block">$$
+t_{\hat\rho}
+=
+\frac{\hat\rho-1}{se(\hat\rho)}
+\Rightarrow
+\frac{\frac12\{W(1)^2-1\}}
+{\left(\int_0^1W(r)^2\,dr\right)^{1/2}}.
+$$</div>
+<p>这个分布向左偏，不是对称的普通 t 分布。原因是分子里有 $W(1)^2-1$。由于 $W(1)^2\sim\chi_1^2$，它小于 1 的概率较大，因此 $W(1)^2-1$ 经常为负。直觉上，单位根下 OLS $\hat\rho$ 常常低估 1，这就是有限样本向下偏误的来源之一。</p>
+<p>DF 检验的拒绝域一般在左尾：若估计出的 $\hat\rho$ 显著小于 1，或者 $\hat\gamma$ 显著小于 0，就拒绝单位根。这里“显著”必须拿 DF 临界值比较。普通 5% t 临界值约 -1.96，但 DF 有截距、趋势时临界值通常更负。错用普通 t 表会过度拒绝单位根。</p>
+<p>写答案时可以用这套模板：</p>
+<ul>
+<li>原假设下 $y_t$ 是随机游走。</li>
+<li>OLS 误差分式为 $\hat\rho-1=(\sum y_{t-1}u_t)/(\sum y_{t-1}^2)$。</li>
+<li>分子经望远镜恒等式得到 $\frac12\sigma^2(W(1)^2-1)$。</li>
+<li>分母经 FCLT 和连续映射得到 $\sigma^2\int W^2$。</li>
+<li>因此统计量是布朗运动泛函，不能查普通正态/t 表。</li>
+</ul>
+<h3 id="h-417">习题</h3>
+<ul>
+<li>★ 写出 DF 检验的原假设和备择假设。</li>
+</ul>
+<details><summary>参考答案要点</summary>
+<p>$H_0:\rho=1$ 或 $\gamma=0$；常见左尾备择是 $H_1:\rho&lt;1$ 或 $\gamma&lt;0$。</p>
+</details>
+<ul>
+<li>★ 为什么 DF 检验通常看左尾？</li>
+</ul>
+<details><summary>参考答案要点</summary>
+<p>拒绝单位根意味着估计结果显著小于 1，即 $\hat\rho-1$ 或 $\hat\gamma$ 足够负。</p>
+</details>
+<ul>
+<li>★★ 推导 $T(\hat\rho-1)$ 的布朗运动泛函极限。</li>
+</ul>
+<details><summary>参考答案要点</summary>
+<p>将分子除以 $T$、分母除以 $T^2$，分别代入 $\frac12\sigma^2(W(1)^2-1)$ 和 $\sigma^2\int W^2$。</p>
+</details>
+<ul>
+<li>★★ 为什么 DF t 统计量分母是 $\left(\int W^2\right)^{1/2}$？</li>
+</ul>
+<details><summary>参考答案要点</summary>
+<p>标准误包含 $s_T/\sqrt{\sum y_{t-1}^2}$，单位根下 $\sum y_{t-1}^2/T^2\Rightarrow\sigma^2\int W^2$。</p>
+</details>
+<ul>
+<li>★★★ 解释“错用普通 t 临界值会过度拒绝单位根”的原因。</li>
+</ul>
+<details><summary>参考答案要点</summary>
+<p>含截距/趋势的 DF 左尾临界值通常比普通 t 的 -1.96 更负；用普通 t 表会把不够极端的负统计量误判为显著。</p>
+</details>
+<ul>
+<li>★★★ 外部题源扩展：阅读 Stata <code>dfuller</code> 手册，说明 <code>drift</code>、<code>trend</code>、<code>noconstant</code> 选项对应哪些确定性项。来源：https://www.stata.com/manuals/tsdfuller.pdf</li>
+</ul>
+<details><summary>参考答案要点</summary>
+<p><code>noconstant</code> 对应无截距；默认/<code>drift</code> 对应常数项或漂移设定；<code>trend</code> 加入线性时间趋势。具体语义以手册为准，报告时需写明选项。</p>
+</details>
+<h2 id="section-7">§7 单位根检验四种情形：截距、漂移和趋势如何选择 ★★★</h2>
+<h3 id="h-455">脉络梳理</h3>
+<p>PPT 把单位根检验分成四种情形，核心区别是估计回归里是否放截距、是否放线性趋势，以及真实 DGP 在原假设下是否有漂移。选择情形不是装饰问题，因为不同确定性项会改变 DF 统计量的极限分布和临界值。</p>
+<h3 id="h-457">重点内容申明</h3>
+<p>四种情形可整理为：</p>
+<div class="table-wrap"><table>
+<thead><tr>
+<th>情形</th>
+<th>估计模型</th>
+<th>原假设下的典型 DGP</th>
+<th>适用直觉</th>
+</tr></thead>
+<tbody>
+<tr>
+<td>1</td>
+<td>$y_t=\rho y_{t-1}+u_t$</td>
+<td>$y_t=y_{t-1}+u_t$</td>
+<td>序列围绕 0，无截距、无漂移</td>
+</tr>
+<tr>
+<td>2</td>
+<td>$y_t=\alpha+\rho y_{t-1}+u_t$</td>
+<td>$y_t=y_{t-1}+u_t$</td>
+<td>水平不一定为 0，但无明显线性趋势</td>
+</tr>
+<tr>
+<td>3</td>
+<td>$y_t=\alpha+\rho y_{t-1}+u_t$</td>
+<td>$y_t=\alpha+y_{t-1}+u_t,\alpha\ne0$</td>
+<td>单位根下有漂移，序列呈随机漂移</td>
+</tr>
+<tr>
+<td>4</td>
+<td>$y_t=\alpha+\delta t+\rho y_{t-1}+u_t$</td>
+<td>含截距/漂移并允许确定性线性趋势</td>
+<td>图形有明显线性趋势，需控制趋势项</td>
+</tr>
+</tbody>
+</table></div>
+<p>在实际软件中更常见的写法是差分形式：</p>
+<div class="math-block">$$
+\Delta y_t=\alpha+\delta t+\gamma y_{t-1}+u_t.
+$$</div>
+<p>其中 $\gamma=\rho-1$。情形 1 是不放 $\alpha,\delta$；情形 2/3 放 $\alpha$；情形 4 放 $\alpha$ 和 $\delta t$。考试若没有特别说明，通常从数据图、经济理论和趋势项显著性综合判断。</p>
+<p>选择规则可以记为“三问”：</p>
+<p>第一，理论上序列是否可能有非零长期水平？若变量不可能围绕 0 波动，比如价格指数、GDP、利率水平，通常至少放截距。</p>
+<p>第二，图形是否有明显确定性线性趋势？若有，考虑放趋势项；若没有，优先截距模型。</p>
+<p>第三，加入趋势项后残差是否更像白噪声？若趋势模型残差仍强相关，说明滞后阶或模型设定还不够。</p>
+<p>需要警惕两个极端。第一个极端是永远放趋势项。趋势项会降低检验功效，可能让你更难拒绝单位根。第二个极端是永远不放趋势项。如果真实数据有确定性趋势却不控制，单位根检验可能把确定性趋势误判成随机趋势。</p>
+<p>建议的实证流程：</p>
+<ul>
+<li>画时间序列图和 ACF。</li>
+<li>根据理论和图形先选最大合理确定性项，比如截距加趋势。</li>
+<li>运行 ADF，选择足够滞后使残差近似白噪声。</li>
+<li>若趋势项不显著且理论上无趋势，可退回截距模型。</li>
+<li>报告所用情形、滞后阶、统计量、临界值/p 值和结论。</li>
+</ul>
+<h3 id="h-509">习题</h3>
+<ul>
+<li>★ 什么情况下不应使用无截距 DF 模型？</li>
+</ul>
+<details><summary>参考答案要点</summary>
+<p>当变量水平明显不围绕 0、理论上有非零均值或可能有漂移时，不宜使用无截距模型。</p>
+</details>
+<ul>
+<li>★ 若序列图呈明显线性上升趋势，优先考虑哪种情形？</li>
+</ul>
+<details><summary>参考答案要点</summary>
+<p>通常优先考虑含截距和线性趋势的情形，再根据趋势项显著性、理论和残差诊断调整。</p>
+</details>
+<ul>
+<li>★★ 为什么“永远加趋势项”也不是好策略？</li>
+</ul>
+<details><summary>参考答案要点</summary>
+<p>趋势项消耗自由度并改变临界值，可能降低检验功效；若真实没有趋势，过度设定会让检验更难拒绝单位根。</p>
+</details>
+<ul>
+<li>★★ 设计一个判断确定性项的实证流程。</li>
+</ul>
+<details><summary>参考答案要点</summary>
+<p>画图和 ACF；结合理论选择最大合理确定性项；跑 ADF；检查趋势/截距意义与残差白噪声；必要时退回较简单模型；报告稳健性。</p>
+</details>
+<ul>
+<li>★★★ 若带趋势 ADF 未拒绝单位根，但趋势项显著，应如何解释？</li>
+</ul>
+<details><summary>参考答案要点</summary>
+<p>可说样本同时显示明显确定性趋势和强随机趋势证据；在控制线性趋势后仍未能拒绝单位根，水平冲击可能具有持久性。</p>
+</details>
+<ul>
+<li>★★★ 外部题源扩展：用 Stata <code>dfuller</code> 对同一模拟随机游走分别运行无截距、截距、趋势模型，比较统计量和临界值。来源：https://www.stata.com/manuals/tsdfuller.pdf</li>
+</ul>
+<details><summary>参考答案要点</summary>
+<p>三个模型的统计量、临界值和结论可能不同。答案重点是说明确定性项设定改变了检验分布，不能混用临界值。</p>
+</details>
+<h2 id="section-8">§8 扰动项相关时的修正：Phillips-Perron 与 ADF ★★★</h2>
+<h3 id="h-547">脉络梳理</h3>
+<p>基础 DF 假设误差 $u_t$ 是白噪声。但金融和宏观数据中，扰动项常有序列相关或条件异方差。如果直接用基础 DF，残差相关会污染检验统计量。PPT 介绍两条修正路线：Phillips-Perron 直接修正统计量的长期方差；ADF 在回归中加入差分滞后项，把误差相关吸收掉。</p>
+<h3 id="h-549">重点内容申明</h3>
+<p>ADF 回归的一般形式是</p>
+<div class="math-block">$$
+\Delta y_t
+=
+\alpha+\delta t+\gamma y_{t-1}
++\sum_{i=1}^{p-1}\phi_i\Delta y_{t-i}
++\varepsilon_t.
+$$</div>
+<p>检验仍然是</p>
+<div class="math-block">$$
+H_0:\gamma=0.
+$$</div>
+<p>加入 $\Delta y_{t-i}$ 的目的不是改变单位根原假设，而是让 $\varepsilon_t$ 更接近白噪声。滞后阶 $p$ 可以用 AIC/BIC，也可以从较大滞后开始逐步删除最高阶不显著项，同时检查残差白噪声。</p>
+<p>PP 检验保留较简单的 DF 回归，但用 HAC 长期方差修正统计量。设残差自协方差为</p>
+<div class="math-block">$$
+\hat\gamma_j
+=
+T^{-1}\sum_{t=j+1}^T \hat u_t\hat u_{t-j},
+$$</div>
+<p>长期方差估计为</p>
+<div class="math-block">$$
+\hat\lambda^2
+=
+\hat\gamma_0+
+2\sum_{j=1}^{q}
+\left(1-\frac{j}{q+1}\right)\hat\gamma_j.
+$$</div>
+<p>括号里的权重是 Bartlett 核。直觉是：如果误差项有相关性，单期方差 $\gamma_0$ 不够描述累计冲击的波动，必须用长期方差 $\lambda^2$。PP 统计量把 DF 统计量中由序列相关造成的偏差扣掉，使极限分布仍可使用 DF 型临界值。</p>
+<p>ADF 和 PP 的比较：</p>
+<div class="table-wrap"><table>
+<thead><tr>
+<th>维度</th>
+<th>ADF</th>
+<th>PP</th>
+</tr></thead>
+<tbody>
+<tr>
+<td>修正思路</td>
+<td>在回归中加入差分滞后</td>
+<td>对统计量做非参数 HAC 修正</td>
+</tr>
+<tr>
+<td>关键选择</td>
+<td>滞后阶 $p$</td>
+<td>截断阶/带宽 $q$</td>
+</tr>
+<tr>
+<td>优点</td>
+<td>模型直观，残差诊断清楚</td>
+<td>不必显式设定 AR 阶数</td>
+</tr>
+<tr>
+<td>风险</td>
+<td>滞后太少残差相关，太多功效下降</td>
+<td>带宽选择影响有限样本表现</td>
+</tr>
+</tbody>
+</table></div>
+<p>Stata 可运行模拟示例：</p>
+<pre><code class="language-stata">clear all
+set more off
+set seed 20260626
+set obs 500
+gen t = _n
+gen u = rnormal()
+gen y = sum(u)
+tsset t
+
+* 图形与相关图
+tsline y
+corrgram y, lags(40)
+
+* DF/ADF：无截距、截距、趋势三种常见设定
+dfuller y, noconstant lags(0)
+dfuller y, drift lags(0)
+dfuller y, trend lags(0)
+dfuller y, trend lags(4) regress
+
+* PP：用非参数长期方差修正
+pperron y, trend lags(4)
+
+* 一阶差分通常更接近平稳
+gen dy = D.y
+dfuller dy, drift lags(4)</code></pre>
+<p>解释输出时要看四件事：检验模型是否含截距/趋势、滞后阶是多少、检验统计量是否小于对应临界值、残差是否近似白噪声。不要只写“p 值大于 0.05，所以有单位根”，更严谨的说法是“在该确定性项设定和滞后阶下，未能拒绝单位根原假设”。</p>
+<h3 id="h-593">习题</h3>
+<ul>
+<li>★ ADF 中加入 $\Delta y_{t-i}$ 的目的是什么？</li>
+</ul>
+<details><summary>参考答案要点</summary>
+<p>吸收误差项序列相关，使回归残差更接近白噪声，而不是改变单位根原假设。</p>
+</details>
+<ul>
+<li>★ PP 检验的核心修正对象是什么？</li>
+</ul>
+<details><summary>参考答案要点</summary>
+<p>使用 HAC 长期方差估计修正 DF 统计量，使其允许更一般的序列相关和异方差。</p>
+</details>
+<ul>
+<li>★★ 写出 ADF 回归一般式，并指出被检验参数。</li>
+</ul>
+<details><summary>参考答案要点</summary>
+<p>$\Delta y_t=\alpha+\delta t+\gamma y_{t-1}+\sum_{i=1}^{p-1}\phi_i\Delta y_{t-i}+\varepsilon_t$；检验 $\gamma=0$。</p>
+</details>
+<ul>
+<li>★★ ADF 滞后阶过小和过大分别有什么问题？</li>
+</ul>
+<details><summary>参考答案要点</summary>
+<p>过小会留下残差自相关，统计量失真；过大会损失自由度和检验功效。</p>
+</details>
+<ul>
+<li>★★★ 解释 PP 长期方差 $\lambda^2$ 与单期方差 $\gamma_0$ 的区别。</li>
+</ul>
+<details><summary>参考答案要点</summary>
+<p>$\gamma_0$ 只看当期方差；$\lambda^2$ 包含自协方差加权和，描述累计冲击长期波动。</p>
+</details>
+<ul>
+<li>★★★ 外部题源扩展：比较 Stata <code>dfuller</code> 与 <code>pperron</code> 在同一序列上的输出项目。来源：https://www.stata.com/manuals/tsdfuller.pdf 与 https://www.stata.com/manuals/tspperron.pdf</li>
+</ul>
+<details><summary>参考答案要点</summary>
+<p>应比较确定性项、滞后/带宽设定、统计量、临界值和结论。若二者一致，单位根判断更稳健；若不一致，应检查残差相关和设定。</p>
+</details>
+<h2 id="section-9">§9 其他单位根检验：高阶自相关与 Portmanteau 思路 ★</h2>
+<h3 id="h-631">脉络梳理</h3>
+<p>PPT 后半部分介绍 Bierens 型高阶自相关检验和 Zhang-Chan 的 Portmanteau 思路，标注为“仅作了解”。它们的共同出发点是：传统 DF/ADF 主要利用一阶自回归系数的信息，但单位根过程不仅一阶自相关接近 1，高阶自相关也衰减很慢。把更多滞后的相关信息合并起来，可能提高对某些备择的检验功效。</p>
+<h3 id="h-633">重点内容申明</h3>
+<p>样本自相关的基本形式是</p>
+<div class="math-block">$$
+\hat r(m)
+=
+\frac{\sum_{t=m+1}^n (y_t-\bar y)(y_{t-m}-\bar y)}
+{\sum_{t=1}^n (y_t-\bar y)^2}.
+$$</div>
+<p>若序列是单位根，$m$ 不太大时，高阶自相关也会接近 1；若序列平稳，随着 $m$ 增大，自相关会逐步衰减。因此可以构造</p>
+<div class="math-block">$$
+\sqrt{\frac{n}{m}}\{\hat r(m)-1\}
+$$</div>
+<p>这类统计量。PPT 中的 Bierens 结果说明，当 $m\to\infty$ 且增长速度受限制时，这些高阶自相关统计量也会收敛到布朗运动泛函。</p>
+<p>Portmanteau 检验进一步把多个滞后阶的信息合并。例如考虑前 $M$ 阶自相关系数的平均偏离：</p>
+<div class="math-block">$$
+T_n
+=
+\frac{n}{M(M+1)}
+\sum_{i=1}^M(\hat\rho_i-1).
+$$</div>
+<p>如果单位根成立，许多 $\hat\rho_i$ 都接近 1；如果平稳，较高阶自相关会更明显低于 1。合并信息的好处是：当备择下高阶相关包含额外信号时，检验可能比只盯着一阶系数更有力量。</p>
+<p>复习时无需死记复杂极限式，只需掌握三点：</p>
+<ul>
+<li>高阶自相关检验的动机是利用单位根过程“所有低中阶 ACF 都很高”的特征。</li>
+<li>它们的极限分布仍然与布朗运动泛函有关。</li>
+<li>实证主线仍以 ADF/PP 为主，其他检验可作为稳健性或扩展阅读。</li>
+</ul>
+<h3 id="h-648">习题</h3>
+<ul>
+<li>★ 为什么单位根过程的高阶自相关也包含信息？</li>
+</ul>
+<details><summary>参考答案要点</summary>
+<p>单位根过程高度持续，不只是 $\rho_1$ 接近 1，多个低中阶自相关也会接近 1 或衰减很慢。</p>
+</details>
+<ul>
+<li>★ 写出样本 $m$ 阶自相关的基本形式。</li>
+</ul>
+<details><summary>参考答案要点</summary>
+<p>$\hat r(m)=\frac{\sum_{t=m+1}^n(y_t-\bar y)(y_{t-m}-\bar y)}{\sum_{t=1}^n(y_t-\bar y)^2}$。</p>
+</details>
+<ul>
+<li>★★ Portmanteau 思路和 ADF 思路有什么区别？</li>
+</ul>
+<details><summary>参考答案要点</summary>
+<p>ADF 主要通过回归中的一阶滞后水平项检验单位根，并加入差分滞后控制相关；Portmanteau 合并多个高阶自相关的信息。</p>
+</details>
+<ul>
+<li>★★ 为什么这类检验的极限仍然常出现布朗运动泛函？</li>
+</ul>
+<details><summary>参考答案要点</summary>
+<p>高阶自相关的分子、分母仍由单位根路径的求和、平方和、去均值项构成，标准化后仍通过 FCLT 转为布朗运动泛函。</p>
+</details>
+<ul>
+<li>★★★ 在复习优先级上，为什么本节低于 ADF/PP？</li>
+</ul>
+<details><summary>参考答案要点</summary>
+<p>ADF/PP 是主流实证工具和考试重点；高阶自相关检验更多用于扩展理解和稳健性，复杂公式不宜喧宾夺主。</p>
+</details>
+<ul>
+<li>★★★ 外部题源扩展：阅读 Bierens (1993) 摘要，说明其相对传统 DF 的信息来源差异。来源：https://doi.org/10.1016/0304-4076(93)90102-Y</li>
+</ul>
+<details><summary>参考答案要点</summary>
+<p>Bierens 型检验利用高阶样本自相关，而传统 DF/ADF 更集中于低阶动态回归参数。答案重点写“信息维度扩展”。</p>
+</details>
+<h2 id="section-10">§10 实证流程：以 S&amp;P500 对数指数为例 ★★★</h2>
+<h3 id="h-686">脉络梳理</h3>
+<p>PPT 的案例使用 2012-02-29 到 2019-12-31 的 S&amp;P500 日度指数。对数指数图形呈上升趋势，ACF 缓慢衰减。先用带截距和线性趋势的 ADF 设定，滞后阶 $k=1,\ldots,6$ 下都未拒绝单位根；进一步做联合假设检验，结果支持序列具有线性趋势；最终回归形如</p>
+<div class="math-block">$$
+Y_t=0.08822+0.000004830\,t+0.9879Y_{t-1}+X_t,
+$$</div>
+<p>残差 $X_t$ 的 Ljung-Box 检验 p 值为 0.661，说明残差白噪声设定较合理。</p>
+<h3 id="h-690">重点内容申明</h3>
+<p>实证报告不能只写“ADF p 值是多少”。完整报告应包含：</p>
+<ul>
+<li>数据处理：水平值还是对数值，频率是什么，样本区间是什么。</li>
+<li>初步图形：时间序列图、ACF/PACF。</li>
+<li>确定性项选择：无截距、截距、截距加趋势的理由。</li>
+<li>滞后阶选择：AIC/BIC、逐步检验或残差白噪声诊断。</li>
+<li>单位根检验结论：统计量、临界值/p 值、是否拒绝。</li>
+<li>稳健性：ADF 与 PP 是否一致，一阶差分是否平稳。</li>
+<li>经济解释：若未拒绝单位根，说明水平冲击可能具有持久性；若拒绝，则说明更像趋势平稳或水平平稳。</li>
+</ul>
+<p>S&amp;P500 这种金融价格指数常见模式是：价格水平高度持续，收益率或对数差分更接近平稳。可以用如下 Stata 模板处理真实 CSV 数据。假设文件包含 <code>date</code> 和 <code>close</code> 两列：</p>
+<pre><code class="language-stata">clear all
+set more off
+
+* 替换为你的本地 CSV 路径
+import delimited &quot;sp500_daily.csv&quot;, clear varnames(1)
+
+* 如果 date 是 YYYY-MM-DD 字符串
+gen td = date(date, &quot;YMD&quot;)
+format td %td
+sort td
+tsset td
+
+gen lsp = ln(close)
+gen ret = D.lsp
+
+tsline lsp
+corrgram lsp, lags(40)
+
+* 带趋势 ADF，并显示回归
+dfuller lsp, trend lags(1) regress
+dfuller lsp, trend lags(6) regress
+
+* PP 稳健性检查
+pperron lsp, trend lags(6)
+
+* 检查一阶差分
+tsline ret
+corrgram ret, lags(40)
+dfuller ret, drift lags(6)
+pperron ret, drift lags(6)
+
+* 手动估计趋势加滞后项模型，并检查残差白噪声
+gen trend = _n
+reg lsp trend L.lsp
+predict ehat, resid
+wntestq ehat, lags(20)</code></pre>
+<p>如果没有真实数据，也可以先用模拟理解结论：</p>
+<pre><code class="language-stata">clear all
+set more off
+set seed 20260626
+set obs 2000
+gen t = _n
+gen u = rnormal()
+gen price = 100 + sum(u)
+gen lprice = ln(price - min(price) + 10)
+tsset t
+
+dfuller lprice, trend lags(4)
+gen d_lprice = D.lprice
+dfuller d_lprice, drift lags(4)</code></pre>
+<p>案例解释的关键是：不能因为对数指数有上升趋势就直接说它是趋势平稳，也不能因为 ACF 缓慢衰减就直接说一定有单位根。正确表述要绑定“所选模型设定”。例如：“在带截距和线性趋势、滞后阶 1 到 6 的 ADF 回归中，未能拒绝单位根原假设；同时趋势相关的联合检验提示线性趋势项对刻画样本有帮助；残差白噪声检验支持该回归设定。”</p>
+<h3 id="h-706">习题</h3>
+<ul>
+<li>★ 为什么通常对股票指数取对数？</li>
+</ul>
+<details><summary>参考答案要点</summary>
+<p>对数差分近似收益率，尺度更稳定，也便于解释增长率和复利变化。</p>
+</details>
+<ul>
+<li>★ ACF 缓慢衰减说明什么？它能直接证明单位根吗？</li>
+</ul>
+<details><summary>参考答案要点</summary>
+<p>说明强持续性或趋势特征，但不能直接证明单位根；确定性趋势也可能造成缓慢衰减。</p>
+</details>
+<ul>
+<li>★★ 解释 PPT 中 “ADF p 值大于 0.05” 的严谨结论。</li>
+</ul>
+<details><summary>参考答案要点</summary>
+<p>在所选带趋势模型和滞后阶下，未能拒绝单位根原假设；不能说“接受单位根为真”。</p>
+</details>
+<ul>
+<li>★★ 残差 Ljung-Box 检验 p 值为 0.661 说明什么？</li>
+</ul>
+<details><summary>参考答案要点</summary>
+<p>在常用显著性水平下，未发现残差存在显著自相关，说明模型残差近似白噪声，设定较可接受。</p>
+</details>
+<ul>
+<li>★★★ 写出一份单位根检验实证报告至少应包含的六项信息。</li>
+</ul>
+<details><summary>参考答案要点</summary>
+<p>数据来源/区间/频率、变量变换、图形和 ACF、确定性项选择、滞后阶选择、检验统计量与临界值/p 值、残差诊断、经济解释。</p>
+</details>
+<ul>
+<li>★★★ 外部题源扩展：用 Stata <code>dfuller</code> 手册中的语法，写一段检验对数价格和对数收益率的代码。来源：https://www.stata.com/manuals/tsdfuller.pdf</li>
+</ul>
+<details><summary>参考答案要点</summary>
+<p>应包含 <code>tsset</code>、生成 <code>ln(price)</code> 和差分、对水平用 <code>trend</code> 或 <code>drift</code>，对收益率常用 <code>drift</code>，并报告滞后阶。</p>
+</details>
+<h2 id="section-11">§11 爆炸过程：$\rho&gt;1$ 时为什么会出现柯西极限 ★★</h2>
+<h3 id="h-744">脉络梳理</h3>
+<p>爆炸过程不是单位根检验的主战场，但它展示了 AR 根越过 1 以后推断会多么不稳定。若</p>
+<div class="math-block">$$
+y_t=\rho y_{t-1}+u_t,\qquad \rho>1,
+$$</div>
+<p>则旧冲击会被 $\rho$ 的幂不断放大，序列末端观测几乎决定整个样本。OLS 的分子和分母都被最后几期支配，极限中出现正态变量之比，因此得到柯西分布。</p>
+<h3 id="h-748">重点内容申明</h3>
+<p>从 $y_0=0$ 出发，递推展开：</p>
+<div class="math-block">$$
+y_t=\sum_{j=1}^t\rho^{t-j}u_j
+=
+\rho^t\sum_{j=1}^t\rho^{-j}u_j.
+$$</div>
+<p>定义</p>
+<div class="math-block">$$
+X_t=\sum_{j=1}^t\rho^{-j}u_j.
+$$</div>
+<p>因为 $\rho&gt;1$，$\sum \rho^{-2j}$ 收敛，所以</p>
+<div class="math-block">$$
+X_t\rightarrow X=\sum_{j=1}^\infty\rho^{-j}u_j,
+$$</div>
+<p>且若 $u_j$ 正态，则</p>
+<div class="math-block">$$
+X\sim N\left(0,\frac{\sigma^2}{\rho^2-1}\right)
+$$</div>
+<p>（这里常数取决于求和起点，重点是它是有限方差正态变量）。于是大样本下</p>
+<div class="math-block">$$
+y_t\approx \rho^tX.
+$$</div>
+<p>分母近似为</p>
+<div class="math-block">$$
+\sum_{t=1}^T y_{t-1}^2
+\approx
+X^2\sum_{t=1}^T\rho^{2(t-1)}
+\approx
+X^2\frac{\rho^{2T}}{\rho^2-1}.
+$$</div>
+<p>分子在适当缩放后会出现另一个与 $X$ 独立的正态变量 $Y$，最终</p>
+<div class="math-block">$$
+\rho^T(\hat\rho-\rho)
+\Rightarrow
+C\frac{Y}{X},
+$$</div>
+<p>而两个独立零均值正态变量之比服从柯西型分布。PPT 给出的 White 结果可概括为：爆炸 AR(1) 的 OLS 极限分布是柯西型，并且收敛速度依赖 $\rho^T$。</p>
+<p>这节只需掌握直觉：平稳时历史冲击衰减，单位根时历史冲击永久保留，爆炸时历史冲击被指数放大。三种情形对应三套完全不同的渐近推断。</p>
+<h3 id="h-765">习题</h3>
+<ul>
+<li>★ $\rho&gt;1$ 的 AR(1) 为什么叫爆炸过程？</li>
+</ul>
+<details><summary>参考答案要点</summary>
+<p>冲击影响被 $\rho^k$ 指数放大，序列水平随时间快速增长，后期观测支配样本。</p>
+</details>
+<ul>
+<li>★ 展开 $y_t=\rho y_{t-1}+u_t$，假设 $y_0=0$。</li>
+</ul>
+<details><summary>参考答案要点</summary>
+<p>$y_t=\sum_{j=1}^t\rho^{t-j}u_j=\rho^t\sum_{j=1}^t\rho^{-j}u_j$。</p>
+</details>
+<ul>
+<li>★★ 为什么 $X_t=\sum_{j=1}^t\rho^{-j}u_j$ 会收敛？</li>
+</ul>
+<details><summary>参考答案要点</summary>
+<p>因为 $\rho&gt;1$，权重平方和 $\sum\rho^{-2j}$ 收敛；若 $u_j$ 方差有限，级数有有限方差极限。</p>
+</details>
+<ul>
+<li>★★ 正态变量之比为什么产生柯西分布？</li>
+</ul>
+<details><summary>参考答案要点</summary>
+<p>两个独立零均值同方差正态变量的比值服从标准柯西分布；爆炸 AR 的极限中出现类似 $Y/X$。</p>
+</details>
+<ul>
+<li>★★★ 比较平稳、单位根、爆炸三种情形的冲击命运。</li>
+</ul>
+<details><summary>参考答案要点</summary>
+<p>平稳：冲击几何衰减；单位根：冲击永久保留；爆炸：冲击指数放大。</p>
+</details>
+<ul>
+<li>★★★ 外部题源扩展：查阅柯西分布的密度函数，解释它为什么没有均值和方差；再说明这对爆炸过程 OLS 推断意味着什么。来源：https://en.wikipedia.org/wiki/Cauchy_distribution</li>
+</ul>
+<details><summary>参考答案要点</summary>
+<p>柯西尾部很厚，均值和方差不存在；爆炸过程估计量极限极不稳定，常规均方误差直觉不适用。</p>
+</details>
+<h2 id="a">附录 A：全章公式速查</h2>
+<ul>
+<li>时间趋势 OLS：</li>
+</ul>
+<div class="math-block">$$
+D_T(\hat\beta-\beta)\Rightarrow N(0,\sigma^2Q^{-1}),\quad
+D_T=diag(T^{1/2},T^{3/2}),\quad
+Q=\begin{pmatrix}1&1/2\\1/2&1/3\end{pmatrix}.
+$$</div>
+<ul>
+<li>随机游走：</li>
+</ul>
+<div class="math-block">$$
+y_t=y_0+\sum_{j=1}^t u_j,\quad Var(y_t)=t\sigma^2.
+$$</div>
+<ul>
+<li>FCLT：</li>
+</ul>
+<div class="math-block">$$
+\frac{1}{\sigma\sqrt{T}}\sum_{t=1}^{\lfloor Tr\rfloor}u_t\Rightarrow W(r).
+$$</div>
+<ul>
+<li>单位根核心极限：</li>
+</ul>
+<div class="math-block">$$
+T^{-2}\sum y_{t-1}^2\Rightarrow\sigma^2\int_0^1W(r)^2dr,
+$$</div>
+<div class="math-block">$$
+T^{-1}\sum y_{t-1}u_t\Rightarrow\frac{\sigma^2}{2}\{W(1)^2-1\}.
+$$</div>
+<ul>
+<li>DF 统计量：</li>
+</ul>
+<div class="math-block">$$
+T(\hat\rho-1)\Rightarrow
+\frac{\frac12\{W(1)^2-1\}}
+{\int_0^1W(r)^2dr}.
+$$</div>
+<ul>
+<li>DF t 型统计量：</li>
+</ul>
+<div class="math-block">$$
+t_{\hat\rho}\Rightarrow
+\frac{\frac12\{W(1)^2-1\}}
+{\left(\int_0^1W(r)^2dr\right)^{1/2}}.
+$$</div>
+<ul>
+<li>ADF 回归：</li>
+</ul>
+<div class="math-block">$$
+\Delta y_t=\alpha+\delta t+\gamma y_{t-1}+
+\sum_{i=1}^{p-1}\phi_i\Delta y_{t-i}+\varepsilon_t.
+$$</div>
+<ul>
+<li>PP 长期方差：</li>
+</ul>
+<div class="math-block">$$
+\hat\lambda^2=\hat\gamma_0+2\sum_{j=1}^q
+\left(1-\frac{j}{q+1}\right)\hat\gamma_j.
+$$</div>
+<h2 id="b">附录 B：本章参考与外部题源</h2>
+<ul>
+<li>课程 PPT：第3章 单位根时间序列模型，林锐，西南财经大学金融学院。</li>
+<li>Dickey, D. A. and Fuller, W. A. (1979). Distribution of the Estimators for Autoregressive Time Series with a Unit Root. Journal of the American Statistical Association. https://www.jstor.org/stable/2286348</li>
+<li>Phillips, P. C. B. and Perron, P. (1988). Testing for a Unit Root in Time Series Regression. Biometrika. https://doi.org/10.1093/biomet/75.2.335</li>
+<li>Stata <code>dfuller</code> manual: https://www.stata.com/manuals/tsdfuller.pdf</li>
+<li>Stata <code>pperron</code> manual: https://www.stata.com/manuals/tspperron.pdf</li>
+<li>Bierens, H. J. (1993). Higher-order sample autocorrelations and the unit root hypothesis. Journal of Econometrics. https://doi.org/10.1016/0304-4076(93)90102-Y</li>
+</ul></article>
+    </main>
+  </div>
+  <script>
+    window.addEventListener('DOMContentLoaded', () => {
+      renderMathInElement(document.body, {
+        delimiters: [
+          {left: '$$', right: '$$', display: true},
+          {left: '$', right: '$', display: false},
+          {left: '\\(', right: '\\)', display: false},
+          {left: '\\[', right: '\\]', display: true}
+        ],
+        throwOnError: false
+      });
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,1281 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>第1章 时间序列分析基础｜复习材料</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.10/dist/katex.min.css">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.10/dist/katex.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.10/dist/contrib/auto-render.min.js" onload="renderMathInElement(document.body, {delimiters: [{left: '$$', right: '$$', display: true}, {left: '$', right: '$', display: false}]});"></script>
+<style>
+:root {
+  color-scheme: light dark;
+  --bg: #f6f2ea;
+  --paper: #fffdf8;
+  --ink: #25221d;
+  --muted: #6d665b;
+  --line: #ddd3c2;
+  --accent: #176b63;
+  --accent-2: #8f3f2b;
+  --code: #f1eadf;
+  --shadow: 0 18px 40px rgba(64, 48, 26, .08);
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #171816;
+    --paper: #20221f;
+    --ink: #eee7dc;
+    --muted: #b8aea0;
+    --line: #3c3831;
+    --accent: #66c2b4;
+    --accent-2: #e08b75;
+    --code: #2b2d29;
+    --shadow: none;
+  }
+}
+* { box-sizing: border-box; }
+html { overflow-x: hidden; }
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--ink);
+  font: 17px/1.75 "Iowan Old Style", "Noto Serif SC", "Songti SC", Georgia, serif;
+  overflow-x: hidden;
+}
+a { color: var(--accent); text-decoration-thickness: .08em; text-underline-offset: .18em; }
+.layout { display: grid; grid-template-columns: 290px minmax(0, 1fr); min-height: 100vh; min-width: 0; }
+aside {
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  overflow: auto;
+  padding: 28px 20px;
+  border-right: 1px solid var(--line);
+  background: color-mix(in srgb, var(--paper) 82%, var(--bg));
+}
+.brand { font: 700 18px/1.35 system-ui, sans-serif; margin-bottom: 18px; color: var(--accent-2); }
+nav a {
+  display: block;
+  padding: 6px 0;
+  color: var(--muted);
+  text-decoration: none;
+  font: 14px/1.4 system-ui, sans-serif;
+  overflow-wrap: anywhere;
+}
+nav a:hover { color: var(--accent); }
+.toc-l2 { padding-left: 10px; }
+.toc-l3 { padding-left: 22px; font-size: 13px; }
+main {
+  width: min(980px, calc(100vw - 340px));
+  margin: 34px auto;
+  padding: 44px 54px;
+  background: var(--paper);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  box-shadow: var(--shadow);
+  overflow-wrap: anywhere;
+  min-width: 0;
+}
+h1, h2, h3, h4 { line-height: 1.25; letter-spacing: 0; scroll-margin-top: 24px; }
+h1 { font-size: 34px; margin: 0 0 22px; color: var(--accent-2); }
+h2 { font-size: 25px; margin-top: 42px; border-top: 1px solid var(--line); padding-top: 24px; }
+h3 { font-size: 20px; margin-top: 28px; color: var(--accent); }
+h4 { font-size: 18px; margin-top: 22px; }
+p, li { margin: .55em 0; }
+ul { padding-left: 1.25em; }
+blockquote {
+  margin: 18px 0;
+  padding: 12px 16px;
+  border-left: 4px solid var(--accent);
+  background: color-mix(in srgb, var(--accent) 8%, transparent);
+}
+pre {
+  overflow: auto;
+  padding: 15px 16px;
+  background: var(--code);
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  font-size: 14px;
+  line-height: 1.55;
+}
+code { font-family: "SFMono-Regular", Consolas, monospace; font-size: .92em; }
+p code, li code { background: var(--code); padding: .1em .25em; border-radius: 4px; }
+p code, li code { white-space: normal; overflow-wrap: anywhere; word-break: break-word; }
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 20px 0;
+  font-size: 15px;
+}
+th, td { border: 1px solid var(--line); padding: 8px 10px; vertical-align: top; }
+th { background: color-mix(in srgb, var(--accent) 10%, transparent); }
+details {
+  margin: 8px 0 14px;
+  padding: 10px 14px;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  background: color-mix(in srgb, var(--paper) 80%, var(--code));
+}
+summary { cursor: pointer; color: var(--accent); font-weight: 700; }
+.question { font-weight: 650; }
+.math-block { overflow-x: auto; padding: 4px 0; }
+hr { border: 0; border-top: 1px solid var(--line); margin: 36px 0; }
+@media (max-width: 900px) {
+  .layout { display: block; }
+  aside { position: static; height: auto; max-height: 260px; overflow: auto; border-right: 0; border-bottom: 1px solid var(--line); }
+  main { width: 100%; max-width: 100vw; margin: 0; padding: 28px 20px; border-left: 0; border-right: 0; border-radius: 0; overflow-x: hidden; }
+  h1 { font-size: 24px; word-break: break-all; }
+  h2 { font-size: 22px; }
+  h2, h3, h4, p, li, blockquote { overflow-wrap: anywhere; word-break: break-all; line-break: anywhere; }
+  pre, table { max-width: 100%; }
+  .math-block { font-size: 14px; }
+}
+@media print {
+  body { background: white; color: black; font-size: 12pt; }
+  aside { display: none; }
+  .layout { display: block; }
+  main { width: 100%; margin: 0; padding: 0; border: 0; box-shadow: none; }
+  details { break-inside: avoid; }
+  h2, h3 { break-after: avoid; }
+  pre, table { break-inside: avoid; }
+}
+</style>
+</head>
+<body>
+<div class="layout">
+<aside>
+  <div class="brand">第1章<br>时间序列分析基础</div>
+  <nav><a class="toc-l1" href="#sec-1-第1章-时间序列分析基础-超级详细复习讲义">第1章 时间序列分析基础：超级详细复习讲义</a>
+<a class="toc-l2" href="#sec-2-一页总览">一页总览</a>
+<a class="toc-l2" href="#sec-3-1-时间序列从哪里来-和横截面-面板有什么不同">§1 时间序列从哪里来，和横截面、面板有什么不同 ★★</a>
+<a class="toc-l3" href="#sec-4-脉络梳理">脉络梳理</a>
+<a class="toc-l3" href="#sec-5-重点内容申明">重点内容申明</a>
+<a class="toc-l3" href="#sec-6-stata-操作模板">Stata 操作模板</a>
+<a class="toc-l3" href="#sec-7-易错点">易错点</a>
+<a class="toc-l2" href="#sec-8-2-时序图里的六种信号-平稳-非平稳-差分平稳-结构变化-季节性-协整">§2 时序图里的六种信号：平稳、非平稳、差分平稳、结构变化、季节性、协整 ★★★</a>
+<a class="toc-l3" href="#sec-9-脉络梳理">脉络梳理</a>
+<a class="toc-l3" href="#sec-10-重点内容申明">重点内容申明</a>
+<a class="toc-l3" href="#sec-11-公式与直觉">公式与直觉</a>
+<a class="toc-l3" href="#sec-12-习题">习题</a>
+<a class="toc-l2" href="#sec-13-3-数据预处理-异常-缺失-变换与分解">§3 数据预处理：异常、缺失、变换与分解 ★★</a>
+<a class="toc-l3" href="#sec-14-脉络梳理">脉络梳理</a>
+<a class="toc-l3" href="#sec-15-重点内容申明">重点内容申明</a>
+<a class="toc-l3" href="#sec-16-stata-操作模板">Stata 操作模板</a>
+<a class="toc-l2" href="#sec-17-4-严平稳与弱平稳-分布不变-vs-一二阶矩稳定">§4 严平稳与弱平稳：分布不变 vs. 一二阶矩稳定 ★★★</a>
+<a class="toc-l3" href="#sec-18-脉络梳理">脉络梳理</a>
+<a class="toc-l3" href="#sec-19-重点内容申明">重点内容申明</a>
+<a class="toc-l3" href="#sec-20-判断套路">判断套路</a>
+<a class="toc-l3" href="#sec-21-习题">习题</a>
+<a class="toc-l2" href="#sec-22-5-遍历性与平稳遍历大数定律-为什么一条历史路径也能估总体">§5 遍历性与平稳遍历大数定律：为什么一条历史路径也能估总体 ★★★</a>
+<a class="toc-l3" href="#sec-23-脉络梳理">脉络梳理</a>
+<a class="toc-l3" href="#sec-24-重点内容申明">重点内容申明</a>
+<a class="toc-l3" href="#sec-25-易错点">易错点</a>
+<a class="toc-l2" href="#sec-26-6-白噪声-独立白噪声与鞅差过程">§6 白噪声、独立白噪声与鞅差过程 ★★★</a>
+<a class="toc-l3" href="#sec-27-脉络梳理">脉络梳理</a>
+<a class="toc-l3" href="#sec-28-重点内容申明">重点内容申明</a>
+<a class="toc-l2" href="#sec-29-7-线性相依性-协方差-相关系数-acf-与-sacf">§7 线性相依性：协方差、相关系数、ACF 与 SACF ★★★</a>
+<a class="toc-l3" href="#sec-30-脉络梳理">脉络梳理</a>
+<a class="toc-l3" href="#sec-31-重点内容申明">重点内容申明</a>
+<a class="toc-l3" href="#sec-32-手算示例">手算示例</a>
+<a class="toc-l3" href="#sec-33-stata-操作模板">Stata 操作模板</a>
+<a class="toc-l2" href="#sec-34-8-白噪声检验-box-pierce-与-ljung-box">§8 白噪声检验：Box-Pierce 与 Ljung-Box ★★★</a>
+<a class="toc-l3" href="#sec-35-脉络梳理">脉络梳理</a>
+<a class="toc-l3" href="#sec-36-重点内容申明">重点内容申明</a>
+<a class="toc-l3" href="#sec-37-小计算">小计算</a>
+<a class="toc-l2" href="#sec-38-9-非线性相依性-spearman-秩相关与-kendall-tau">§9 非线性相依性：Spearman 秩相关与 Kendall tau ★★</a>
+<a class="toc-l3" href="#sec-39-脉络梳理">脉络梳理</a>
+<a class="toc-l3" href="#sec-40-重点内容申明">重点内容申明</a>
+<a class="toc-l3" href="#sec-41-考试提醒">考试提醒</a>
+<a class="toc-l2" href="#sec-42-10-长期协方差与-newey-west-估计-样本均值的不确定性不只是方差除以">§10 长期协方差与 Newey-West 估计：样本均值的不确定性不只是方差除以 T ★★★</a>
+<a class="toc-l3" href="#sec-43-脉络梳理">脉络梳理</a>
+<a class="toc-l3" href="#sec-44-重点内容申明">重点内容申明</a>
+<a class="toc-l3" href="#sec-45-stata-操作模板">Stata 操作模板</a>
+<a class="toc-l2" href="#sec-46-11-基本模型-ma-ar-随机游走与-arma">§11 基本模型：MA、AR、随机游走与 ARMA ★★★</a>
+<a class="toc-l3" href="#sec-47-脉络梳理">脉络梳理</a>
+<a class="toc-l3" href="#sec-48-重点内容申明">重点内容申明</a>
+<a class="toc-l3" href="#sec-49-识别口诀">识别口诀</a>
+<a class="toc-l2" href="#sec-50-12-预测与投资组合-从条件期望-条件方差到最优权重">§12 预测与投资组合：从条件期望、条件方差到最优权重 ★★★</a>
+<a class="toc-l3" href="#sec-51-脉络梳理">脉络梳理</a>
+<a class="toc-l3" href="#sec-52-重点内容申明">重点内容申明</a>
+<a class="toc-l3" href="#sec-53-stata-操作模板">Stata 操作模板</a>
+<a class="toc-l2" href="#sec-54-全章公式速查">全章公式速查</a>
+<a class="toc-l2" href="#sec-55-考前-20-分钟背诵版">考前 20 分钟背诵版</a>
+<a class="toc-l1" href="#sec-56-第1章-时间序列分析基础-练习题库">第1章 时间序列分析基础：练习题库</a>
+<a class="toc-l2" href="#sec-57-1-数据类型与可视化">§1 数据类型与可视化</a>
+<a class="toc-l2" href="#sec-58-2-序列特征识别">§2 序列特征识别</a>
+<a class="toc-l2" href="#sec-59-3-预处理">§3 预处理</a>
+<a class="toc-l2" href="#sec-60-4-平稳性">§4 平稳性</a>
+<a class="toc-l2" href="#sec-61-5-遍历性与大数定律">§5 遍历性与大数定律</a>
+<a class="toc-l2" href="#sec-62-6-白噪声与鞅差">§6 白噪声与鞅差</a>
+<a class="toc-l2" href="#sec-63-7-acf-与-sacf">§7 ACF 与 SACF</a>
+<a class="toc-l2" href="#sec-64-8-白噪声检验">§8 白噪声检验</a>
+<a class="toc-l2" href="#sec-65-9-非线性相关">§9 非线性相关</a>
+<a class="toc-l2" href="#sec-66-10-长期协方差">§10 长期协方差</a>
+<a class="toc-l2" href="#sec-67-11-基本模型">§11 基本模型</a>
+<a class="toc-l2" href="#sec-68-12-预测与投资组合">§12 预测与投资组合</a>
+<a class="toc-l2" href="#sec-69-综合大题">综合大题</a>
+<a class="toc-l2" href="#sec-70-附录-章节骨架与来源映射">附录：章节骨架与来源映射</a>
+<a class="toc-l1" href="#sec-71-第1章-时间序列分析基础-复习材料骨架">第1章 时间序列分析基础：复习材料骨架</a>
+<a class="toc-l2" href="#sec-72-开场问题">开场问题</a>
+<a class="toc-l2" href="#sec-73-章节主线">章节主线</a>
+<a class="toc-l2" href="#sec-74-方法谱系">方法谱系</a>
+<a class="toc-l2" href="#sec-75-1-时间序列从哪里来-和横截面-面板有什么不同">§1 时间序列从哪里来，和横截面、面板有什么不同 ★★</a>
+<a class="toc-l3" href="#sec-76-脉络梳理">脉络梳理</a>
+<a class="toc-l3" href="#sec-77-重点内容申明">重点内容申明</a>
+<a class="toc-l3" href="#sec-78-习题">习题</a>
+<a class="toc-l2" href="#sec-79-2-时序图里的六种信号-平稳-非平稳-差分平稳-结构变化-季节性-协整-核心一">§2 时序图里的六种信号：平稳、非平稳、差分平稳、结构变化、季节性、协整 ★★★ （核心一）</a>
+<a class="toc-l3" href="#sec-80-脉络梳理">脉络梳理</a>
+<a class="toc-l3" href="#sec-81-重点内容申明">重点内容申明</a>
+<a class="toc-l3" href="#sec-82-习题">习题</a>
+<a class="toc-l2" href="#sec-83-3-数据预处理-异常-缺失-变换与分解">§3 数据预处理：异常、缺失、变换与分解 ★★</a>
+<a class="toc-l3" href="#sec-84-脉络梳理">脉络梳理</a>
+<a class="toc-l3" href="#sec-85-重点内容申明">重点内容申明</a>
+<a class="toc-l3" href="#sec-86-习题">习题</a>
+<a class="toc-l2" href="#sec-87-4-严平稳与弱平稳-分布不变-vs-一二阶矩稳定-核心二">§4 严平稳与弱平稳：分布不变 vs. 一二阶矩稳定 ★★★ （核心二）</a>
+<a class="toc-l3" href="#sec-88-脉络梳理">脉络梳理</a>
+<a class="toc-l3" href="#sec-89-重点内容申明">重点内容申明</a>
+<a class="toc-l3" href="#sec-90-习题">习题</a>
+<a class="toc-l2" href="#sec-91-5-遍历性与平稳遍历大数定律-为什么一条历史路径也能估总体-核心三">§5 遍历性与平稳遍历大数定律：为什么一条历史路径也能估总体 ★★★ （核心三）</a>
+<a class="toc-l3" href="#sec-92-脉络梳理">脉络梳理</a>
+<a class="toc-l3" href="#sec-93-重点内容申明">重点内容申明</a>
+<a class="toc-l3" href="#sec-94-习题">习题</a>
+<a class="toc-l2" href="#sec-95-6-白噪声-独立白噪声与鞅差过程">§6 白噪声、独立白噪声与鞅差过程 ★★★</a>
+<a class="toc-l3" href="#sec-96-脉络梳理">脉络梳理</a>
+<a class="toc-l3" href="#sec-97-重点内容申明">重点内容申明</a>
+<a class="toc-l3" href="#sec-98-习题">习题</a>
+<a class="toc-l2" href="#sec-99-7-线性相依性-协方差-相关系数-acf-与-sacf">§7 线性相依性：协方差、相关系数、ACF 与 SACF ★★★</a>
+<a class="toc-l3" href="#sec-100-脉络梳理">脉络梳理</a>
+<a class="toc-l3" href="#sec-101-重点内容申明">重点内容申明</a>
+<a class="toc-l3" href="#sec-102-习题">习题</a>
+<a class="toc-l2" href="#sec-103-8-白噪声检验-box-pierce-与-ljung-box">§8 白噪声检验：Box-Pierce 与 Ljung-Box ★★★</a>
+<a class="toc-l3" href="#sec-104-脉络梳理">脉络梳理</a>
+<a class="toc-l3" href="#sec-105-重点内容申明">重点内容申明</a>
+<a class="toc-l3" href="#sec-106-习题">习题</a>
+<a class="toc-l2" href="#sec-107-9-非线性相依性-spearman-秩相关与-kendall-tau">§9 非线性相依性：Spearman 秩相关与 Kendall tau ★★</a>
+<a class="toc-l3" href="#sec-108-脉络梳理">脉络梳理</a>
+<a class="toc-l3" href="#sec-109-重点内容申明">重点内容申明</a>
+<a class="toc-l3" href="#sec-110-习题">习题</a>
+<a class="toc-l2" href="#sec-111-10-长期协方差与-newey-west-估计-样本均值的不确定性不只是方差除以">§10 长期协方差与 Newey-West 估计：样本均值的不确定性不只是方差除以 T ★★★</a>
+<a class="toc-l3" href="#sec-112-脉络梳理">脉络梳理</a>
+<a class="toc-l3" href="#sec-113-重点内容申明">重点内容申明</a>
+<a class="toc-l3" href="#sec-114-习题">习题</a>
+<a class="toc-l2" href="#sec-115-11-基本模型-ma-ar-随机游走与-arma">§11 基本模型：MA、AR、随机游走与 ARMA ★★★</a>
+<a class="toc-l3" href="#sec-116-脉络梳理">脉络梳理</a>
+<a class="toc-l3" href="#sec-117-重点内容申明">重点内容申明</a>
+<a class="toc-l3" href="#sec-118-习题">习题</a>
+<a class="toc-l2" href="#sec-119-12-预测与投资组合-从条件期望-条件方差到最优权重">§12 预测与投资组合：从条件期望、条件方差到最优权重 ★★★</a>
+<a class="toc-l3" href="#sec-120-脉络梳理">脉络梳理</a>
+<a class="toc-l3" href="#sec-121-重点内容申明">重点内容申明</a>
+<a class="toc-l3" href="#sec-122-习题">习题</a></nav>
+</aside>
+<main><h1 id="sec-1-第1章-时间序列分析基础-超级详细复习讲义">第1章 时间序列分析基础：超级详细复习讲义</h1>
+<blockquote>复习定位：这一章不是让你马上掌握所有高级模型，而是给后续 ARMA、单位根、协整、GARCH、预测评价和投资组合实证打地基。考试最容易考三类东西：概念辨析、公式推导、给定材料后的模型/检验选择。</blockquote>
+<h2 id="sec-2-一页总览">一页总览</h2>
+<p>时间序列分析最怕两件事：第一，把有时间顺序的数据当作独立样本；第二，看见趋势就急着建模型，却没有先判断平稳性和相依结构。本章的主线可以记成：</p>
+<p><code>数据长相 -&gt; 稳定性 -&gt; 记忆性 -&gt; 噪声性 -&gt; 长期不确定性 -&gt; 模型化 -&gt; 预测与决策</code></p>
+<p>数据长相告诉你要不要差分、去季节或处理结构变化；稳定性告诉你历史规律能否外推；记忆性告诉你过去是否有预测价值；白噪声检验告诉你模型残差是否还剩可预测信息；长期协方差告诉你有序列相关时标准误该怎样修正；预测和投资组合则把统计量变成金融决策。</p>
+<h2 id="sec-3-1-时间序列从哪里来-和横截面-面板有什么不同">§1 时间序列从哪里来，和横截面、面板有什么不同 ★★</h2>
+<h3 id="sec-4-脉络梳理">脉络梳理</h3>
+<p>这一节先把“数据是什么”讲清楚。横截面、时间序列、面板不是三种文件格式，而是三种抽样逻辑。横截面强调同一时间的多个个体，时间序列强调同一个对象在时间上的连续观察，面板则同时保留个体维度和时间维度。只要数据有时间顺序，顺序就可能携带信息，不能随便打乱。</p>
+<h3 id="sec-5-重点内容申明">重点内容申明</h3>
+<p>横截面数据的典型样子是“2026 年某一天 1000 个学生的身高”。每个学生是一条观测，观测之间通常可以近似看作来自不同个体。时间序列数据的典型样子是“上证指数从 2000 年 1 月到 2021 年 1 月的月收益率”。每个观测来自同一个对象的不同时点，因此今天的收益率、昨天的收益率、上个月的波动都可能相关。面板数据则是“2001-2020 年所有国家 GDP”，既能比较国家之间差异，也能看每个国家随时间的变化。</p>
+<p>金融时间序列尤其强调频率。日收益、月收益、季度 GDP、年度人口不是同一种时间尺度。频率越高，市场微观结构噪声、交易日效应和波动聚集越明显；频率越低，趋势、周期和结构变化更突出。复习时遇到题目，先写清楚观测对象、时间频率、样本区间和变量定义。</p>
+<p>常见来源可以按类型记忆：宏观官方数据来自国家统计局、世界银行、OECD、IMF；金融市场数据来自 Wind、Bloomberg、CEIC、Yahoo Finance 等。数据来源会影响可复现性和口径，比如 CPI 是同比、环比还是定基指数，收益率是简单收益还是对数收益。</p>
+<p>数据可视化是建模前的第一道检查。时序图回答“随时间怎么动”；散点图回答“两个变量是否一起动”；密度图回答“分布是否偏态、厚尾、多峰”；季节图回答“同一月份或同一季度是否有固定模式”。图形诊断不是可有可无，很多错误模型都来自没有先看图。</p>
+<h3 id="sec-6-stata-操作模板">Stata 操作模板</h3>
+<pre><code class="language-stata">
+* 示例：导入一条月度时间序列并做基础图形
+clear all
+import delimited &quot;monthly_series.csv&quot;, clear
+gen mdate = monthly(date, &quot;YM&quot;)
+format mdate %tm
+tsset mdate
+
+tsline y, title(&quot;时间序列图&quot;)
+histogram y, normal title(&quot;密度与正态参照&quot;)
+scatter consumption income, title(&quot;收入与消费散点图&quot;)
+</code></pre>
+<h3 id="sec-7-易错点">易错点</h3>
+<p>不要把时间序列样本量 T 理解成“有 T 个彼此独立的个体”。如果序列高度自相关，T 个观测提供的信息量可能远小于 T 个独立样本。</p>
+<h2 id="sec-8-2-时序图里的六种信号-平稳-非平稳-差分平稳-结构变化-季节性-协整">§2 时序图里的六种信号：平稳、非平稳、差分平稳、结构变化、季节性、协整 ★★★</h2>
+<h3 id="sec-9-脉络梳理">脉络梳理</h3>
+<p>这一节是“看图说模型”。时间序列图里的常见信号有六类：平稳、非平稳、差分平稳、结构变化、季节性和协整。它们不是互相完全排斥的标签，一条真实序列可能同时有趋势、季节和结构变化。</p>
+<h3 id="sec-10-重点内容申明">重点内容申明</h3>
+<p>平稳序列的直观特征是围绕固定水平上下波动，波动幅度大致稳定。比如某些通胀率或收益率序列可能在一段时期内表现得近似平稳。平稳性的本质不是“线一定水平”，而是概率规律不随时间系统改变。一个平稳序列可以有短期冲击，但冲击的影响不会永久改变均值水平。</p>
+<p>非平稳序列则不满足这些特征。它可能有趋势，比如价格指数长期上升；可能有结构变化，比如汇率制度调整后均值或波动突然改变；可能有周期，比如经济扩张和收缩；也可能有时变波动，比如危机时期波动明显放大。非平稳不是一个单一原因，而是一组“规律不稳定”的表现。</p>
+<p>差分平稳序列是一类重要非平稳序列。设价格水平为 $P_t$，若 $\log P_t$ 非平稳，但对数差分</p>
+<div class="math-block">$$
+r_t = \Delta \log P_t = \log P_t-\log P_{t-1}
+$$</div>
+<p>近似平稳，则 $r_t$ 可被理解为连续复利收益率。推导上，若简单收益率 $R_t=(P_t-P_{t-1})/P_{t-1}$ 较小，则</p>
+<div class="math-block">$$
+\log P_t-\log P_{t-1}
+=\log\left(\frac{P_t}{P_{t-1}}\right)
+=\log(1+R_t)
+\approx R_t.
+$$</div>
+<p>所以金融里经常对价格取对数差分，而不是直接对价格水平建平稳模型。</p>
+<p>结构变化强调某一时点前后统计规律跳变。比如政策制度改变、金融危机、汇率制度变化、样本口径调整，都可能让均值、方差或变量关系改变。结构变化最危险的地方是：整体样本看起来像一个模型，实际上是几个不同制度拼在一起。</p>
+<p>季节性是固定日历周期造成的重复模式。春节对 CPI、寒暑假对航空旅客量、季度财报对企业变量都有影响。季节性和周期性要分开：季节性周期长度固定且可预期，经济周期长度不固定。</p>
+<p>协整是本章非常重要的伏笔。两个变量各自非平稳，并不代表它们的关系也漂移。若收入和消费都随时间上升，但某个线性组合 $c_t-\beta y_t$ 是平稳的，那么二者存在长期均衡关系。协整告诉我们：不能简单因为变量非平稳就放弃水平关系，关键要检验长期组合是否稳定。</p>
+<h3 id="sec-11-公式与直觉">公式与直觉</h3>
+<p>如果 $y_t$ 是随机游走：</p>
+<div class="math-block">$$
+y_t=y_{t-1}+\varepsilon_t,
+$$</div>
+<p>递推可得：</p>
+<div class="math-block">$$
+y_t=y_0+\sum_{j=1}^{t}\varepsilon_j.
+$$</div>
+<p>这说明每一次冲击都会永久累积到水平值里，因此水平序列非平稳。差分后：</p>
+<div class="math-block">$$
+\Delta y_t=y_t-y_{t-1}=\varepsilon_t,
+$$</div>
+<p>如果 $\varepsilon_t$ 是白噪声，差分序列就是平稳的。这就是差分平稳的核心。</p>
+<h3 id="sec-12-习题">习题</h3>
+<p class="question">1. ★ 给出股票价格、股票收益率、CPI 水平、CPI 同比增速四个变量，分别判断更可能平稳还是非平稳。</p>
+<details><summary>参考答案要点</summary>
+<p>价格和 CPI 水平通常更可能非平稳；收益率和同比增速更可能近似平稳，但仍需检查结构变化和波动聚集。</p>
+</details>
+<p class="question">2. ★★ 为什么“有周期波动”不等于“有季节性”？</p>
+<details><summary>参考答案要点</summary>
+<p>季节性对应固定且已知的日历频率；周期波动频率不固定，常与宏观经济状态有关。</p>
+</details>
+<p class="question">3. ★★★ 若 $x_t$ 和 $y_t$ 都是随机游走，但 $y_t-2x_t$ 平稳，如何解释二者关系？</p>
+<details><summary>参考答案要点</summary>
+<p>二者可能存在协整关系，$y_t\approx 2x_t$ 是长期均衡，偏离项会围绕稳定水平波动。</p>
+</details>
+<h2 id="sec-13-3-数据预处理-异常-缺失-变换与分解">§3 数据预处理：异常、缺失、变换与分解 ★★</h2>
+<h3 id="sec-14-脉络梳理">脉络梳理</h3>
+<p>预处理是从“原始观测”到“可建模序列”的桥。它不只是清洗脏数据，也包括把变量变成更符合模型假设的形式。</p>
+<h3 id="sec-15-重点内容申明">重点内容申明</h3>
+<p>奇异值检测要先判断来源。录入错误应修正或剔除；真实极端事件应保留并建模；制度变化可能需要分段、加入虚拟变量或使用结构变化模型。不能机械地把所有极端值删掉，金融时间序列里的极端值往往正是风险信息。</p>
+<p>缺失值填补要避免未来信息泄露。若做实时预测，不能用未来均值填补过去缺失；可以考虑前值填补、插值、季节均值或模型填补，但要说明假设。对金融交易日数据，还要区分停牌、非交易日和数据缺失。</p>
+<p>Box-Cox 变换常用来稳定方差：</p>
+<div class="math-block">$$
+y_t^{(\lambda)}=
+\begin{cases}
+\dfrac{y_t^\lambda-1}{\lambda}, &amp; \lambda\neq 0,\\
+\log y_t, &amp; \lambda=0.
+\end{cases}
+$$</div>
+<p>当变量水平越高波动越大时，对数变换往往有效。对数还能把乘法增长转成加法增长，方便解释增长率。</p>
+<p>分解方法把序列写成：</p>
+<div class="math-block">$$
+y_t = T_t + S_t + R_t
+$$</div>
+<p>或乘法形式：</p>
+<div class="math-block">$$
+y_t = T_t \times S_t \times R_t.
+$$</div>
+<p>其中 $T_t$ 是趋势，$S_t$ 是季节项，$R_t$ 是剩余项。X-13 偏官方季调，ETS 从指数平滑角度建模，STL 灵活且稳健。考试中不一定要求掌握算法细节，但要知道分解的目的：把混在一起的规律拆开。</p>
+<h3 id="sec-16-stata-操作模板">Stata 操作模板</h3>
+<pre><code class="language-stata">
+* 对数、差分、季节差分、异常标记
+tsset mdate
+gen lny = ln(y)
+gen d_lny = D.lny
+gen s12_lny = S12.lny
+
+summ d_lny, detail
+gen outlier = abs(d_lny - r(p50)) &gt; 4 * (r(p75)-r(p25))
+tsline d_lny if !missing(d_lny)
+</code></pre>
+<h2 id="sec-17-4-严平稳与弱平稳-分布不变-vs-一二阶矩稳定">§4 严平稳与弱平稳：分布不变 vs. 一二阶矩稳定 ★★★</h2>
+<h3 id="sec-18-脉络梳理">脉络梳理</h3>
+<p>平稳性回答“历史规律能否代表未来”。如果一个序列的统计规律随时间改变，用过去估计未来就会失去基础。</p>
+<h3 id="sec-19-重点内容申明">重点内容申明</h3>
+<p>严平稳要求任意有限维联合分布在时间平移后不变。用符号写，若对任意 $k$、任意时点 $t_1,\ldots,t_k$ 和任意平移 $m$，</p>
+<div class="math-block">$$
+(y_{t_1},\ldots,y_{t_k})
+\overset{d}{=}
+(y_{t_1-m},\ldots,y_{t_k-m}),
+$$</div>
+<p>则 $\{y_t\}$ 严平稳。这里 $\overset{d}{=}$ 表示分布相同。它要求的不只是均值方差相同，而是整个联合分布相同。</p>
+<p>弱平稳要求更少。若</p>
+<div class="math-block">$$
+E(y_t)=\mu_y,\quad \text{不随 }t\text{ 变化},
+$$</div>
+<p>并且</p>
+<div class="math-block">$$
+\gamma_{s,t}=Cov(y_s,y_t)=\gamma_{|s-t|},
+$$</div>
+<p>即协方差只依赖间隔长度，不依赖具体日期，则称弱平稳，也叫协方差平稳或宽平稳。</p>
+<p>为什么入门课更常用弱平稳？因为很多线性模型、ACF、长期协方差和大样本推断主要依赖一阶矩和二阶矩。严平稳太强，实际检验也困难。若序列是联合正态过程，则均值和协方差决定全部有限维分布，此时弱平稳可以推出严平稳；但一般情况下不能反推。</p>
+<h3 id="sec-20-判断套路">判断套路</h3>
+<p>给定模型判断弱平稳，按三步来：</p>
+<p class="question">1. 求 $E(y_t)$，看是否有限且与 $t$ 无关。</p>
+<p class="question">2. 求 $Var(y_t)$，看是否有限且与 $t$ 无关。</p>
+<p class="question">3. 求 $Cov(y_t,y_{t-l})$，看是否只依赖 $l$。</p>
+<p>例：若 $y_t=\mu+\varepsilon_t+0.5\varepsilon_{t-1}$，且 $\varepsilon_t$ 为方差 $\sigma^2$ 的白噪声，则</p>
+<div class="math-block">$$
+E(y_t)=\mu,
+$$</div>
+<div class="math-block">$$
+Var(y_t)=Var(\varepsilon_t)+0.25Var(\varepsilon_{t-1})=1.25\sigma^2,
+$$</div>
+<div class="math-block">$$
+Cov(y_t,y_{t-1})
+=Cov(\varepsilon_t+0.5\varepsilon_{t-1},\varepsilon_{t-1}+0.5\varepsilon_{t-2})
+=0.5\sigma^2.
+$$</div>
+<p>更高阶滞后协方差为 0，所以它是弱平稳的 MA(1)。</p>
+<h3 id="sec-21-习题">习题</h3>
+<p class="question">1. ★ 什么是弱平稳？为什么它比严平稳弱？</p>
+<details><summary>参考答案要点</summary>
+<p>弱平稳只约束均值、方差和自协方差；严平稳约束任意有限维联合分布。分布不变推出矩稳定通常需要矩存在，反过来一般不成立。</p>
+</details>
+<p class="question">2. ★★ 判断 $y_t=0.7y_{t-1}+\varepsilon_t$ 是否可能平稳。</p>
+<details><summary>参考答案要点</summary>
+<p>若 $|\phi|=0.7&lt;1$ 且冲击为白噪声，则存在平稳解；均值为 0，自协方差随滞后按 $0.7^l$ 衰减。</p>
+</details>
+<p class="question">3. ★★★ 随机游走为什么不是弱平稳？</p>
+<details><summary>参考答案要点</summary>
+<p>随机游走方差随时间累积，$Var(y_t)=t\sigma^2$（忽略初值方差），不满足方差不随时间变化。</p>
+</details>
+<h2 id="sec-22-5-遍历性与平稳遍历大数定律-为什么一条历史路径也能估总体">§5 遍历性与平稳遍历大数定律：为什么一条历史路径也能估总体 ★★★</h2>
+<h3 id="sec-23-脉络梳理">脉络梳理</h3>
+<p>平稳说“规律不变”，遍历说“时间平均能逼近总体平均”。时间序列经常只有一条历史路径，如果没有遍历性，样本均值就未必能代表总体均值。</p>
+<h3 id="sec-24-重点内容申明">重点内容申明</h3>
+<p>均值遍历性写作：</p>
+<div class="math-block">$$
+\bar y=\frac{1}{T}\sum_{t=1}^{T}y_t \overset{p}{\to}\mu_y.
+$$</div>
+<p>协方差遍历性写作：</p>
+<div class="math-block">$$
+\hat\gamma_l=\frac{1}{T}\sum_{t=l+1}^{T}(y_t-\bar y)(y_{t-l}-\bar y)
+\overset{p}{\to}\gamma_l.
+$$</div>
+<p>直觉上，遍历性要求相隔很远的观测不要还像“同一个信息”一样高度绑定。若相关性随滞后足够快地衰减，样本量增加才真的增加信息。</p>
+<p>课件给出的平稳遍历大数定律可概括为：若 $y_t$ 是弱平稳序列，且自协方差绝对可加：</p>
+<div class="math-block">$$
+\sum_{j=0}^{\infty}|\gamma_j|&lt;\infty,
+$$</div>
+<p>则</p>
+<div class="math-block">$$
+\bar y \overset{p}{\to}\mu_y.
+$$</div>
+<p>推导重点是样本均值方差。先写：</p>
+<div class="math-block">$$
+Var(\bar y)=E(\bar y-\mu_y)^2
+=Var\left(\frac{1}{T}\sum_{t=1}^{T}y_t\right).
+$$</div>
+<p>把常数提出：</p>
+<div class="math-block">$$
+Var(\bar y)=\frac{1}{T^2}Var\left(\sum_{t=1}^{T}y_t\right).
+$$</div>
+<p>方差展开为所有协方差的和：</p>
+<div class="math-block">$$
+Var\left(\sum_{t=1}^{T}y_t\right)
+=\sum_{s=1}^{T}\sum_{t=1}^{T}Cov(y_s,y_t).
+$$</div>
+<p>弱平稳使 $Cov(y_s,y_t)=\gamma_{|s-t|}$。按滞后合并：</p>
+<div class="math-block">$$
+Var(\bar y)
+=\frac{1}{T^2}\left[T\gamma_0+2(T-1)\gamma_1+2(T-2)\gamma_2+\cdots+2\gamma_{T-1}\right].
+$$</div>
+<p>再整理：</p>
+<div class="math-block">$$
+Var(\bar y)
+=\frac{1}{T}\left[\gamma_0+2\sum_{l=1}^{T-1}\left(1-\frac{l}{T}\right)\gamma_l\right].
+$$</div>
+<p>若自协方差绝对可加，括号内有界，因此</p>
+<div class="math-block">$$
+Var(\bar y)\to 0.
+$$</div>
+<p>再由切比雪夫不等式：</p>
+<div class="math-block">$$
+P(|\bar y-\mu_y|&gt;\epsilon)\leq \frac{Var(\bar y)}{\epsilon^2}\to 0,
+$$</div>
+<p>所以 $\bar y\overset{p}{\to}\mu_y$。</p>
+<h3 id="sec-25-易错点">易错点</h3>
+<p>平稳不自动等于遍历。一个极端例子是 $y_t=z$，其中 $z$ 是一次抽取后永远不变的随机变量。它的分布不随时间变，但沿时间平均永远等于 $z$，不会收敛到 $E(z)$。这说明“规律不变”和“时间平均有效”是两件事。</p>
+<h2 id="sec-26-6-白噪声-独立白噪声与鞅差过程">§6 白噪声、独立白噪声与鞅差过程 ★★★</h2>
+<h3 id="sec-27-脉络梳理">脉络梳理</h3>
+<p>白噪声是时间序列模型里的基准误差。一个模型拟合完以后，如果残差还显著自相关，说明模型没有把时间结构解释干净。</p>
+<h3 id="sec-28-重点内容申明">重点内容申明</h3>
+<p>白噪声 $\varepsilon_t$ 满足：</p>
+<div class="math-block">$$
+E(\varepsilon_t)=0,\quad Var(\varepsilon_t)=\sigma^2&lt;\infty,\quad Cov(\varepsilon_s,\varepsilon_t)=0\ (s\neq t).
+$$</div>
+<p>它只要求“不相关”，不要求“独立”。独立白噪声更强，要求任意不同时点的随机变量独立。高斯独立白噪声还要求每期服从正态分布：</p>
+<div class="math-block">$$
+\varepsilon_t\sim iidN(0,\sigma^2).
+$$</div>
+<p>鞅差过程要求：</p>
+<div class="math-block">$$
+E(y_t\mid I_{t-1})=0,
+$$</div>
+<p>其中 $I_{t-1}$ 是 $t-1$ 时刻已知的信息集合。这个条件比无条件均值为 0 更强，因为它说“即使给你全部历史信息，下一期条件均值仍然是 0”。若 $y_t$ 是鞅差且二阶矩有限，则对任何 $I_{t-1}$ 中可测的变量 $g_{t-1}$，</p>
+<div class="math-block">$$
+E(y_tg_{t-1})=E[E(y_tg_{t-1}\mid I_{t-1})]
+=E[g_{t-1}E(y_t\mid I_{t-1})]=0.
+$$</div>
+<p>这说明鞅差序列与历史信息不相关，因此没有线性均值预测性。</p>
+<p>金融里常见现象是：收益率 $r_t$ 的 ACF 很弱，像白噪声；但 $r_t^2$ 或 $|r_t|$ 的 ACF 很强，说明波动率有记忆。这正是后续 ARCH/GARCH 模型的动机。</p>
+<h2 id="sec-29-7-线性相依性-协方差-相关系数-acf-与-sacf">§7 线性相依性：协方差、相关系数、ACF 与 SACF ★★★</h2>
+<h3 id="sec-30-脉络梳理">脉络梳理</h3>
+<p>相依性度量回答“过去和现在有什么关系”。最基础的是线性关系：两个变量是否倾向于同向偏离各自均值。</p>
+<h3 id="sec-31-重点内容申明">重点内容申明</h3>
+<p>两个随机变量的协方差为：</p>
+<div class="math-block">$$
+Cov(X,Y)=E[(X-E X)(Y-E Y)].
+$$</div>
+<p>Pearson 相关系数为：</p>
+<div class="math-block">$$
+\rho_{XY}=\frac{Cov(X,Y)}{\sqrt{Var(X)Var(Y)}}.
+$$</div>
+<p>它把协方差标准化到 $[-1,1]$。但它只度量线性关系，不等于独立性。</p>
+<p>对于平稳时间序列，$l$ 阶自协方差为：</p>
+<div class="math-block">$$
+\gamma_l=Cov(y_t,y_{t-l}).
+$$</div>
+<p>由于协方差对称，</p>
+<div class="math-block">$$
+\gamma_l=\gamma_{-l}.
+$$</div>
+<p>$l$ 阶自相关系数为：</p>
+<div class="math-block">$$
+\rho_l=\frac{\gamma_l}{\gamma_0}.
+$$</div>
+<p>自相关函数 ACF 是 $\rho_l$ 关于 $l$ 的函数。样本里我们用：</p>
+<div class="math-block">$$
+\hat\gamma_l=\frac{1}{T}\sum_{t=l+1}^{T}(y_t-\bar y)(y_{t-l}-\bar y),
+$$</div>
+<div class="math-block">$$
+\hat\rho_l=\frac{\hat\gamma_l}{\hat\gamma_0}.
+$$</div>
+<p>这里分母用 $T$ 是时间序列教材里常见写法，它让 $\hat\gamma_l$ 在各阶滞后下保持统一尺度。</p>
+<h3 id="sec-32-手算示例">手算示例</h3>
+<p>若序列为 $1,2,3$，则 $\bar y=2$。样本零阶自协方差：</p>
+<div class="math-block">$$
+\hat\gamma_0=\frac{1}{3}[(-1)^2+0^2+1^2]=\frac{2}{3}.
+$$</div>
+<p>一阶自协方差：</p>
+<div class="math-block">$$
+\hat\gamma_1=\frac{1}{3}[(2-2)(1-2)+(3-2)(2-2)]=0.
+$$</div>
+<p>所以 $\hat\rho_1=0$。这个例子也提醒：样本太小时 SACF 非常不稳定。</p>
+<h3 id="sec-33-stata-操作模板">Stata 操作模板</h3>
+<pre><code class="language-stata">
+clear all
+import delimited &quot;returns.csv&quot;, clear
+gen date2 = daily(date, &quot;YMD&quot;)
+format date2 %td
+tsset date2
+
+ac return, lags(20)
+pac return, lags(20)
+wntestq return, lags(10)
+</code></pre>
+<h2 id="sec-34-8-白噪声检验-box-pierce-与-ljung-box">§8 白噪声检验：Box-Pierce 与 Ljung-Box ★★★</h2>
+<h3 id="sec-35-脉络梳理">脉络梳理</h3>
+<p>ACF 图告诉我们“看起来有没有自相关”，白噪声检验告诉我们“统计上能不能拒绝无自相关”。它把前 $k$ 阶自相关合在一起检验。</p>
+<h3 id="sec-36-重点内容申明">重点内容申明</h3>
+<p>原假设：</p>
+<div class="math-block">$$
+H_0:\rho_1=\rho_2=\cdots=\rho_k=0.
+$$</div>
+<p>备择假设是至少有一个不为 0。Box-Pierce 统计量：</p>
+<div class="math-block">$$
+Q_{BP}=T\sum_{l=1}^{k}\hat\rho_l^2
+\overset{d}{\to}\chi^2(k).
+$$</div>
+<p>推导直觉是：白噪声下样本自相关近似服从均值为 0、方差约为 $1/T$ 的正态分布，所以 $\sqrt{T}\hat\rho_l$ 近似标准正态，平方后相加近似卡方。</p>
+<p>Ljung-Box 统计量做有限样本修正：</p>
+<div class="math-block">$$
+Q_{LB}=T(T+2)\sum_{l=1}^{k}\frac{\hat\rho_l^2}{T-l}
+\overset{d}{\to}\chi^2(k).
+$$</div>
+<p>当 $Q$ 大于 $\chi^2_k$ 的上分位数，或 p 值小于显著性水平，就拒绝白噪声原假设。课件例子中，标准正态模拟序列的 $Q_{BP}=3.0662$、p 值 0.6898；$Q_{LB}=3.1661$、p 值 0.6774，均不拒绝白噪声。</p>
+<p>模型诊断时要特别注意：白噪声检验通常用于残差，而不是总是用于原序列。如果你拟合了 ARMA(p,q)，残差检验的自由度常需要按 $k-p-q$ 调整。</p>
+<h3 id="sec-37-小计算">小计算</h3>
+<p>若 $T=100$，$k=3$，样本自相关为 $0.10,-0.05,0.20$，则</p>
+<div class="math-block">$$
+Q_{BP}=100(0.10^2+(-0.05)^2+0.20^2)=100(0.0525)=5.25.
+$$</div>
+<p>在 5% 水平下，$\chi^2_3$ 临界值约 7.815，因此不拒绝。Ljung-Box 会略微放大有限样本下的统计量。</p>
+<h2 id="sec-38-9-非线性相依性-spearman-秩相关与-kendall-tau">§9 非线性相依性：Spearman 秩相关与 Kendall tau ★★</h2>
+<h3 id="sec-39-脉络梳理">脉络梳理</h3>
+<p>线性相关为 0 并不等于没有关系。若关系是 U 型、平方型、尾部相关或单调非线性，Pearson 相关可能失灵。</p>
+<h3 id="sec-40-重点内容申明">重点内容申明</h3>
+<p>典型例子：令 $Y=X^2$，且 $X\sim N(0,1)$。由于</p>
+<div class="math-block">$$
+Cov(X,Y)=Cov(X,X^2)=E(X^3)-E(X)E(X^2)=0,
+$$</div>
+<p>所以 Pearson 相关为 0。但 $Y$ 完全由 $X$ 决定，二者显然不独立。</p>
+<p>Spearman 秩相关把变量转成分布函数值或秩。总体定义可写为：</p>
+<div class="math-block">$$
+R_{XY}=\rho(F(X),G(Y)),
+$$</div>
+<p>其中 $F,G$ 分别为 $X,Y$ 的分布函数。样本里用经验分布函数：</p>
+<div class="math-block">$$
+\hat F(x)=\frac{1}{T}\sum_{t=1}^{T}1\{X_t\le x\},
+\quad
+\hat G(y)=\frac{1}{T}\sum_{t=1}^{T}1\{Y_t\le y\}.
+$$</div>
+<p>令 $W_t=\hat F(X_t)$、$U_t=\hat G(Y_t)$，Spearman 样本秩相关就是 $W_t$ 和 $U_t$ 的 Pearson 相关。</p>
+<p>Kendall $\tau$ 关注成对排序。总体上：</p>
+<div class="math-block">$$
+\tau_{XY}=P[(X-X&#x27;)(Y-Y&#x27;)&gt;0]-P[(X-X&#x27;)(Y-Y&#x27;)&lt;0],
+$$</div>
+<p>也就是同序概率减去逆序概率。样本形式：</p>
+<div class="math-block">$$
+\hat\tau_{XY}
+=\frac{4}{T(T-1)}\sum_{s&lt;t}1\{(X_t-X_s)(Y_t-Y_s)&gt;0\}-1.
+$$</div>
+<p>若 $X$ 和 $Y$ 独立，则 $\tau_{XY}=0$，并有渐近正态近似用于检验。</p>
+<h3 id="sec-41-考试提醒">考试提醒</h3>
+<p>Spearman 和 Kendall 不是为了替代 Pearson，而是为了补充 Pearson。若题目问“变量是否存在非线性相依”，应说明 Pearson 只能发现线性关系，再引出秩相关或更一般的独立性检验。</p>
+<h2 id="sec-42-10-长期协方差与-newey-west-估计-样本均值的不确定性不只是方差除以">§10 长期协方差与 Newey-West 估计：样本均值的不确定性不只是方差除以 T ★★★</h2>
+<h3 id="sec-43-脉络梳理">脉络梳理</h3>
+<p>独立样本下，$\bar y$ 的方差是 $\sigma^2/T$。但时间序列有自相关时，样本均值的不确定性来自所有滞后协方差。长期协方差就是把这些记忆加总起来。</p>
+<h3 id="sec-44-重点内容申明">重点内容申明</h3>
+<p>考虑：</p>
+<div class="math-block">$$
+\sqrt{T}(\bar y-\mu_y)
+=\frac{1}{\sqrt{T}}\sum_{t=1}^{T}(y_t-\mu_y).
+$$</div>
+<p>其方差为：</p>
+<div class="math-block">$$
+Var(\sqrt{T}\bar y)
+=Var\left(\frac{1}{\sqrt{T}}\sum_{t=1}^{T}y_t\right)
+=\frac{1}{T}\sum_{s=1}^{T}\sum_{t=1}^{T}Cov(y_s,y_t).
+$$</div>
+<p>利用弱平稳并按滞后合并：</p>
+<div class="math-block">$$
+Var(\sqrt{T}\bar y)
+=\gamma_0+2\sum_{l=1}^{T-1}\left(1-\frac{l}{T}\right)\gamma_l.
+$$</div>
+<p>当 $T\to\infty$ 且协方差可加：</p>
+<div class="math-block">$$
+Var(\sqrt{T}\bar y)\to \gamma_0+2\sum_{l=1}^{\infty}\gamma_l
+=\sum_{l=-\infty}^{\infty}\gamma_l
+\equiv S.
+$$</div>
+<p>$S$ 就是长期协方差。中心极限定理给出：</p>
+<div class="math-block">$$
+\sqrt{T}(\bar y-\mu_y)\overset{d}{\to}N(0,S).
+$$</div>
+<p>若 $\gamma_l&gt;0$ 很多，$S&gt;\gamma_0$，忽略自相关会低估标准误。课件 MA(1) 例子里，HAC 置信区间覆盖率约 0.97，而无序列相依假设下覆盖率约 0.85，说明后者区间过窄。</p>
+<p>Newey-West 估计量写作：</p>
+<div class="math-block">$$
+\hat S=\sum_{l=-T+1}^{T-1}k\left(\frac{l}{q(T)}\right)\hat\gamma_l.
+$$</div>
+<p>$k(\cdot)$ 是核函数，$q(T)$ 是带宽。Bartlett 核：</p>
+<div class="math-block">$$
+k(x)=
+\begin{cases}
+1-|x|,&amp; |x|\le 1,\\
+0,&amp; |x|&gt;1.
+\end{cases}
+$$</div>
+<p>若采用课件的写法，$q(T)=3$ 时，保留 $l=1,2$ 的正滞后权重，得到：</p>
+<div class="math-block">$$
+\hat S=\hat\gamma_0+\frac{4}{3}\hat\gamma_1+\frac{2}{3}\hat\gamma_2.
+$$</div>
+<p>这个式子来自对称滞后的加总：正负一阶各有权重 $2/3$，合计 $4/3$；正负二阶各有权重 $1/3$，合计 $2/3$。</p>
+<h3 id="sec-45-stata-操作模板">Stata 操作模板</h3>
+<pre><code class="language-stata">
+* Newey-West/HAC 标准误示例
+clear all
+import delimited &quot;macro_series.csv&quot;, clear
+gen qdate = quarterly(date, &quot;YQ&quot;)
+format qdate %tq
+tsset qdate
+
+reg y x
+newey y x, lag(4)
+</code></pre>
+<h2 id="sec-46-11-基本模型-ma-ar-随机游走与-arma">§11 基本模型：MA、AR、随机游走与 ARMA ★★★</h2>
+<h3 id="sec-47-脉络梳理">脉络梳理</h3>
+<p>基本模型把“当前值从哪里来”写成可估计的公式。MA 模型来自冲击的有限记忆，AR 模型来自变量自身的历史惯性，ARMA 把两种机制结合。</p>
+<h3 id="sec-48-重点内容申明">重点内容申明</h3>
+<p>白噪声是构造其他模型的原材料。MA(1)：</p>
+<div class="math-block">$$
+y_t=\varepsilon_t+\theta\varepsilon_{t-1}.
+$$</div>
+<p>它只有一阶冲击记忆。其均值为 0，方差为 $(1+\theta^2)\sigma^2$，一阶自协方差为 $\theta\sigma^2$，二阶及以上自协方差为 0。因此 MA(q) 的 ACF 通常在 q 阶后截尾。</p>
+<p>AR(1)：</p>
+<div class="math-block">$$
+y_t=\phi y_{t-1}+\varepsilon_t.
+$$</div>
+<p>若 $|\phi|&lt;1$，递推可得：</p>
+<div class="math-block">$$
+y_t=\varepsilon_t+\phi\varepsilon_{t-1}+\phi^2\varepsilon_{t-2}+\cdots.
+$$</div>
+<p>因为 $\phi^j$ 衰减，远期冲击影响逐渐消失，序列平稳。若 $\phi=1$，则</p>
+<div class="math-block">$$
+y_t=y_{t-1}+\varepsilon_t,
+$$</div>
+<p>这是随机游走，冲击永久累积，通常非平稳。若带漂移：</p>
+<div class="math-block">$$
+y_t=\delta+y_{t-1}+\varepsilon_t,
+$$</div>
+<p>递推得：</p>
+<div class="math-block">$$
+y_t=y_0+\delta t+\sum_{j=1}^{t}\varepsilon_j.
+$$</div>
+<p>它既有确定性漂移，又有随机趋势。</p>
+<p>ARMA(1,1) 示例：</p>
+<div class="math-block">$$
+y_t=0.5y_{t-1}+0.5\varepsilon_{t-1}+\varepsilon_t.
+$$</div>
+<p>它既依赖过去的 $y$，也依赖过去冲击。现实金融收益率若短期线性相依不强，简单 ARMA 可能解释有限；但它是理解残差、预测和波动模型的基础。</p>
+<h3 id="sec-49-识别口诀">识别口诀</h3>
+<p>MA 看“冲击窗口”，AR 看“自身惯性”，随机游走看“单位根累积”，ARMA 看“两种记忆混合”。考试给公式时，先圈出滞后 $y$ 和滞后 $\varepsilon$：有滞后 $y$ 是 AR 成分，有滞后 $\varepsilon$ 是 MA 成分。</p>
+<h2 id="sec-50-12-预测与投资组合-从条件期望-条件方差到最优权重">§12 预测与投资组合：从条件期望、条件方差到最优权重 ★★★</h2>
+<h3 id="sec-51-脉络梳理">脉络梳理</h3>
+<p>预测不是本章的结尾小应用，而是前面所有概念的落点。预测未来收益的条件均值和条件方差，才能做投资组合决策。</p>
+<h3 id="sec-52-重点内容申明">重点内容申明</h3>
+<p>均值预测法：</p>
+<div class="math-block">$$
+\hat y_{T+h|T}=\frac{1}{T}\sum_{t=1}^{T}y_t.
+$$</div>
+<p>它适合没有明显趋势、季节和持续变化的序列，常作为基准。</p>
+<p>朴素预测法：</p>
+<div class="math-block">$$
+\hat y_{T+h|T}=y_T.
+$$</div>
+<p>对随机游走型变量，朴素预测很有竞争力，因为随机游走下最优预测就是当前值。</p>
+<p>滑动平均预测：</p>
+<div class="math-block">$$
+\hat y_{T+h|T}=\frac{1}{k}\sum_{t=T-k+1}^{T}y_t.
+$$</div>
+<p>它只使用最近 $k$ 期，能适应缓慢变化，但窗口过短会太噪，窗口过长会反应迟钝。</p>
+<p>指数平滑：</p>
+<div class="math-block">$$
+\hat y_{T+1|T}
+=\alpha y_T+\alpha(1-\alpha)y_{T-1}+\alpha(1-\alpha)^2y_{T-2}+\cdots.
+$$</div>
+<p>递推式为：</p>
+<div class="math-block">$$
+\hat y_{T+1|T}=\alpha y_T+(1-\alpha)\hat y_{T|T-1}.
+$$</div>
+<p>推导很简单：把上一期预测</p>
+<div class="math-block">$$
+\hat y_{T|T-1}=\alpha y_{T-1}+\alpha(1-\alpha)y_{T-2}+\cdots
+$$</div>
+<p>乘以 $(1-\alpha)$，再加上 $\alpha y_T$，就得到所有历史观测的递减权重。$\alpha$ 越大，越重视最新观测；$\alpha$ 越小，越平滑。</p>
+<p>模型预测法把模型结构转化为条件期望。例如：</p>
+<div class="math-block">$$
+y_t=0.5y_{t-1}+\varepsilon_t,\quad E(\varepsilon_{T+1}\mid I_T)=0.
+$$</div>
+<p>则</p>
+<div class="math-block">$$
+E(y_{T+1}\mid I_T)
+=E(0.5y_T+\varepsilon_{T+1}\mid I_T)
+=0.5y_T.
+$$</div>
+<p>这就是最小均方误差下的一步最优预测。</p>
+<p>投资组合例子中，财富演化为：</p>
+<div class="math-block">$$
+w_{t+1}(\alpha)
+=\alpha w_t(1+R_{t+1})+(1-\alpha)w_t(1+r_f).
+$$</div>
+<p>去掉与 $\alpha$ 无关的常数项后，均值-方差投资者最大化：</p>
+<div class="math-block">$$
+\alpha w_t E(R_{t+1}\mid Z_t)
+-\frac{c}{2}\alpha^2w_t^2Var(R_{t+1}\mid Z_t).
+$$</div>
+<p>对 $\alpha$ 求一阶条件：</p>
+<div class="math-block">$$
+\frac{\partial}{\partial \alpha}
+\left[
+\alpha w_t \mu_{t+1|t}
+-\frac{c}{2}\alpha^2w_t^2\sigma^2_{t+1|t}
+\right]
+=w_t\mu_{t+1|t}-c\alpha w_t^2\sigma^2_{t+1|t}=0.
+$$</div>
+<p>所以无约束最优比例为：</p>
+<div class="math-block">$$
+\alpha^*
+=\frac{\mu_{t+1|t}}{c w_t\sigma^2_{t+1|t}}.
+$$</div>
+<p>若课件约束 $0\le \alpha\le 1$，则实际决策为：</p>
+<div class="math-block">$$
+\alpha^{opt}=\min\{1,\max\{0,\alpha^*\}\}.
+$$</div>
+<p>这条式子把全章连接起来：条件均值预测告诉你“收益补偿有多大”，条件方差预测告诉你“风险有多大”，风险厌恶 $c$ 告诉你“愿意承受多少风险”。</p>
+<h3 id="sec-53-stata-操作模板">Stata 操作模板</h3>
+<pre><code class="language-stata">
+* 简单预测基准：均值、朴素、滑动平均、AR(1)
+clear all
+import delimited &quot;returns.csv&quot;, clear
+gen date2 = daily(date, &quot;YMD&quot;)
+format date2 %td
+tsset date2
+
+gen mean_forecast = .
+quietly summarize r if tin(, td(31dec2020))
+replace mean_forecast = r(mean) if tin(td(01jan2021),)
+
+gen naive_forecast = L.r
+tssmooth ma ma5 = r, window(4 1 0)
+
+arima r, arima(1,0,0)
+predict ar1_fit, y
+</code></pre>
+<h2 id="sec-54-全章公式速查">全章公式速查</h2>
+<table><thead><tr><th>主题</th><th>公式</th><th>含义</th></tr></thead><tbody>
+<tr><td>对数收益</td><td>$r_t=\Delta\log P_t$</td><td>价格水平转为近似收益率</td></tr>
+<tr><td>弱平稳均值</td><td>$E(y_t)=\mu_y$</td><td>均值不随时间变</td></tr>
+<tr><td>弱平稳协方差</td><td>$Cov(y_s,y_t)=\gamma_{</td><td>s-t</td><td>}$</td><td>只依赖间隔</td></tr>
+<tr><td>样本均值</td><td>$\bar y=T^{-1}\sum y_t$</td><td>时间平均</td></tr>
+<tr><td>样本自协方差</td><td>$\hat\gamma_l=T^{-1}\sum_{t=l+1}^{T}(y_t-\bar y)(y_{t-l}-\bar y)$</td><td>滞后 l 的线性相依</td></tr>
+<tr><td>样本自相关</td><td>$\hat\rho_l=\hat\gamma_l/\hat\gamma_0$</td><td>标准化自协方差</td></tr>
+<tr><td>BP 检验</td><td>$Q_{BP}=T\sum_{l=1}^{k}\hat\rho_l^2$</td><td>联合检验前 k 阶自相关</td></tr>
+<tr><td>LB 检验</td><td>$Q_{LB}=T(T+2)\sum_{l=1}^{k}\hat\rho_l^2/(T-l)$</td><td>有限样本修正</td></tr>
+<tr><td>长期协方差</td><td>$S=\sum_{l=-\infty}^{\infty}\gamma_l$</td><td>样本均值的长期方差</td></tr>
+<tr><td>Bartlett 核</td><td>$k(x)=1-</td><td>x</td><td>,\</td><td>x</td><td>\le 1$</td><td>HAC 权重</td></tr>
+<tr><td>AR(1)</td><td>$y_t=\phi y_{t-1}+\varepsilon_t$</td><td>自身历史惯性</td></tr>
+<tr><td>MA(1)</td><td>$y_t=\varepsilon_t+\theta\varepsilon_{t-1}$</td><td>冲击短期记忆</td></tr>
+<tr><td>指数平滑</td><td>$\hat y_{T+1</td><td>T}=\alpha y_T+(1-\alpha)\hat y_{T</td><td>T-1}$</td><td>递减权重预测</td></tr>
+<tr><td>最优权重</td><td>$\alpha^*=\mu_{t+1</td><td>t}/(c w_t\sigma^2_{t+1</td><td>t})$</td><td>均值-方差投资比例</td></tr>
+</tbody></table>
+<h2 id="sec-55-考前-20-分钟背诵版">考前 20 分钟背诵版</h2>
+<p class="question">1. 时间序列不能打乱顺序，因为滞后关系本身是信息。</p>
+<p class="question">2. 平稳看均值和协方差是否稳定；非平稳常见趋势、季节、结构变化和时变波动。</p>
+<p class="question">3. 差分平稳的核心是水平非平稳、差分后平稳。</p>
+<p class="question">4. 严平稳管整个分布，弱平稳管均值和协方差。</p>
+<p class="question">5. 遍历性让一条时间路径的平均能估总体平均。</p>
+<p class="question">6. 白噪声是不相关，独立白噪声是独立，鞅差是给定历史条件均值为 0。</p>
+<p class="question">7. ACF 是总体自相关函数，SACF 是样本估计。</p>
+<p class="question">8. BP/LB 检验的原假设是前 k 阶自相关全为 0。</p>
+<p class="question">9. Pearson 只看线性，Spearman 和 Kendall 看排序相依。</p>
+<p class="question">10. 长期协方差等于所有滞后协方差之和；正自相关会放大样本均值标准误。</p>
+<p class="question">11. MA 看过去冲击，AR 看过去自身，随机游走冲击永久累积。</p>
+<p class="question">12. 预测的核心是条件期望；投资组合还需要条件方差。</p>
+<hr>
+<h1 id="sec-56-第1章-时间序列分析基础-练习题库">第1章 时间序列分析基础：练习题库</h1>
+<blockquote>难度标记：★ 基础识记；★★ 应用计算；★★★ 推导综合。外部延伸题参考公开材料改写，来源链接列在题后。</blockquote>
+<h2 id="sec-57-1-数据类型与可视化">§1 数据类型与可视化</h2>
+<p class="question">1. ★ 判断下列数据类型：某日 500 家上市公司的市盈率；某只股票 2010-2025 年每日收盘价；100 家公司 2010-2025 年年度 ROE。</p>
+<details><summary>参考答案要点</summary>
+<p>依次为横截面、时间序列、面板数据。关键看个体维度和时间维度是否同时存在。</p>
+</details>
+<p class="question">2. ★★ 为什么金融收益率序列通常要先画时序图和密度图？</p>
+<details><summary>参考答案要点</summary>
+<p>时序图检查趋势、结构变化和波动聚集；密度图检查偏态、厚尾、多峰，帮助判断正态假设是否可疑。</p>
+</details>
+<p class="question">3. ★★ 给出一组月度航空旅客量数据，你会画哪些图？</p>
+<details><summary>参考答案要点</summary>
+<p>时序图看趋势和异常；季节图看月份规律；分解图看趋势、季节和剩余；必要时画对数序列。</p>
+</details>
+<p class="question">4. ★★★ 外部延伸：参考 Hyndman &amp; Athanasopoulos 对 trend、seasonal、cyclic 的区分，解释季节性和经济周期为什么不能混用。来源：<a href="https://otexts.com/fpp3/tspatterns.html">https://otexts.com/fpp3/tspatterns.html</a></p>
+<details><summary>参考答案要点</summary>
+<p>季节性频率固定且与日历有关；周期频率不固定，常由经济条件驱动。建模方法和预测解释不同。</p>
+</details>
+<h2 id="sec-58-2-序列特征识别">§2 序列特征识别</h2>
+<p class="question">5. ★ 什么是差分平稳序列？</p>
+<details><summary>参考答案要点</summary>
+<p>水平序列非平稳，但经过一次或若干次差分后变为平稳的序列。</p>
+</details>
+<p class="question">6. ★★ 为什么股价水平常被认为非平稳，而收益率更可能平稳？</p>
+<details><summary>参考答案要点</summary>
+<p>股价冲击会累积到水平中；收益率近似价格对数差分，去除了随机趋势。</p>
+</details>
+<p class="question">7. ★★ CPI 每年春节附近较高，这更像趋势、季节性还是结构变化？</p>
+<details><summary>参考答案要点</summary>
+<p>若每年固定月份重复出现，更像季节性；若某年后均值永久改变，才是结构变化。</p>
+</details>
+<p class="question">8. ★★★ 若 $y_t=x_t+u_t$，其中 $x_t$ 是随机游走，$u_t$ 平稳，$y_t$ 与 $x_t$ 是否可能协整？</p>
+<details><summary>参考答案要点</summary>
+<p>可能。因为 $y_t-x_t=u_t$ 平稳，二者存在协整向量 $(1,-1)$。</p>
+</details>
+<h2 id="sec-59-3-预处理">§3 预处理</h2>
+<p class="question">9. ★ 列出三种时间序列预处理任务。</p>
+<details><summary>参考答案要点</summary>
+<p>异常值检测、缺失值填补、数据变换、季节调整、趋势分解等。</p>
+</details>
+<p class="question">10. ★★ 为什么不能随意删除金融危机期间的极端收益率？</p>
+<details><summary>参考答案要点</summary>
+<p>极端收益可能是真实风险信息，删除会低估尾部风险和波动聚集。</p>
+</details>
+<p class="question">11. ★★ Box-Cox 中 $\lambda=0$ 对应什么变换？</p>
+<details><summary>参考答案要点</summary>
+<p>对应对数变换 $\log y_t$。</p>
+</details>
+<p class="question">12. ★★★ 外部延伸：参考 FPP3 的时间序列分解章节，说明趋势、季节和剩余项拆分后对预测有什么帮助。来源：<a href="https://otexts.com/fpp3/decomposition.html">https://otexts.com/fpp3/decomposition.html</a></p>
+<details><summary>参考答案要点</summary>
+<p>分解后可以分别预测趋势、季节和剩余，或先季调再建模；也便于诊断异常与结构变化。</p>
+</details>
+<h2 id="sec-60-4-平稳性">§4 平稳性</h2>
+<p class="question">13. ★ 写出弱平稳的两个核心条件。</p>
+<details><summary>参考答案要点</summary>
+<p>均值有限且不随时间变化；协方差存在且只依赖时间间隔。</p>
+</details>
+<p class="question">14. ★★ 严平稳一定推出弱平稳吗？</p>
+<details><summary>参考答案要点</summary>
+<p>若二阶矩存在，严平稳推出弱平稳；若矩不存在，则弱平稳条件无法保证。</p>
+</details>
+<p class="question">15. ★★ 判断 $y_t=\mu+\varepsilon_t+0.3\varepsilon_{t-1}$ 是否弱平稳。</p>
+<details><summary>参考答案要点</summary>
+<p>若 $\varepsilon_t$ 为白噪声，则均值为 $\mu$，方差和自协方差不随时间变，是弱平稳。</p>
+</details>
+<p class="question">16. ★★★ 推导随机游走 $y_t=y_{t-1}+\varepsilon_t$ 的方差为什么随时间增长。</p>
+<details><summary>参考答案要点</summary>
+<p>递推得 $y_t=y_0+\sum_{j=1}^{t}\varepsilon_j$；若冲击方差为 $\sigma^2$ 且独立，则 $Var(y_t)=Var(y_0)+t\sigma^2$。</p>
+</details>
+<h2 id="sec-61-5-遍历性与大数定律">§5 遍历性与大数定律</h2>
+<p class="question">17. ★ 什么是均值遍历性？</p>
+<details><summary>参考答案要点</summary>
+<p>样本时间平均 $\bar y$ 依概率收敛到总体均值 $\mu_y$。</p>
+</details>
+<p class="question">18. ★★ 自协方差绝对可加为什么有助于大数定律？</p>
+<details><summary>参考答案要点</summary>
+<p>它保证样本均值方差中的滞后协方差总贡献有界，从而 $Var(\bar y)\to0$。</p>
+</details>
+<p class="question">19. ★★★ 从 $Var(\bar y)$ 的双重求和推导 $Var(\bar y)=T^{-1}[\gamma_0+2\sum_{l=1}^{T-1}(1-l/T)\gamma_l]$。</p>
+<details><summary>参考答案要点</summary>
+<p>先写 $T^{-2}\sum_s\sum_t Cov(y_s,y_t)$，再按 $|s-t|=l$ 合并：0 阶有 T 项，l 阶有 $2(T-l)$ 项。</p>
+</details>
+<p class="question">20. ★★★ 构造一个平稳但不遍历的直观例子。</p>
+<details><summary>参考答案要点</summary>
+<p>令 $y_t=z$，$z$ 是一次抽取后固定的随机变量。分布不随时间变，但时间平均等于 $z$，不收敛到 $E(z)$。</p>
+</details>
+<h2 id="sec-62-6-白噪声与鞅差">§6 白噪声与鞅差</h2>
+<p class="question">21. ★ 白噪声的三个条件是什么？</p>
+<details><summary>参考答案要点</summary>
+<p>均值为 0，方差有限，不同时点不相关。</p>
+</details>
+<p class="question">22. ★★ 独立白噪声和普通白噪声的区别是什么？</p>
+<details><summary>参考答案要点</summary>
+<p>独立白噪声要求不同时点独立；普通白噪声只要求不相关。</p>
+</details>
+<p class="question">23. ★★ 鞅差过程为什么没有均值预测性？</p>
+<details><summary>参考答案要点</summary>
+<p>因为 $E(y_t|I_{t-1})=0$，给定历史信息后最优条件均值仍为 0。</p>
+</details>
+<p class="question">24. ★★★ 金融收益率通过白噪声检验，是否说明市场完全无规律？</p>
+<details><summary>参考答案要点</summary>
+<p>不一定。白噪声检验主要看线性自相关；平方收益率、绝对收益率、尾部风险仍可能有相依性。</p>
+</details>
+<h2 id="sec-63-7-acf-与-sacf">§7 ACF 与 SACF</h2>
+<p class="question">25. ★ 写出 $l$ 阶自相关系数定义。</p>
+<details><summary>参考答案要点</summary>
+<p>$\rho_l=\gamma_l/\gamma_0$，其中 $\gamma_l=Cov(y_t,y_{t-l})$。</p>
+</details>
+<p class="question">26. ★★ 为什么 $\rho_0=1$？</p>
+<details><summary>参考答案要点</summary>
+<p>$\rho_0=\gamma_0/\gamma_0=1$，只要方差非零。</p>
+</details>
+<p class="question">27. ★★ 给定 $\hat\gamma_0=4$、$\hat\gamma_1=1$，求 $\hat\rho_1$。</p>
+<details><summary>参考答案要点</summary>
+<p>$\hat\rho_1=1/4=0.25$。</p>
+</details>
+<p class="question">28. ★★★ 外部延伸：参考 FPP3 的 autocorrelation 与 white noise 内容，说明为什么白噪声的样本 ACF 仍可能有个别滞后超过置信界。来源：<a href="https://otexts.com/fpp3/acf.html">https://otexts.com/fpp3/acf.html</a> 与 <a href="https://otexts.com/fpp3/wn.html">https://otexts.com/fpp3/wn.html</a></p>
+<details><summary>参考答案要点</summary>
+<p>样本自相关是随机变量；即使总体自相关为 0，抽样波动也会让少数滞后显著，需结合整体检验。</p>
+</details>
+<h2 id="sec-64-8-白噪声检验">§8 白噪声检验</h2>
+<p class="question">29. ★ BP/LB 检验的原假设是什么？</p>
+<details><summary>参考答案要点</summary>
+<p>前 k 阶总体自相关均为 0，即序列在这些滞后上无自相关。</p>
+</details>
+<p class="question">30. ★★ 若 $T=200$，$\hat\rho_1=0.1$、$\hat\rho_2=0.05$，求 $Q_{BP}$。</p>
+<details><summary>参考答案要点</summary>
+<p>$Q_{BP}=200(0.01+0.0025)=2.5$。</p>
+</details>
+<p class="question">31. ★★ 为什么 Ljung-Box 在有限样本下常优于 Box-Pierce？</p>
+<details><summary>参考答案要点</summary>
+<p>它使用 $T(T+2)/(T-l)$ 修正不同滞后下样本自相关的有限样本偏差，卡方近似通常更好。</p>
+</details>
+<p class="question">32. ★★★ 外部延伸：参考 Ljung-Box 检验定义，解释为什么 ARMA 残差检验时自由度需要扣除已估参数。来源：<a href="https://en.wikipedia.org/wiki/Ljung%E2%80%93Box_test">https://en.wikipedia.org/wiki/Ljung%E2%80%93Box_test</a></p>
+<details><summary>参考答案要点</summary>
+<p>残差不是原始白噪声，而是估计模型后得到的；参数估计消耗自由度，所以常用 $k-p-q$。</p>
+</details>
+<h2 id="sec-65-9-非线性相关">§9 非线性相关</h2>
+<p class="question">33. ★ Pearson 相关为 0 是否意味着独立？</p>
+<details><summary>参考答案要点</summary>
+<p>一般不意味着，只能说明无线性相关；在联合正态等特殊情形下才可推出独立。</p>
+</details>
+<p class="question">34. ★★ 解释 $Y=X^2$ 且 $X\sim N(0,1)$ 时 Pearson 相关为何为 0。</p>
+<details><summary>参考答案要点</summary>
+<p>$Cov(X,X^2)=E(X^3)-E(X)E(X^2)=0$，因为标准正态三阶矩为 0。</p>
+</details>
+<p class="question">35. ★★ Spearman 秩相关的基本思想是什么？</p>
+<details><summary>参考答案要点</summary>
+<p>先把变量转换为秩或经验分布函数值，再计算 Pearson 相关，捕捉单调相依。</p>
+</details>
+<p class="question">36. ★★★ Kendall tau 如何用同序和逆序解释？</p>
+<details><summary>参考答案要点</summary>
+<p>它等于任意两对观测同序概率减去逆序概率；越接近 1 表示排序越一致。</p>
+</details>
+<h2 id="sec-66-10-长期协方差">§10 长期协方差</h2>
+<p class="question">37. ★ 长期协方差 $S$ 的定义是什么？</p>
+<details><summary>参考答案要点</summary>
+<p>$S=\sum_{l=-\infty}^{\infty}\gamma_l=\gamma_0+2\sum_{l=1}^{\infty}\gamma_l$。</p>
+</details>
+<p class="question">38. ★★ 若序列存在正自相关，忽略长期协方差会怎样影响置信区间？</p>
+<details><summary>参考答案要点</summary>
+<p>通常低估标准误，使置信区间过窄，覆盖率低于名义水平。</p>
+</details>
+<p class="question">39. ★★ Bartlett 核的权重有什么特点？</p>
+<details><summary>参考答案要点</summary>
+<p>滞后越大权重越小，超过带宽后权重为 0。</p>
+</details>
+<p class="question">40. ★★★ 推导 $q=3$ 时 Bartlett 核下 $\hat S=\hat\gamma_0+\frac{4}{3}\hat\gamma_1+\frac{2}{3}\hat\gamma_2$。</p>
+<details><summary>参考答案要点</summary>
+<p>正负一阶各权重 $1-1/3=2/3$，合计 $4/3$；正负二阶各权重 $1-2/3=1/3$，合计 $2/3$。</p>
+</details>
+<p class="question">41. ★★★ 外部延伸：查阅 Newey-West 估计的 HAC 含义，说明它同时处理哪两类问题。来源：<a href="https://www.nber.org/papers/t0055">https://www.nber.org/papers/t0055</a></p>
+<details><summary>参考答案要点</summary>
+<p>HAC 表示 heteroskedasticity and autocorrelation consistent，即对异方差和自相关稳健。</p>
+</details>
+<h2 id="sec-67-11-基本模型">§11 基本模型</h2>
+<p class="question">42. ★ 判断模型 $y_t=\varepsilon_t+0.4\varepsilon_{t-1}$ 类型。</p>
+<details><summary>参考答案要点</summary>
+<p>MA(1)。</p>
+</details>
+<p class="question">43. ★ 判断模型 $y_t=0.6y_{t-1}+\varepsilon_t$ 类型。</p>
+<details><summary>参考答案要点</summary>
+<p>AR(1)，若 $|0.6|&lt;1$ 则可平稳。</p>
+</details>
+<p class="question">44. ★★ 随机游走为什么冲击具有永久影响？</p>
+<details><summary>参考答案要点</summary>
+<p>递推后每期冲击都进入当前水平的累积和，不会随时间衰减。</p>
+</details>
+<p class="question">45. ★★ MA(1) 的 ACF 为什么一阶后截尾？</p>
+<details><summary>参考答案要点</summary>
+<p>相隔超过一阶的 $y_t$ 不共享共同白噪声冲击，因此协方差为 0。</p>
+</details>
+<p class="question">46. ★★★ 外部延伸：参考 FPP3 ARIMA 章节，解释 ACF/PACF 在 AR 和 MA 识别中的用途。来源：<a href="https://otexts.com/fpp3/arima.html">https://otexts.com/fpp3/arima.html</a></p>
+<details><summary>参考答案要点</summary>
+<p>MA(q) 的 ACF 常截尾、PACF 拖尾；AR(p) 的 PACF 常截尾、ACF 拖尾，但样本图只作辅助。</p>
+</details>
+<h2 id="sec-68-12-预测与投资组合">§12 预测与投资组合</h2>
+<p class="question">47. ★ 写出均值预测、朴素预测和滑动平均预测公式。</p>
+<details><summary>参考答案要点</summary>
+<p>均值预测为历史平均；朴素预测为最后观测 $y_T$；滑动平均为最近 k 期平均。</p>
+</details>
+<p class="question">48. ★★ 指数平滑中 $\alpha$ 越大意味着什么？</p>
+<details><summary>参考答案要点</summary>
+<p>越重视最近观测，预测反应更快但更不平滑。</p>
+</details>
+<p class="question">49. ★★ 若 $y_t=0.5y_{t-1}+\varepsilon_t$，求 $\hat y_{T+1|T}$。</p>
+<details><summary>参考答案要点</summary>
+<p>若 $E(\varepsilon_{T+1}|I_T)=0$，则 $\hat y_{T+1|T}=0.5y_T$。</p>
+</details>
+<p class="question">50. ★★★ 从均值-方差目标推出无约束最优 $\alpha^*$。</p>
+<details><summary>参考答案要点</summary>
+<p>对 $\alpha w_t\mu-\frac{c}{2}\alpha^2w_t^2\sigma^2$ 求导，令一阶条件为 0，得 $\alpha^*=\mu/(cw_t\sigma^2)$。</p>
+</details>
+<p class="question">51. ★★★ 若约束 $0\le \alpha\le1$，当无约束 $\alpha^*=1.4$ 或 $-0.2$ 时怎么办？</p>
+<details><summary>参考答案要点</summary>
+<p>投影到可行区间：1.4 取 1，-0.2 取 0。</p>
+</details>
+<p class="question">52. ★★★ 外部延伸：参考 FPP3 简单预测方法，说明为什么朴素预测在很多经济金融序列中是强基准。来源：<a href="https://otexts.com/fpp3/simple-methods.html">https://otexts.com/fpp3/simple-methods.html</a></p>
+<details><summary>参考答案要点</summary>
+<p>很多经济金融水平变量接近随机游走，当前值包含了所有历史累积信息，未来变化难预测。</p>
+</details>
+<p class="question">53. ★★★ 外部延伸：参考 FPP3 简单指数平滑，解释指数平滑为什么叫“指数”。来源：<a href="https://otexts.com/fpp3/ses.html">https://otexts.com/fpp3/ses.html</a></p>
+<details><summary>参考答案要点</summary>
+<p>递推展开后，历史观测权重为 $\alpha(1-\alpha)^j$，随滞后按几何/指数速度衰减。</p>
+</details>
+<h2 id="sec-69-综合大题">综合大题</h2>
+<p class="question">54. ★★★ 你拿到一条 2002-2025 年月度 CPI 指数。请设计从图形诊断到预测的完整流程。</p>
+<details><summary>参考答案要点</summary>
+<p>画时序图和季节图；检查趋势、春节季节性和结构变化；考虑对数、同比、环比或季调；检验平稳性和 ACF；选择基准预测、ETS/STL 或 ARMA；对残差做白噪声检验；报告预测区间。</p>
+</details>
+<p class="question">55. ★★★ 某收益率序列本身 Ljung-Box 不拒绝白噪声，但平方收益率强烈拒绝。如何解释？</p>
+<details><summary>参考答案要点</summary>
+<p>均值可能难预测，但波动率存在相依性，即波动聚集；后续可考虑 ARCH/GARCH。</p>
+</details>
+<p class="question">56. ★★★ 给定一个 AR(1) 收益预测和条件方差预测，说明如何转化为投资组合权重。</p>
+<details><summary>参考答案要点</summary>
+<p>用 AR(1) 得到 $\mu_{t+1|t}$，用波动模型或历史方法得到 $\sigma^2_{t+1|t}$，代入 $\alpha^*=\mu/(cw_t\sigma^2)$ 并按约束截断。</p>
+</details>
+<hr>
+<h2 id="sec-70-附录-章节骨架与来源映射">附录：章节骨架与来源映射</h2>
+<h1 id="sec-71-第1章-时间序列分析基础-复习材料骨架">第1章 时间序列分析基础：复习材料骨架</h1>
+<h2 id="sec-72-开场问题">开场问题</h2>
+<p>同样是一列数字，为什么股票价格不能随便打乱顺序再做回归？为什么收益率看起来像白噪声，平方收益率却可能有强烈规律？</p>
+<h2 id="sec-73-章节主线">章节主线</h2>
+<p>本章从时间序列数据的形态识别出发，建立平稳性、遍历性、相依性和长期协方差等基础概念，再把这些概念连接到 MA/AR/ARMA 模型、预测方法与投资组合决策。</p>
+<h2 id="sec-74-方法谱系">方法谱系</h2>
+<p><code>数据类型识别 -&gt; 图形诊断 -&gt; 平稳/非平稳判断 -&gt; 相依性度量 -&gt; 白噪声检验 -&gt; 长期协方差估计 -&gt; 基本模型 -&gt; 预测 -&gt; 投资组合决策</code></p>
+<h2 id="sec-75-1-时间序列从哪里来-和横截面-面板有什么不同">§1 时间序列从哪里来，和横截面、面板有什么不同 ★★</h2>
+<p>来源范围：Slides 2-6</p>
+<h3 id="sec-76-脉络梳理">脉络梳理</h3>
+<p>这一节解决入口问题：为什么同样是数据，时间序列不能像普通横截面样本那样随意重排？因为每个观测值都带着时间位置，前后顺序本身就是信息。</p>
+<h3 id="sec-77-重点内容申明">重点内容申明</h3>
+<ul>
+<li>横截面数据看同一时点的多个个体；时间序列看同一个体在多个时点的演化；面板数据把两个维度合在一起。</li>
+<li>金融时间序列常见来源包括国家统计局、世界银行、OECD、IMF、Wind、Bloomberg、CEIC、Yahoo Finance 等。</li>
+<li>初看数据时先画时序图，再补散点图、密度图、季节图；图形不是装饰，而是模型选择前的诊断。</li>
+</ul>
+<h3 id="sec-78-习题">习题</h3>
+<ul>
+<li>区分数据类型并说明为什么时间顺序不能打乱。</li>
+</ul>
+<h2 id="sec-79-2-时序图里的六种信号-平稳-非平稳-差分平稳-结构变化-季节性-协整-核心一">§2 时序图里的六种信号：平稳、非平稳、差分平稳、结构变化、季节性、协整 ★★★ （核心一）</h2>
+<p>来源范围：Slides 7-13</p>
+<h3 id="sec-80-脉络梳理">脉络梳理</h3>
+<p>这一节是全章的观察框架。模型之前先问：这条线是在固定水平附近摇摆，还是带趋势、跳点、季节、长期均衡？</p>
+<h3 id="sec-81-重点内容申明">重点内容申明</h3>
+<ul>
+<li>平稳序列围绕固定均值波动，波动幅度不系统随时间改变。</li>
+<li>非平稳序列可能有趋势、结构变化、周期或时变波动；金融价格水平、宏观总量水平常常非平稳。</li>
+<li>差分平稳序列经过一阶差分或对数差分后可能变平稳，股价指数到收益率就是典型例子。</li>
+<li>结构变化是均值、方差或变量关系在某个时点前后发生跳变。</li>
+<li>季节性是固定日历周期导致的规律，和不固定频率的经济周期不同。</li>
+<li>协整说明若干非平稳序列之间可能存在稳定长期均衡，例如收入与消费。</li>
+</ul>
+<h3 id="sec-82-习题">习题</h3>
+<ul>
+<li>根据图形特征判断序列类型，并说明适合的预处理。</li>
+</ul>
+<h2 id="sec-83-3-数据预处理-异常-缺失-变换与分解">§3 数据预处理：异常、缺失、变换与分解 ★★</h2>
+<p>来源范围：Slides 14-15</p>
+<h3 id="sec-84-脉络梳理">脉络梳理</h3>
+<p>现实数据不会自动适合模型。预处理的目标不是把数据“修漂亮”，而是让模型假设和数据特征更接近。</p>
+<h3 id="sec-85-重点内容申明">重点内容申明</h3>
+<ul>
+<li>异常值要先区分录入错误、真实冲击与制度变化。</li>
+<li>缺失值填补要尊重频率和经济含义，不能把未来信息偷偷放进过去。</li>
+<li>Box-Cox 变换用来缓和尺度效应和非恒定方差。</li>
+<li>X-13、ETS、STL 等分解方法把序列拆成趋势、季节和剩余成分，帮助理解和预测。</li>
+</ul>
+<h3 id="sec-86-习题">习题</h3>
+<ul>
+<li>给出一条含缺失和季节性的宏观序列，设计预处理流程。</li>
+</ul>
+<h2 id="sec-87-4-严平稳与弱平稳-分布不变-vs-一二阶矩稳定-核心二">§4 严平稳与弱平稳：分布不变 vs. 一二阶矩稳定 ★★★ （核心二）</h2>
+<p>来源范围：Slides 16-17</p>
+<h3 id="sec-88-脉络梳理">脉络梳理</h3>
+<p>平稳性是时间序列推断的地基。地基的意思是：只有过去和未来的统计规律够稳定，我们才敢用历史样本估计总体规律。</p>
+<h3 id="sec-89-重点内容申明">重点内容申明</h3>
+<ul>
+<li>严平稳要求任意有限维联合分布在时间平移后完全不变。</li>
+<li>弱平稳只要求均值有限且不随时间变，自协方差只依赖时间间隔而不依赖具体时点。</li>
+<li>在金融计量入门里，默认说“平稳”通常指弱平稳或协方差平稳。</li>
+<li>若过程服从联合正态，严平稳与弱平稳的距离会缩小，因为正态分布由均值和协方差决定。</li>
+</ul>
+<h3 id="sec-90-习题">习题</h3>
+<ul>
+<li>判断给定过程是否弱平稳，并解释严平稳和弱平稳的差别。</li>
+</ul>
+<h2 id="sec-91-5-遍历性与平稳遍历大数定律-为什么一条历史路径也能估总体-核心三">§5 遍历性与平稳遍历大数定律：为什么一条历史路径也能估总体 ★★★ （核心三）</h2>
+<p>来源范围：Slides 18-20</p>
+<h3 id="sec-92-脉络梳理">脉络梳理</h3>
+<p>横截面里我们常有很多个体；时间序列里经常只有一个经济体、一只股票、一条历史路径。遍历性就是把“沿时间平均”当成“总体平均”的通行证。</p>
+<h3 id="sec-93-重点内容申明">重点内容申明</h3>
+<ul>
+<li>均值遍历性：样本均值依概率收敛到总体均值。</li>
+<li>协方差遍历性：样本自协方差依概率收敛到总体自协方差。</li>
+<li>弱平稳加自协方差绝对可加，能保证样本均值方差随样本量增大而趋近 0。</li>
+<li>核心直觉：远距离观测之间的相关性不能拖太久，否则新增样本没有带来足够的新信息。</li>
+</ul>
+<h3 id="sec-94-习题">习题</h3>
+<ul>
+<li>推导样本均值方差并说明绝对可加条件的作用。</li>
+</ul>
+<h2 id="sec-95-6-白噪声-独立白噪声与鞅差过程">§6 白噪声、独立白噪声与鞅差过程 ★★★</h2>
+<p>来源范围：Slides 21-22, 38</p>
+<h3 id="sec-96-脉络梳理">脉络梳理</h3>
+<p>噪声不是“没用的信息”，而是模型解释完以后剩下的不可预测部分。白噪声和鞅差过程告诉我们什么叫“已经没有线性可预测性”或“给定历史也无法预测”。</p>
+<h3 id="sec-97-重点内容申明">重点内容申明</h3>
+<ul>
+<li>白噪声均值为 0、方差有限、不同时间不相关，是经典回归扰动项在时间序列里的放宽版本。</li>
+<li>独立白噪声要求各期独立，比白噪声更强；高斯独立白噪声还要求边际正态。</li>
+<li>鞅差过程要求给定历史信息集的条件期望为 0，因此没有可利用历史信息预测其均值。</li>
+<li>鞅差一定不相关，但白噪声不一定独立；金融收益率常接近白噪声，但平方收益率可能有相依性。</li>
+</ul>
+<h3 id="sec-98-习题">习题</h3>
+<ul>
+<li>比较白噪声、独立白噪声和鞅差过程。</li>
+</ul>
+<h2 id="sec-99-7-线性相依性-协方差-相关系数-acf-与-sacf">§7 线性相依性：协方差、相关系数、ACF 与 SACF ★★★</h2>
+<p>来源范围：Slides 23-25</p>
+<h3 id="sec-100-脉络梳理">脉络梳理</h3>
+<p>时间序列的第一种“记忆”是线性记忆：今天高于均值，明天是否也倾向于高于均值？ACF 就是把这个问题按滞后阶数系统展开。</p>
+<h3 id="sec-101-重点内容申明">重点内容申明</h3>
+<ul>
+<li>协方差度量同向偏离均值的平均程度；相关系数把协方差标准化到无量纲。</li>
+<li>l 阶自协方差是同一序列相隔 l 期的协方差。</li>
+<li>ACF 是总体对象，SACF 是用样本估出来的对象。</li>
+<li>SACF 是识别白噪声、MA、AR、ARMA 模型的重要图形工具。</li>
+</ul>
+<h3 id="sec-102-习题">习题</h3>
+<ul>
+<li>根据样本序列手算一阶样本自协方差和样本自相关。</li>
+</ul>
+<h2 id="sec-103-8-白噪声检验-box-pierce-与-ljung-box">§8 白噪声检验：Box-Pierce 与 Ljung-Box ★★★</h2>
+<p>来源范围：Slides 26-27</p>
+<h3 id="sec-104-脉络梳理">脉络梳理</h3>
+<p>看 ACF 图是直觉，做白噪声检验是把直觉变成统计决策。它问的是：前 k 阶自相关是否可以整体看作 0？</p>
+<h3 id="sec-105-重点内容申明">重点内容申明</h3>
+<ul>
+<li>Box-Pierce 统计量把前 k 阶样本自相关平方相加并乘以样本量。</li>
+<li>Ljung-Box 对有限样本做修正，通常比 Box-Pierce 更接近卡方近似。</li>
+<li>原假设是前 k 阶自相关全为 0；统计量过大则拒绝白噪声。</li>
+<li>用于模型诊断时，应该对残差做检验，并调整自由度以反映已估参数。</li>
+</ul>
+<h3 id="sec-106-习题">习题</h3>
+<ul>
+<li>给定若干样本自相关，计算 Q 统计量并判断是否拒绝。</li>
+</ul>
+<h2 id="sec-107-9-非线性相依性-spearman-秩相关与-kendall-tau">§9 非线性相依性：Spearman 秩相关与 Kendall tau ★★</h2>
+<p>来源范围：Slides 28-32</p>
+<h3 id="sec-108-脉络梳理">脉络梳理</h3>
+<p>线性相关为 0 不等于没有关系。金融里很多关系藏在排序、尾部、波动或平方项里，秩相关和 Kendall tau 就是补充视角。</p>
+<h3 id="sec-109-重点内容申明">重点内容申明</h3>
+<ul>
+<li>当 Y=X^2 且 X 对称分布时，Pearson 相关可以为 0，但变量显然不独立。</li>
+<li>Spearman 相关把变量先转成分布函数值或秩，再计算 Pearson 相关。</li>
+<li>Kendall tau 比较两对观测的排序是否一致，度量同序配对概率减去逆序配对概率。</li>
+<li>秩相关对单调非线性关系更敏感，但不等于万能的独立性检验。</li>
+</ul>
+<h3 id="sec-110-习题">习题</h3>
+<ul>
+<li>构造 Pearson 为 0 但存在非线性关系的例子。</li>
+</ul>
+<h2 id="sec-111-10-长期协方差与-newey-west-估计-样本均值的不确定性不只是方差除以">§10 长期协方差与 Newey-West 估计：样本均值的不确定性不只是方差除以 T ★★★</h2>
+<p>来源范围：Slides 33-36</p>
+<h3 id="sec-112-脉络梳理">脉络梳理</h3>
+<p>如果数据有序列相关，样本均值的方差由所有滞后协方差共同决定。长期协方差就是把这些短期记忆加总起来后的长期不确定性。</p>
+<h3 id="sec-113-重点内容申明">重点内容申明</h3>
+<ul>
+<li>长期协方差定义为 $\sqrt{T}\bar y$ 的方差极限，也等于所有阶自协方差之和。</li>
+<li>若正自相关明显，忽略序列相关会低估标准误，置信区间过窄，覆盖率偏低。</li>
+<li>Newey-West/HAC 估计用核权重和带宽截断高阶自协方差。</li>
+<li>Bartlett 核权重随滞后增加线性下降，带宽决定保留多少阶序列相关。</li>
+</ul>
+<h3 id="sec-114-习题">习题</h3>
+<ul>
+<li>推导长期协方差，并比较 HAC 与 iid 标准误。</li>
+</ul>
+<h2 id="sec-115-11-基本模型-ma-ar-随机游走与-arma">§11 基本模型：MA、AR、随机游走与 ARMA ★★★</h2>
+<p>来源范围：Slides 37-41</p>
+<h3 id="sec-116-脉络梳理">脉络梳理</h3>
+<p>模型是把“今天和过去、冲击之间怎么连起来”写成公式。MA 看过去冲击，AR 看过去变量，ARMA 把两者合并。</p>
+<h3 id="sec-117-重点内容申明">重点内容申明</h3>
+<ul>
+<li>MA 模型把当前值写成当前与过去白噪声冲击的线性组合。</li>
+<li>AR 模型把当前值写成过去自身值加新冲击。</li>
+<li>随机游走是 AR 中最重要的非平稳例子，冲击会永久累积。</li>
+<li>ARMA 同时包含自回归项和滑动平均项，是更灵活的短记忆平稳模型。</li>
+</ul>
+<h3 id="sec-118-习题">习题</h3>
+<ul>
+<li>判断公式属于 MA、AR、随机游走还是 ARMA。</li>
+</ul>
+<h2 id="sec-119-12-预测与投资组合-从条件期望-条件方差到最优权重">§12 预测与投资组合：从条件期望、条件方差到最优权重 ★★★</h2>
+<p>来源范围：Slides 42-46</p>
+<h3 id="sec-120-脉络梳理">脉络梳理</h3>
+<p>本章最后把时间序列基础落到金融决策：你真正需要预测的不是图形本身，而是未来收益的条件均值和条件方差。</p>
+<h3 id="sec-121-重点内容申明">重点内容申明</h3>
+<ul>
+<li>均值预测用历史平均值；朴素预测用最后一个观测；滑动平均只看最近 k 个观测。</li>
+<li>指数平滑给所有历史观测递减权重，递推式让预测随新信息更新。</li>
+<li>模型预测把模型结构转化为最小均方误差下的条件期望。</li>
+<li>均值-方差投资者的最优持仓取决于预期超额收益、条件方差、风险厌恶和财富规模。</li>
+</ul>
+<h3 id="sec-122-习题">习题</h3>
+<ul>
+<li>从效用函数推出最优股票投资比例。</li>
+</ul></main>
+</div>
+</body>
+</html>

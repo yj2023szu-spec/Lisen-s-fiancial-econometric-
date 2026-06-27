@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Lisen's Financial Econometrics — 复习材料导航</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: "Segoe UI", "Microsoft YaHei", sans-serif;
+      background: linear-gradient(135deg, #0c1929 0%, #1a2a4a 50%, #0d1b30 100%);
+      min-height: 100vh;
+      color: #e0e8f0;
+      padding: 2rem 1rem;
+    }
+    .container { max-width: 900px; margin: 0 auto; }
+
+    /* Header */
+    .header {
+      text-align: center;
+      padding: 3rem 2rem 2rem;
+      border-bottom: 2px solid rgba(255,255,255,0.08);
+      margin-bottom: 2.5rem;
+    }
+    .header h1 {
+      font-size: 2.4rem;
+      font-weight: 700;
+      background: linear-gradient(135deg, #d4b87a, #f0d68a, #c9a55c);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      margin-bottom: 0.6rem;
+    }
+    .header .subtitle {
+      font-size: 1.05rem;
+      color: #8899bb;
+      letter-spacing: 0.04em;
+    }
+    .header .authors {
+      margin-top: 1.2rem;
+      font-size: 0.95rem;
+      color: #7b8ea8;
+    }
+    .header .authors .author-role {
+      display: inline-block;
+      margin: 0 0.5rem;
+    }
+    .header .authors .first-author {
+      color: #f0d68a;
+      font-weight: 600;
+    }
+    .header .authors .second-author {
+      color: #aac4e0;
+    }
+
+    /* Grid */
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+      gap: 1.2rem;
+    }
+
+    /* Card */
+    .card {
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.07);
+      border-radius: 12px;
+      padding: 1.5rem 1.6rem;
+      transition: all 0.25s ease;
+      text-decoration: none;
+      color: inherit;
+      display: flex;
+      flex-direction: column;
+      gap: 0.55rem;
+      backdrop-filter: blur(4px);
+    }
+    .card:hover {
+      background: rgba(255,255,255,0.09);
+      border-color: rgba(212,184,122,0.35);
+      transform: translateY(-3px);
+      box-shadow: 0 12px 32px rgba(0,0,0,0.35);
+    }
+    .card .chapter-tag {
+      display: inline-block;
+      font-size: 0.78rem;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      color: #d4b87a;
+      text-transform: uppercase;
+    }
+    .card .card-title {
+      font-size: 1.12rem;
+      font-weight: 600;
+      line-height: 1.4;
+    }
+    .card .card-desc {
+      font-size: 0.88rem;
+      color: #8899bb;
+      line-height: 1.5;
+    }
+    .card .card-arrow {
+      align-self: flex-end;
+      margin-top: auto;
+      color: #d4b87a;
+      font-size: 1.2rem;
+    }
+
+    /* Footer */
+    .footer {
+      text-align: center;
+      margin-top: 3rem;
+      padding: 1.5rem;
+      border-top: 1px solid rgba(255,255,255,0.06);
+      color: #5a6e88;
+      font-size: 0.85rem;
+      line-height: 1.7;
+    }
+    .footer .credit {
+      color: #8899bb;
+    }
+    .footer strong {
+      color: #bcc8d8;
+    }
+
+    @media (max-width: 500px) {
+      .header h1 { font-size: 1.6rem; }
+      .grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+
+    <!-- Header -->
+    <div class="header">
+      <h1>高级金融计量经济学<br>复习材料导航</h1>
+      <p class="subtitle">Advanced Financial Econometrics · Review Materials</p>
+      <p class="authors">
+        <span class="author-role">第一作者：<span class="first-author">lisen1995411-a11y</span></span>
+        ｜
+        <span class="author-role">第二作者：<span class="second-author">yj2023szu-spec</span></span>
+      </p>
+    </div>
+
+    <!-- Chapter Grid -->
+    <div class="grid">
+
+      <a href="chapter0_advanced_financial_econometrics_review(1).html" class="card">
+        <span class="chapter-tag">第 0 章</span>
+        <span class="card-title">高级金融计量分析复习笔记</span>
+        <span class="card-desc">课程总览与预备知识回顾，涵盖金融计量学的核心框架与基本概念。</span>
+        <span class="card-arrow">→</span>
+      </a>
+
+      <a href="review_material.html" class="card">
+        <span class="chapter-tag">第 1 章</span>
+        <span class="card-title">时间序列分析基础</span>
+        <span class="card-desc">平稳性、自相关函数、白噪声过程等时间序列分析的核心基础概念。</span>
+        <span class="card-arrow">→</span>
+      </a>
+
+      <a href="linear_time_series_review.html" class="card">
+        <span class="chapter-tag">第 2 章</span>
+        <span class="card-title">线性时间序列模型</span>
+        <span class="card-desc">AR、MA、ARMA 与 ARIMA 模型的系统复习与推导。</span>
+        <span class="card-arrow">→</span>
+      </a>
+
+      <a href="unit_root_time_series_review.html" class="card">
+        <span class="chapter-tag">第 3 章</span>
+        <span class="card-title">单位根时间序列模型</span>
+        <span class="card-desc">单位根检验（ADF、PP、KPSS）、随机游走与协整预备知识。</span>
+        <span class="card-arrow">→</span>
+      </a>
+
+      <a href="ch04_nonlinear_time_series_review.html" class="card">
+        <span class="chapter-tag">第 4 章</span>
+        <span class="card-title">非线性时间序列模型</span>
+        <span class="card-desc">SETAR、STAR、马尔可夫转换模型等非线性时间序列建模方法。</span>
+        <span class="card-arrow">→</span>
+      </a>
+
+      <a href="第5章_协整时间序列模型_超级无敌详细版.html" class="card">
+        <span class="chapter-tag">第 5 章</span>
+        <span class="card-title">协整时间序列模型</span>
+        <span class="card-desc">Engle-Granger 两步法、Johansen 检验、VECM 模型——超级无敌详细版。</span>
+        <span class="card-arrow">→</span>
+      </a>
+
+      <a href="第6章_波动率模型_超级详细复习材料.html" class="card">
+        <span class="chapter-tag">第 6 章</span>
+        <span class="card-title">波动率模型</span>
+        <span class="card-desc">ARCH、GARCH、EGARCH、GJR-GARCH 及多元波动率建模——超级详细复习材料。</span>
+        <span class="card-arrow">→</span>
+      </a>
+
+    </div>
+
+    <!-- Footer -->
+    <div class="footer">
+      <p class="credit">
+        © 2026 <strong>Lisen's Financial Econometrics Review</strong>
+      </p>
+      <p>
+        第一作者：<strong>lisen1995411-a11y</strong> &nbsp;·&nbsp;
+        第二作者：<strong>yj2023szu-spec</strong>
+      </p>
+      <p style="margin-top:0.4rem; font-size:0.8rem;">
+        Hosted on GitHub Pages · 仅由人类作者编写，不含AI生成内容署名
+      </p>
+    </div>
+
+  </div>
+</body>
+</html>

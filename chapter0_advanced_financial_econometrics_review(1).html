@@ -1,0 +1,827 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>第0章 高级金融计量分析复习笔记</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/katex.min.css">
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/katex.min.js"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/contrib/auto-render.min.js" onload="renderMathInElement(document.body, {delimiters: [{left: '$$', right: '$$', display: true}, {left: '$', right: '$', display: false}]});"></script>
+  <style>
+    :root { color-scheme: light dark; --bg:#f7f1e7; --paper:#fffdf8; --ink:#241f1a; --muted:#6b6258; --accent:#a33b2f; --accent2:#1d6f66; --line:#dacdbc; --code:#f2eadf; }
+    @media (prefers-color-scheme: dark) { :root { --bg:#171614; --paper:#211f1c; --ink:#f3eadb; --muted:#c5b8a7; --accent:#ff9b83; --accent2:#65c5b7; --line:#4a4036; --code:#2c2925; } }
+    * { box-sizing:border-box; }
+    html, body { max-width:100%; overflow-x:hidden; }
+    body { margin:0; background:var(--bg); color:var(--ink); font:18px/1.78 "Songti SC","Noto Serif CJK SC","STSong",serif; }
+    .layout { display:grid; grid-template-columns:280px minmax(0,1fr); min-height:100vh; }
+    nav { position:sticky; top:0; height:100vh; overflow:auto; padding:28px 18px; border-right:1px solid var(--line); background:color-mix(in srgb, var(--paper) 82%, transparent); }
+    nav h1 { font-size:18px; line-height:1.35; margin:0 0 18px; color:var(--accent); }
+    nav a { display:block; color:var(--muted); text-decoration:none; padding:5px 0; font-size:14px; line-height:1.4; overflow-wrap:anywhere; }
+    nav a.toc-sub { padding-left:14px; font-size:13px; }
+    main { width:100%; max-width:980px; padding:48px 48px 96px; background:var(--paper); }
+    h1,h2,h3,h4,p,li { overflow-wrap:anywhere; word-break:break-word; }
+    h1,h2,h3,h4 { font-family:"Songti SC","Noto Serif CJK SC","STSong",serif; line-height:1.35; letter-spacing:0; }
+    h1 { font-size:34px; margin:0 0 22px; color:var(--accent); }
+    h2 { font-size:27px; margin:52px 0 16px; padding-top:10px; border-top:2px solid var(--line); color:var(--accent); }
+    h3 { font-size:22px; margin:30px 0 10px; color:var(--accent2); }
+    h4 { font-size:19px; margin:22px 0 8px; }
+    p { margin:12px 0; }
+    ul,ol { padding-left:1.4em; }
+    li { margin:6px 0; }
+    code { background:var(--code); padding:.1em .3em; border-radius:4px; font-family:"SFMono-Regular",Consolas,monospace; font-size:.9em; }
+    pre { background:var(--code); border:1px solid var(--line); border-radius:8px; padding:16px; overflow:auto; line-height:1.55; }
+    pre code { background:transparent; padding:0; }
+    details { border:1px solid var(--line); border-radius:8px; padding:10px 14px; margin:10px 0 18px; background:color-mix(in srgb, var(--paper) 88%, var(--code)); }
+    summary { cursor:pointer; color:var(--accent2); font-weight:700; }
+    a { color:var(--accent2); }
+    .katex-display { overflow-x:auto; overflow-y:hidden; padding:.35rem 0; }
+    @media (max-width: 860px) { .layout { display:block; width:100%; max-width:100%; overflow-x:hidden; } nav { position:relative; width:100%; max-width:100%; height:auto; max-height:38vh; overflow:auto; border-right:0; border-bottom:1px solid var(--line); padding:20px 18px; } main { width:100%; max-width:100%; padding:28px 20px 72px; overflow-x:hidden; } body { font-size:16px; } h1 { font-size:28px; } h2 { font-size:23px; } h3 { font-size:20px; } }
+    @media print { nav { display:none; } .layout { display:block; } main { max-width:none; padding:0; } details { break-inside:avoid; } h2,h3 { break-after:avoid; } }
+  </style>
+</head>
+<body>
+  <div class="layout">
+    <nav><h1>第0章<br>高级金融计量分析</h1><a class="toc-main" href="#开场谜题">开场谜题</a>
+<a class="toc-main" href="#1-课程定位-为什么金融计量首先是时间序列问题-核心">§1 课程定位：为什么金融计量首先是时间序列问题 ★★★ 核心</a>
+<a class="toc-sub" href="#脉络梳理">脉络梳理</a>
+<a class="toc-sub" href="#重点内容申明">重点内容申明</a>
+<a class="toc-sub" href="#习题">习题</a>
+<a class="toc-main" href="#2-时间序列数据观-样本-信息集与动态规律-核心">§2 时间序列数据观：样本、信息集与动态规律 ★★★ 核心</a>
+<a class="toc-sub" href="#脉络梳理">脉络梳理</a>
+<a class="toc-sub" href="#重点内容申明">重点内容申明</a>
+<a class="toc-sub" href="#习题">习题</a>
+<a class="toc-main" href="#3-动态规律的第一层-均值-方差-自协方差与相关图-核心">§3 动态规律的第一层：均值、方差、自协方差与相关图 ★★★ 核心</a>
+<a class="toc-sub" href="#脉络梳理">脉络梳理</a>
+<a class="toc-sub" href="#重点内容申明">重点内容申明</a>
+<a class="toc-sub" href="#习题">习题</a>
+<a class="toc-main" href="#4-建模逻辑-从白噪声到-ARMA-ARIMA">§4 建模逻辑：从白噪声到 ARMA/ARIMA ★★</a>
+<a class="toc-sub" href="#脉络梳理">脉络梳理</a>
+<a class="toc-sub" href="#重点内容申明">重点内容申明</a>
+<a class="toc-sub" href="#习题">习题</a>
+<a class="toc-main" href="#5-预测-从-看趋势-到-最小化损失">§5 预测：从“看趋势”到“最小化损失” ★★</a>
+<a class="toc-sub" href="#脉络梳理">脉络梳理</a>
+<a class="toc-sub" href="#重点内容申明">重点内容申明</a>
+<a class="toc-sub" href="#习题">习题</a>
+<a class="toc-main" href="#6-多个序列之间的关系-VAR-Granger-因果与协整">§6 多个序列之间的关系：VAR、Granger 因果与协整 ★★</a>
+<a class="toc-sub" href="#脉络梳理">脉络梳理</a>
+<a class="toc-sub" href="#重点内容申明">重点内容申明</a>
+<a class="toc-sub" href="#习题">习题</a>
+<a class="toc-main" href="#7-金融时间序列的特殊性-收益率-厚尾和波动聚集">§7 金融时间序列的特殊性：收益率、厚尾和波动聚集 ★★</a>
+<a class="toc-sub" href="#脉络梳理">脉络梳理</a>
+<a class="toc-sub" href="#重点内容申明">重点内容申明</a>
+<a class="toc-sub" href="#习题">习题</a>
+<a class="toc-main" href="#8-软件实作-用-Stata-把理论变成可复现流程">§8 软件实作：用 Stata 把理论变成可复现流程 ★★</a>
+<a class="toc-sub" href="#脉络梳理">脉络梳理</a>
+<a class="toc-sub" href="#重点内容申明">重点内容申明</a>
+<a class="toc-sub" href="#习题">习题</a>
+<a class="toc-main" href="#9-学术规范与课程考核-作业是主战场">§9 学术规范与课程考核：作业是主战场 ★</a>
+<a class="toc-sub" href="#脉络梳理">脉络梳理</a>
+<a class="toc-sub" href="#重点内容申明">重点内容申明</a>
+<a class="toc-sub" href="#习题">习题</a>
+<a class="toc-main" href="#10-参考书与学习路线-从教材到经典文献">§10 参考书与学习路线：从教材到经典文献 ★</a>
+<a class="toc-sub" href="#脉络梳理">脉络梳理</a>
+<a class="toc-sub" href="#重点内容申明">重点内容申明</a>
+<a class="toc-sub" href="#习题">习题</a>
+<a class="toc-main" href="#本章怎么复习">本章怎么复习</a>
+<a class="toc-main" href="#1-课程定位-为什么金融计量首先是时间序列问题-核心">§1 课程定位：为什么金融计量首先是时间序列问题 ★★★ 核心</a>
+<a class="toc-sub" href="#脉络梳理">脉络梳理</a>
+<a class="toc-sub" href="#重点内容">重点内容</a>
+<a class="toc-sub" href="#笨蛋讲法">笨蛋讲法</a>
+<a class="toc-sub" href="#本节小结">本节小结</a>
+<a class="toc-main" href="#2-时间序列数据观-样本-信息集与动态规律-核心">§2 时间序列数据观：样本、信息集与动态规律 ★★★ 核心</a>
+<a class="toc-sub" href="#脉络梳理">脉络梳理</a>
+<a class="toc-sub" href="#重点内容">重点内容</a>
+<a class="toc-sub" href="#易错点">易错点</a>
+<a class="toc-main" href="#3-动态规律的第一层-均值-方差-自协方差与相关图-核心">§3 动态规律的第一层：均值、方差、自协方差与相关图 ★★★ 核心</a>
+<a class="toc-sub" href="#脉络梳理">脉络梳理</a>
+<a class="toc-sub" href="#重点内容">重点内容</a>
+<a class="toc-sub" href="#平稳性的直觉">平稳性的直觉</a>
+<a class="toc-sub" href="#本节小结">本节小结</a>
+<a class="toc-main" href="#4-建模逻辑-从白噪声到-ARMA-ARIMA">§4 建模逻辑：从白噪声到 ARMA/ARIMA ★★</a>
+<a class="toc-sub" href="#脉络梳理">脉络梳理</a>
+<a class="toc-sub" href="#重点内容">重点内容</a>
+<a class="toc-sub" href="#单位根的直觉">单位根的直觉</a>
+<a class="toc-main" href="#5-预测-从-看趋势-到-最小化损失">§5 预测：从“看趋势”到“最小化损失” ★★</a>
+<a class="toc-sub" href="#脉络梳理">脉络梳理</a>
+<a class="toc-sub" href="#重点内容">重点内容</a>
+<a class="toc-sub" href="#样本内与样本外">样本内与样本外</a>
+<a class="toc-main" href="#6-多个序列之间的关系-VAR-Granger-因果与协整">§6 多个序列之间的关系：VAR、Granger 因果与协整 ★★</a>
+<a class="toc-sub" href="#脉络梳理">脉络梳理</a>
+<a class="toc-sub" href="#重点内容">重点内容</a>
+<a class="toc-sub" href="#经济金融直觉">经济金融直觉</a>
+<a class="toc-main" href="#7-金融时间序列的特殊性-收益率-厚尾和波动聚集">§7 金融时间序列的特殊性：收益率、厚尾和波动聚集 ★★</a>
+<a class="toc-sub" href="#脉络梳理">脉络梳理</a>
+<a class="toc-sub" href="#重点内容">重点内容</a>
+<a class="toc-sub" href="#为什么这属于-高级金融计量">为什么这属于“高级金融计量”</a>
+<a class="toc-main" href="#8-软件实作-用-Stata-把理论变成可复现流程">§8 软件实作：用 Stata 把理论变成可复现流程 ★★</a>
+<a class="toc-sub" href="#脉络梳理">脉络梳理</a>
+<a class="toc-sub" href="#重点内容">重点内容</a>
+<a class="toc-sub" href="#作业复现最低标准">作业复现最低标准</a>
+<a class="toc-main" href="#9-学术规范与课程考核-作业是主战场">§9 学术规范与课程考核：作业是主战场 ★</a>
+<a class="toc-sub" href="#脉络梳理">脉络梳理</a>
+<a class="toc-sub" href="#重点内容">重点内容</a>
+<a class="toc-sub" href="#闭卷考试怎么准备">闭卷考试怎么准备</a>
+<a class="toc-main" href="#10-参考书与学习路线-从教材到经典文献">§10 参考书与学习路线：从教材到经典文献 ★</a>
+<a class="toc-sub" href="#脉络梳理">脉络梳理</a>
+<a class="toc-sub" href="#重点内容">重点内容</a>
+<a class="toc-sub" href="#学习路线建议">学习路线建议</a>
+<a class="toc-main" href="#全章总览表">全章总览表</a>
+<a class="toc-main" href="#一页速记">一页速记</a>
+<a class="toc-main" href="#外部延伸来源">外部延伸来源</a>
+<a class="toc-main" href="#1-课程定位-为什么金融计量首先是时间序列问题">§1 课程定位：为什么金融计量首先是时间序列问题</a>
+<a class="toc-main" href="#2-时间序列数据观-样本-信息集与动态规律">§2 时间序列数据观：样本、信息集与动态规律</a>
+<a class="toc-main" href="#3-动态规律的第一层-均值-方差-自协方差与相关图">§3 动态规律的第一层：均值、方差、自协方差与相关图</a>
+<a class="toc-main" href="#4-建模逻辑-从白噪声到-ARMA-ARIMA">§4 建模逻辑：从白噪声到 ARMA/ARIMA</a>
+<a class="toc-main" href="#5-预测-从-看趋势-到-最小化损失">§5 预测：从“看趋势”到“最小化损失”</a>
+<a class="toc-main" href="#6-多个序列之间的关系-VAR-Granger-因果与协整">§6 多个序列之间的关系：VAR、Granger 因果与协整</a>
+<a class="toc-main" href="#7-金融时间序列的特殊性-收益率-厚尾和波动聚集">§7 金融时间序列的特殊性：收益率、厚尾和波动聚集</a>
+<a class="toc-main" href="#8-软件实作-用-Stata-把理论变成可复现流程">§8 软件实作：用 Stata 把理论变成可复现流程</a>
+<a class="toc-main" href="#9-学术规范与课程考核-作业是主战场">§9 学术规范与课程考核：作业是主战场</a>
+<a class="toc-main" href="#10-参考书与学习路线-从教材到经典文献">§10 参考书与学习路线：从教材到经典文献</a>
+<a class="toc-main" href="#综合提升题">综合提升题</a></nav>
+    <main><h1 id="第0章-高级金融计量分析-复习骨架">第0章 高级金融计量分析：复习骨架</h1>
+<h2 id="开场谜题">开场谜题</h2>
+<p>同样是一串数字，为什么“每天的股票收益率”不能像普通横截面样本一样随便打乱，而“今天的通胀率、昨天的利率、上个月的产出缺口”之间又会互相牵扯？本章的答案是：时间序列数据不是一堆点，而是一条带记忆的轨迹。</p>
+<p><strong>本章主线一句话</strong>：高级金融计量分析要做的事，是用时间序列模型识别数据的动态规律，再把这种规律用于解释、检验和预测。</p>
+<p><strong>方法谱系</strong></p>
+<p>数据按时间排列 → 描述动态特征 → 判断平稳性与记忆结构 → 建立单变量模型 → 扩展到多变量系统 → 处理金融波动与风险 → 评价预测表现 → 用软件复现实证流程</p>
+<h2 id="1-课程定位-为什么金融计量首先是时间序列问题-核心">§1 课程定位：为什么金融计量首先是时间序列问题 ★★★ 核心</h2>
+<h3 id="脉络梳理">脉络梳理</h3>
+<p>本节对应课件“简介”：经济、金融、营销、管理中的许多变量天然按时间出现，研究对象不是静态差异，而是动态变化。</p>
+<h3 id="重点内容申明">重点内容申明</h3>
+<p>需要明确时间序列分析的目标：刻画数据生成机制、理解动态规律、基于过去预测未来、分析多个序列的相互关系。</p>
+<h3 id="习题">习题</h3>
+<p>围绕“为什么不能忽略时间顺序”设计概念题与应用题。</p>
+<h2 id="2-时间序列数据观-样本-信息集与动态规律-核心">§2 时间序列数据观：样本、信息集与动态规律 ★★★ 核心</h2>
+<h3 id="脉络梳理">脉络梳理</h3>
+<p>从“按时间顺序排列的一组或多组数据”出发，建立随机过程、样本路径、信息集的语言。</p>
+<h3 id="重点内容申明">重点内容申明</h3>
+<p>区分横截面、时间序列、面板数据；解释 $y_t$、$\mathcal{F}_t$、滞后项、差分、增长率、收益率。</p>
+<h3 id="习题">习题</h3>
+<p>围绕变量频率、缺失、滞后和信息集设计练习。</p>
+<h2 id="3-动态规律的第一层-均值-方差-自协方差与相关图-核心">§3 动态规律的第一层：均值、方差、自协方差与相关图 ★★★ 核心</h2>
+<h3 id="脉络梳理">脉络梳理</h3>
+<p>时间序列的“规律”最先落在均值、波动和相关性上。</p>
+<h3 id="重点内容申明">重点内容申明</h3>
+<p>讲清自协方差函数、ACF、PACF、白噪声、平稳性的直觉与公式。</p>
+<h3 id="习题">习题</h3>
+<p>围绕 ACF 读图、平稳性判断和白噪声识别设计练习。</p>
+<h2 id="4-建模逻辑-从白噪声到-ARMA-ARIMA">§4 建模逻辑：从白噪声到 ARMA/ARIMA ★★</h2>
+<h3 id="脉络梳理">脉络梳理</h3>
+<p>如果序列有记忆，就用过去解释现在；如果冲击有拖尾，就用误差结构解释现在。</p>
+<h3 id="重点内容申明">重点内容申明</h3>
+<p>建立 AR、MA、ARMA、ARIMA 的直觉；推导 AR(1) 的均值、方差和预测。</p>
+<h3 id="习题">习题</h3>
+<p>围绕 AR(1)、随机游走、差分和平稳条件设计练习。</p>
+<h2 id="5-预测-从-看趋势-到-最小化损失">§5 预测：从“看趋势”到“最小化损失” ★★</h2>
+<h3 id="脉络梳理">脉络梳理</h3>
+<p>课程目标之一是对经济金融变量构建预测；预测不是猜，而是在给定信息下选择损失最小的数。</p>
+<h3 id="重点内容申明">重点内容申明</h3>
+<p>讲清条件期望、预测误差、RMSE/MAE、滚动窗口、样本内与样本外评价。</p>
+<h3 id="习题">习题</h3>
+<p>围绕预测目标、误差评价和滚动预测设计练习。</p>
+<h2 id="6-多个序列之间的关系-VAR-Granger-因果与协整">§6 多个序列之间的关系：VAR、Granger 因果与协整 ★★</h2>
+<h3 id="脉络梳理">脉络梳理</h3>
+<p>课件提到“研究多个序列之间的关系”，这正是宏观金融计量的核心场景。</p>
+<h3 id="重点内容申明">重点内容申明</h3>
+<p>解释联立动态系统、Granger 因果、冲击响应、方差分解和长期均衡关系。</p>
+<h3 id="习题">习题</h3>
+<p>围绕变量相互预测、政策冲击和长期关系设计练习。</p>
+<h2 id="7-金融时间序列的特殊性-收益率-厚尾和波动聚集">§7 金融时间序列的特殊性：收益率、厚尾和波动聚集 ★★</h2>
+<h3 id="脉络梳理">脉络梳理</h3>
+<p>金融数据常常均值难预测、方差很可预测，因此要把“收益”和“风险”分开建模。</p>
+<h3 id="重点内容申明">重点内容申明</h3>
+<p>讲清价格到收益率、条件异方差、ARCH/GARCH、风险度量的入门逻辑。</p>
+<h3 id="习题">习题</h3>
+<p>围绕收益率转换、波动聚集和风险预测设计练习。</p>
+<h2 id="8-软件实作-用-Stata-把理论变成可复现流程">§8 软件实作：用 Stata 把理论变成可复现流程 ★★</h2>
+<h3 id="脉络梳理">脉络梳理</h3>
+<p>课件目标明确要求“运用计算机软件分析时间序列数据”。</p>
+<h3 id="重点内容申明">重点内容申明</h3>
+<p>给出 Stata 中导入、设定时间变量、画图、检验、估计、预测的完整模板。</p>
+<h3 id="习题">习题</h3>
+<p>围绕 <code>tsset</code>、<code>tsline</code>、<code>dfuller</code>、<code>arima</code>、<code>var</code> 的可运行流程设计练习。</p>
+<h2 id="9-学术规范与课程考核-作业是主战场">§9 学术规范与课程考核：作业是主战场 ★</h2>
+<h3 id="脉络梳理">脉络梳理</h3>
+<p>课件给出考核：闭卷考试 30，作业 60，课堂提问/出勤 10，并强调学术不端零容忍。</p>
+<h3 id="重点内容申明">重点内容申明</h3>
+<p>解释如何把作业写成可复现实证报告：数据来源、代码、表图、解释、稳健性和引用。</p>
+<h3 id="习题">习题</h3>
+<p>围绕作业提交、引用规范和复现检查设计练习。</p>
+<h2 id="10-参考书与学习路线-从教材到经典文献">§10 参考书与学习路线：从教材到经典文献 ★</h2>
+<h3 id="脉络梳理">脉络梳理</h3>
+<p>课件列出教材与参考书：涂云东、Tsay、Hamilton、Davidson，以及数据库和网络资源。</p>
+<h3 id="重点内容申明">重点内容申明</h3>
+<p>给出不同参考书的分工：入门、金融应用、理论深水区、随机极限理论。</p>
+<h3 id="习题">习题</h3>
+<p>围绕阅读策略、概念索引和错题本设计练习。</p>
+<h1 id="第0章-高级金融计量分析-超级详细复习笔记">第0章 高级金融计量分析：超级详细复习笔记</h1>
+<h2 id="本章怎么复习">本章怎么复习</h2>
+<p>第0章不是公式密集章节，而是整门课的地图。课件只给出课程简介、目标、参考书、纪律和考核，但它暗含了后面所有章节的学习方式：先认识时间序列数据，再找动态规律，再用模型刻画，再用软件估计，最后用预测或经济解释检验模型是否有用。</p>
+<p>复习时不要把它当成“开学说明”跳过。考试和作业真正考的不是“课程群是多少”，而是你是否理解以下三个问题：</p>
+<ol>
+<li>为什么经济金融数据经常必须按时间顺序分析？</li>
+<li>什么叫“掌握数据生成机制的动态规律”？</li>
+<li>为什么预测、变量关系和软件复现是同一套计量流程的三个出口？</li>
+</ol>
+<p>如果能把这三个问题讲清楚，后面的 ARMA、单位根、VAR、GARCH、协整、预测评价就都能挂到同一张知识网上。</p>
+<h2 id="1-课程定位-为什么金融计量首先是时间序列问题-核心">§1 课程定位：为什么金融计量首先是时间序列问题 ★★★ 核心</h2>
+<h3 id="脉络梳理">脉络梳理</h3>
+<p>课件给时间序列分析的定义是：研究和分析时间序列数据的方法总称。这里的关键词不是“数据”，而是“时间”。一旦数据有先后顺序，今天的观测就可能包含昨天、上周、上月甚至几年前的信息。金融市场尤其如此：股票价格、汇率、利率、成交量、波动率、信用利差、宏观公告，几乎全部是沿时间展开的。</p>
+<p>横截面分析常问：“为什么 A 公司比 B 公司收益率更高？”时间序列分析常问：“为什么某只资产今天的收益率、风险或交易量会变成这样？”前者强调个体差异，后者强调动态机制。</p>
+<h3 id="重点内容">重点内容</h3>
+<p>最朴素的时间序列可以写成：</p>
+<p>$$ \{y_t: t=1,2,\ldots,T\} $$</p>
+<p>这里 $t$ 是时间索引，$T$ 是样本长度。它可以是日收益率、月度通胀率、季度 GDP 增速，也可以是一分钟级别的高频交易价格。</p>
+<p>时间序列分析的核心不是把 $y_1,\ldots,y_T$ 当成彼此独立的一堆数，而是承认：</p>
+<p>$$ y_t \text{ 可能依赖 } y_{t-1},y_{t-2},\ldots $$</p>
+<p>这句话有三个后果。</p>
+<p>第一，样本顺序不能随意打乱。假设你有 1000 个日收益率，如果把日期随机重排，均值和方差也许不变，但波动聚集、趋势、危机时期的连续下跌、政策冲击后的调整路径都会被破坏。时间顺序本身就是信息。</p>
+<p>第二，模型误差不能轻易假设独立。普通回归里常见的“误差独立同分布”在时间序列中非常危险，因为冲击会持续。比如货币政策收紧后的利率冲击可能在未来几期继续影响债券收益率。</p>
+<p>第三，预测是自然任务。只要现在与过去有关，就可以用过去的信息形成对未来的判断。预测不是玄学，而是条件信息下的最优决策问题。</p>
+<h3 id="笨蛋讲法">笨蛋讲法</h3>
+<p>时间序列像电影，横截面像照片。照片里你可以比较同一时刻不同对象；电影里你要理解前一幕如何推动后一幕。金融计量之所以离不开时间序列，是因为价格、风险和政策都不是一次性出现的，它们会延续、反转、累积和传导。</p>
+<h3 id="本节小结">本节小结</h3>
+<p>本课程的定位可以浓缩为一句话：用模型把“过去如何影响现在、现在如何预示未来”说清楚，并把这种说法放到经济金融问题中检验。</p>
+<h2 id="2-时间序列数据观-样本-信息集与动态规律-核心">§2 时间序列数据观：样本、信息集与动态规律 ★★★ 核心</h2>
+<h3 id="脉络梳理">脉络梳理</h3>
+<p>课件说时间序列数据是“在时间上有先后顺序的一组或多组数据”。这句话看似简单，其实包含三层对象：观测值、随机过程、信息集。</p>
+<p>观测值是你手里看到的数据。随机过程是数据背后的生成机制。信息集是某个时点已经知道的全部信息。</p>
+<h3 id="重点内容">重点内容</h3>
+<p>一个时间序列样本是随机过程的一条实现路径。可以这样理解：</p>
+<p>$$ \{Y_t\}_{t\in \mathbb{Z}} \quad \text{是随机过程，} $$</p>
+<p>$$ y_1,y_2,\ldots,y_T \quad \text{是我们实际看到的一条样本路径。} $$</p>
+<p>为什么要区分 $Y_t$ 和 $y_t$？因为模型关心的是“如果世界重复运行很多次，这个变量会怎样分布”，而我们只看到其中一次历史。计量分析的任务，是从这一次历史中尽量推断背后的规律。</p>
+<p>信息集通常记作：</p>
+<p>$$ \mathcal{F}_t=\{y_t,y_{t-1},y_{t-2},\ldots; x_t,x_{t-1},\ldots\} $$</p>
+<p>它表示到 $t$ 时刻为止可用的信息。预测 $y_{t+1}$ 时，不能偷看 $y_{t+1}$；只能使用 $\mathcal{F}_t$。这就是所有预测实验必须区分训练期和测试期的原因。</p>
+<p>常见的数据变换包括：</p>
+<ul>
+<li>滞后：$L y_t=y_{t-1}$，其中 $L$ 是滞后算子。</li>
+<li>一阶差分：$\Delta y_t=y_t-y_{t-1}$。</li>
+<li>增长率：$g_t=(y_t-y_{t-1})/y_{t-1}$。</li>
+<li>对数增长率：$\Delta \ln y_t=\ln y_t-\ln y_{t-1}$。</li>
+<li>金融对数收益率：$r_t=\ln P_t-\ln P_{t-1}$。</li>
+</ul>
+<p>为什么金融里喜欢用对数收益率？因为当价格变化不大时：</p>
+<p>$$ \ln P_t-\ln P_{t-1} =\ln\left(\frac{P_t}{P_{t-1}}\right) =\ln(1+R_t) \approx R_t $$</p>
+<p>其中 $R_t=(P_t-P_{t-1})/P_{t-1}$ 是简单收益率。近似来自泰勒展开：</p>
+<p>$$ \ln(1+x)=x-\frac{x^2}{2}+\frac{x^3}{3}-\cdots $$</p>
+<p>当 $x$ 很小时，高阶项很小，所以 $\ln(1+x)\approx x$。对数收益率还有一个好处：多期收益可以相加。</p>
+<p>$$ \ln P_t-\ln P_{t-k} =\sum_{j=0}^{k-1}(\ln P_{t-j}-\ln P_{t-j-1}) $$</p>
+<h3 id="易错点">易错点</h3>
+<p>不要把“样本按时间排好”误解为“模型一定有趋势”。有些序列有明显趋势，如 GDP 水平；有些序列围绕固定均值波动，如很多资产收益率；还有些序列均值不明显但方差会变化，如金融波动率。时间序列分析第一步不是上模型，而是先问数据的时间结构是什么。</p>
+<h2 id="3-动态规律的第一层-均值-方差-自协方差与相关图-核心">§3 动态规律的第一层：均值、方差、自协方差与相关图 ★★★ 核心</h2>
+<h3 id="脉络梳理">脉络梳理</h3>
+<p>课件说时间序列分析要“刻画数据的内在动态规律”。最基础的动态规律有三类：平均水平、波动强度、相隔不同期数的相关性。</p>
+<h3 id="重点内容">重点内容</h3>
+<p>均值描述序列的中心：</p>
+<p>$$ \mu_t=E(Y_t) $$</p>
+<p>方差描述单期波动：</p>
+<p>$$ \sigma_t^2=Var(Y_t)=E[(Y_t-\mu_t)^2] $$</p>
+<p>自协方差描述 $Y_t$ 与 $Y_{t-k}$ 的共同运动：</p>
+<p>$$ \gamma_t(k)=Cov(Y_t,Y_{t-k}) =E[(Y_t-\mu_t)(Y_{t-k}-\mu_{t-k})] $$</p>
+<p>如果序列是弱平稳的，均值不随时间变，方差有限且不随时间变，自协方差只取决于间隔 $k$，不取决于具体时点 $t$。这时可以写成：</p>
+<p>$$ E(Y_t)=\mu,\quad Var(Y_t)=\gamma(0),\quad Cov(Y_t,Y_{t-k})=\gamma(k) $$</p>
+<p>自相关系数是标准化后的自协方差：</p>
+<p>$$ \rho(k)=\frac{\gamma(k)}{\gamma(0)} $$</p>
+<p>它的范围在 $[-1,1]$ 之间，方便比较不同序列。</p>
+<p>白噪声是最基本的基准模型：</p>
+<p>$$ \varepsilon_t\sim WN(0,\sigma^2) $$</p>
+<p>意思是：</p>
+<p>$$ E(\varepsilon_t)=0,\quad Var(\varepsilon_t)=\sigma^2,\quad Cov(\varepsilon_t,\varepsilon_{t-k})=0,\ k\neq 0 $$</p>
+<p>白噪声不等于正态分布。正态白噪声更强，它还要求每期误差服从正态分布。很多金融收益率可能没有显著线性自相关，却有厚尾和条件异方差，所以不能因为 ACF 不显著就说“没有风险结构”。</p>
+<h3 id="平稳性的直觉">平稳性的直觉</h3>
+<p>平稳不是“数据不动”，而是“数据的概率规律不随时间漂移”。如果一个序列今天围绕 0 波动，明天也围绕 0 波动，长期方差稳定，相关结构也稳定，那么历史规律才比较可能用于未来。</p>
+<p>如果序列有单位根或趋势，直接用水平值回归容易出现伪回归。所谓伪回归，就是两个彼此没有真实经济关系的趋势序列也可能回归出很高的 $R^2$ 和显著系数。后续学习单位根和协整时，这一点会反复出现。</p>
+<h3 id="本节小结">本节小结</h3>
+<p>任何时间序列建模前都要完成三件事：看图、看描述统计、看相关结构。它们不是形式主义，而是在回答“这个序列有没有稳定的动态规律可学”。</p>
+<h2 id="4-建模逻辑-从白噪声到-ARMA-ARIMA">§4 建模逻辑：从白噪声到 ARMA/ARIMA ★★</h2>
+<h3 id="脉络梳理">脉络梳理</h3>
+<p>如果白噪声是“没有可预测结构”，那么时间序列模型就是在寻找偏离白噪声的结构。最经典的单变量模型是 AR、MA、ARMA 和 ARIMA。</p>
+<h3 id="重点内容">重点内容</h3>
+<p>AR 模型用过去的自己解释现在。AR(1) 写作：</p>
+<p>$$ y_t=c+\phi y_{t-1}+\varepsilon_t $$</p>
+<p>其中 $\varepsilon_t$ 是白噪声。直觉是：今天的变量由一个长期水平、昨天的惯性和今天的新冲击组成。</p>
+<p>如果 $|\phi|&lt;1$，AR(1) 是平稳的。推导均值时，对两边取期望：</p>
+<p>$$ E(y_t)=E(c+\phi y_{t-1}+\varepsilon_t) $$</p>
+<p>利用期望线性性质：</p>
+<p>$$ E(y_t)=c+\phi E(y_{t-1})+E(\varepsilon_t) $$</p>
+<p>若平稳，$E(y_t)=E(y_{t-1})=\mu$，且 $E(\varepsilon_t)=0$，所以：</p>
+<p>$$ \mu=c+\phi \mu $$</p>
+<p>移项：</p>
+<p>$$ \mu(1-\phi)=c $$</p>
+<p>得到：</p>
+<p>$$ \mu=\frac{c}{1-\phi} $$</p>
+<p>这一步的经济含义是：截距 $c$ 不是长期均值本身，长期均值取决于截距和惯性系数。</p>
+<p>再看方差。令 $x_t=y_t-\mu$，则：</p>
+<p>$$ x_t=\phi x_{t-1}+\varepsilon_t $$</p>
+<p>两边取方差：</p>
+<p>$$ Var(x_t)=Var(\phi x_{t-1}+\varepsilon_t) $$</p>
+<p>如果 $\varepsilon_t$ 与过去信息不相关：</p>
+<p>$$ Var(x_t)=\phi^2 Var(x_{t-1})+Var(\varepsilon_t) $$</p>
+<p>平稳时 $Var(x_t)=Var(x_{t-1})=\gamma(0)$，所以：</p>
+<p>$$ \gamma(0)=\phi^2\gamma(0)+\sigma^2 $$</p>
+<p>移项：</p>
+<p>$$ \gamma(0)(1-\phi^2)=\sigma^2 $$</p>
+<p>因此：</p>
+<p>$$ \gamma(0)=\frac{\sigma^2}{1-\phi^2} $$</p>
+<p>这说明 $\phi$ 越接近 1，方差越大，冲击越持久。</p>
+<p>MA 模型用过去冲击解释现在。MA(1) 写作：</p>
+<p>$$ y_t=\mu+\varepsilon_t+\theta\varepsilon_{t-1} $$</p>
+<p>ARMA 把二者合在一起：</p>
+<p>$$ y_t=c+\phi_1y_{t-1}+\cdots+\phi_py_{t-p} \varepsilon_t+\theta_1\varepsilon_{t-1}+\cdots+\theta_q\varepsilon_{t-q} $$</p>
+<p>ARIMA 则用于处理非平稳序列。ARIMA$(p,d,q)$ 的意思是：先对序列差分 $d$ 次，让它更接近平稳，再对差分后的序列建立 ARMA$(p,q)$。</p>
+<h3 id="单位根的直觉">单位根的直觉</h3>
+<p>如果 AR(1) 中 $\phi=1$，则：</p>
+<p>$$ y_t=c+y_{t-1}+\varepsilon_t $$</p>
+<p>这就是带漂移的随机游走。冲击不会衰减，而是永久进入水平值。股票价格、汇率和很多宏观水平变量常被近似成这种过程。此时用历史均值预测未来通常没有意义，因为均值本身在漂移。</p>
+<h2 id="5-预测-从-看趋势-到-最小化损失">§5 预测：从“看趋势”到“最小化损失” ★★</h2>
+<h3 id="脉络梳理">脉络梳理</h3>
+<p>课件目标第三条是“对经济和金融中的重要变量构建预测”。预测不是简单画线外推，而是基于信息集选择一个在损失函数下最优的数。</p>
+<h3 id="重点内容">重点内容</h3>
+<p>设我们要在 $t$ 时刻预测 $Y_{t+1}$，可用信息是 $\mathcal{F}_t$。如果损失函数是平方误差：</p>
+<p>$$ L(a)=(Y_{t+1}-a)^2 $$</p>
+<p>最优预测 $a^\*$ 是使条件期望损失最小的数：</p>
+<p>$$ a^\*=\arg\min_a E[(Y_{t+1}-a)^2\mid \mathcal{F}_t] $$</p>
+<p>推导如下。展开平方项：</p>
+<p>$$ E[(Y_{t+1}-a)^2\mid \mathcal{F}_t] =E[Y_{t+1}^2-2aY_{t+1}+a^2\mid \mathcal{F}_t] $$</p>
+<p>利用条件期望线性性质，且 $a$ 在 $\mathcal{F}_t$ 下是已知数：</p>
+<p>$$ =E[Y_{t+1}^2\mid \mathcal{F}_t]-2aE[Y_{t+1}\mid \mathcal{F}_t]+a^2 $$</p>
+<p>对 $a$ 求一阶条件：</p>
+<p>$$ \frac{\partial}{\partial a} \left(E[Y_{t+1}^2\mid \mathcal{F}_t]-2aE[Y_{t+1}\mid \mathcal{F}_t]+a^2\right)=0 $$</p>
+<p>得到：</p>
+<p>$$ -2E[Y_{t+1}\mid \mathcal{F}_t]+2a=0 $$</p>
+<p>所以：</p>
+<p>$$ a^\*=E[Y_{t+1}\mid \mathcal{F}_t] $$</p>
+<p>这就是“条件期望是平方损失下最优预测”的来源。它的意义很重要：时间序列模型本质上是在近似条件期望。</p>
+<p>预测评价常用指标：</p>
+<p>$$ ME=\frac{1}{n}\sum_{i=1}^n e_i $$</p>
+<p>$$ MAE=\frac{1}{n}\sum_{i=1}^n |e_i| $$</p>
+<p>$$ RMSE=\sqrt{\frac{1}{n}\sum_{i=1}^n e_i^2} $$</p>
+<p>其中 $e_i=y_i-\hat y_i$。RMSE 对大误差惩罚更重，适合特别不希望出现大偏差的场景；MAE 更稳健，不容易被极端值支配。</p>
+<h3 id="样本内与样本外">样本内与样本外</h3>
+<p>样本内拟合好，不代表预测好。一个模型可以用很多参数把历史拟合得很漂亮，但未来表现很差。这叫过拟合。真正重要的是样本外预测：先用训练期估计模型，再用保留的测试期评价预测误差。</p>
+<p>金融预测还经常使用滚动窗口。比如每次用过去 120 个月数据预测下一个月，窗口向前滚动。这更符合现实，因为研究者在每个时点只能看到当时以前的数据。</p>
+<h2 id="6-多个序列之间的关系-VAR-Granger-因果与协整">§6 多个序列之间的关系：VAR、Granger 因果与协整 ★★</h2>
+<h3 id="脉络梳理">脉络梳理</h3>
+<p>课件提到时间序列分析可以“研究多个序列之间的关系”。这句话指向多变量时间序列。金融和宏观问题很少只有一个变量：利率影响汇率，汇率影响通胀，通胀影响央行政策，政策又影响资产价格。</p>
+<h3 id="重点内容">重点内容</h3>
+<p>VAR 模型把多个变量都看成内生变量。最简单的二维 VAR(1) 可以写成：</p>
+<p>$$ \begin{pmatrix} y_t\\ x_t \end{pmatrix} = \begin{pmatrix} c_y\\ c_x \end{pmatrix} + \begin{pmatrix} a_{11} &amp; a_{12}\\ a_{21} &amp; a_{22} \end{pmatrix} \begin{pmatrix} y_{t-1}\\ x_{t-1} \end{pmatrix} + \begin{pmatrix} u_{yt}\\ u_{xt} \end{pmatrix} $$</p>
+<p>这里 $a_{12}$ 表示 $x_{t-1}$ 对 $y_t$ 的预测作用，$a_{21}$ 表示 $y_{t-1}$ 对 $x_t$ 的预测作用。</p>
+<p>Granger 因果不是哲学意义上的因果，而是预测意义上的因果。如果加入 $x$ 的过去值能显著提高对 $y$ 的预测，我们说 $x$ Granger 导致 $y$。</p>
+<p>协整处理另一类问题：两个非平稳序列单独看都漂移，但某种线性组合是平稳的。比如：</p>
+<p>$$ z_t=y_t-\beta x_t $$</p>
+<p>如果 $y_t$ 和 $x_t$ 都是 $I(1)$，但 $z_t$ 是 $I(0)$，则二者存在协整关系。这可以解释长期均衡：变量短期会偏离，但不会无限分离。</p>
+<h3 id="经济金融直觉">经济金融直觉</h3>
+<p>VAR 适合问“冲击如何传导”。例如一次货币政策收紧冲击，可能先影响短端利率，再影响长端利率，再影响股票估值。协整适合问“长期约束是否存在”。例如汇率、价格水平与货币供给之间可能存在长期关系。</p>
+<h2 id="7-金融时间序列的特殊性-收益率-厚尾和波动聚集">§7 金融时间序列的特殊性：收益率、厚尾和波动聚集 ★★</h2>
+<h3 id="脉络梳理">脉络梳理</h3>
+<p>普通时间序列课程常从均值预测开始，金融时间序列必须更重视风险。很多资产收益率的均值很难预测，但波动率、尾部风险和相关性会表现出明显结构。</p>
+<h3 id="重点内容">重点内容</h3>
+<p>金融收益率有几个典型事实：</p>
+<ol>
+<li>收益率线性自相关通常较弱，尤其在高流动性市场。</li>
+<li>收益率分布常有厚尾，极端涨跌比正态分布更常见。</li>
+<li>波动率会聚集，大波动后更容易接大波动，小波动后更容易接小波动。</li>
+<li>不同资产的相关性在危机期可能上升。</li>
+</ol>
+<p>波动聚集可以用 ARCH/GARCH 思路描述。设：</p>
+<p>$$ r_t=\mu+\varepsilon_t,\quad \varepsilon_t=\sigma_t z_t $$</p>
+<p>其中 $z_t$ 是标准化冲击，$\sigma_t^2$ 是条件方差。GARCH(1,1) 写作：</p>
+<p>$$ \sigma_t^2=\omega+\alpha \varepsilon_{t-1}^2+\beta\sigma_{t-1}^2 $$</p>
+<p>直觉是：今天的风险由三部分组成，长期底噪 $\omega$、昨天实际冲击大小 $\alpha\varepsilon_{t-1}^2$、昨天已有风险水平 $\beta\sigma_{t-1}^2$。</p>
+<p>如果 $\alpha+\beta$ 很接近 1，说明波动冲击很持久。这在金融市场中很常见：危机不会一天结束，风险会持续一段时间。</p>
+<h3 id="为什么这属于-高级金融计量">为什么这属于“高级金融计量”</h3>
+<p>高级之处不只是公式更复杂，而是问题更接近真实市场：数据不是独立同分布，风险不是常数，冲击会传导，极端事件很重要，模型必须能被数据和预测表现检验。</p>
+<h2 id="8-软件实作-用-Stata-把理论变成可复现流程">§8 软件实作：用 Stata 把理论变成可复现流程 ★★</h2>
+<h3 id="脉络梳理">脉络梳理</h3>
+<p>课件目标第二条是“运用计算机软件来分析时间序列数据”。软件不是附属技能，而是让理论可检验、作业可复现、结论可追踪的工具。</p>
+<h3 id="重点内容">重点内容</h3>
+<p>Stata 的时间序列工作流通常分为六步：导入数据、生成时间变量、声明时间结构、画图诊断、估计模型、输出预测。</p>
+<p>下面给出一个完整模板。它使用 FRED 的月度联邦基金利率 CSV 链接作为例子；真实作业中可以替换为教师给定数据。</p>
+<pre><code class="language-stata">
+clear all
+set more off
+
+* 1. 导入月度时间序列数据
+import delimited &quot;https://fred.stlouisfed.org/graph/fredgraph.csv?id=FEDFUNDS&quot;, clear
+
+* 2. 处理日期。FRED 的 DATE 通常是 yyyy-mm-dd 字符串
+gen mdate = monthly(substr(date, 1, 7), &quot;YM&quot;)
+format mdate %tm
+rename fedfunds rate
+drop if missing(rate)
+
+* 3. 声明时间序列结构
+tsset mdate, monthly
+
+* 4. 基础图形与相关结构
+tsline rate
+ac rate
+pac rate
+
+* 5. 单位根检验与差分
+dfuller rate, lags(12)
+gen d_rate = D.rate
+dfuller d_rate, lags(12)
+
+* 6. 示例 ARIMA 模型与动态预测
+arima rate, arima(1,1,1)
+predict rate_hat, y dynamic(tm(2020m1))
+tsline rate rate_hat
+</code></pre>
+<p>这个代码块的要点如下。</p>
+<p><code>tsset</code> 是 Stata 时间序列命令的地基。没有 <code>tsset</code>，<code>L.rate</code>、<code>D.rate</code>、<code>F.rate</code> 这样的滞后、差分和超前算子无法正确工作。</p>
+<p><code>dfuller</code> 用于检验单位根。它不是告诉你“序列一定平稳或不平稳”的神谕，而是提供统计证据。实际研究中要结合图形、经济含义、样本长度和稳健性。</p>
+<p><code>arima rate, arima(1,1,1)</code> 表示对原序列做一次差分后拟合 ARMA(1,1)。其中中间的 1 是差分阶数 $d$。</p>
+<h3 id="作业复现最低标准">作业复现最低标准</h3>
+<p>一份合格的时间序列作业至少应该包含：</p>
+<ul>
+<li>数据来源和变量定义。</li>
+<li>样本区间与频率。</li>
+<li>时间变量处理代码。</li>
+<li>图形诊断。</li>
+<li>平稳性或差分处理说明。</li>
+<li>模型设定理由。</li>
+<li>估计结果解释。</li>
+<li>预测或关系检验。</li>
+<li>结论与局限。</li>
+</ul>
+<h2 id="9-学术规范与课程考核-作业是主战场">§9 学术规范与课程考核：作业是主战场 ★</h2>
+<h3 id="脉络梳理">脉络梳理</h3>
+<p>课件写明考核方式：闭卷考试 30 分，作业 60 分，课堂提问和出勤 10 分。这意味着作业不是边角料，而是本课程最重要的持续评价方式。</p>
+<h3 id="重点内容">重点内容</h3>
+<p>时间序列作业最容易出问题的地方不是公式，而是复现性。你不能只提交“跑出来一张表”，还要让别人能顺着你的数据和代码得到同样结果。</p>
+<p>严禁抄袭、作弊、伪造，原因不只是纪律要求。时间序列实证高度依赖数据清洗和模型选择，如果伪造过程，结论就失去意义。金融计量尤其强调透明：同一个模型换样本期、换频率、换损失函数，结论可能变化；所以必须让选择过程可检查。</p>
+<p>推荐的作业写法是：</p>
+<ol>
+<li>研究问题：一句话说明你要预测什么或解释什么。</li>
+<li>数据说明：变量、频率、来源、样本区间。</li>
+<li>描述事实：图形、均值、方差、相关图。</li>
+<li>模型选择：为什么用 ARIMA、VAR 或 GARCH。</li>
+<li>估计结果：参数、显著性、诊断。</li>
+<li>预测或检验：样本外误差、Granger 检验、冲击响应等。</li>
+<li>经济解释：结果意味着什么，不能意味着什么。</li>
+<li>复现附件：完整代码和必要数据说明。</li>
+</ol>
+<h3 id="闭卷考试怎么准备">闭卷考试怎么准备</h3>
+<p>闭卷考试通常更看重概念、推导和判断。导论章可准备成三类题：</p>
+<ul>
+<li>概念题：什么是时间序列？什么是动态规律？为什么要预测？</li>
+<li>判断题：某序列是否适合直接回归？为什么时间顺序不能打乱？</li>
+<li>简答题：说明时间序列分析在金融中的应用，并给出一个模型流程。</li>
+</ul>
+<h2 id="10-参考书与学习路线-从教材到经典文献">§10 参考书与学习路线：从教材到经典文献 ★</h2>
+<h3 id="脉络梳理">脉络梳理</h3>
+<p>课件列出教材《时间序列分析》（涂云东，2022）和三本英文参考书：Tsay 的金融时间序列、Hamilton 的时间序列、Davidson 的随机极限理论。它们对应不同学习层级。</p>
+<h3 id="重点内容">重点内容</h3>
+<p>涂云东教材适合作为课程主线。你应该用它建立中文概念、基本模型和常规例题。</p>
+<p>Tsay 的 Analysis of Financial Time Series 更偏金融应用，适合学习收益率、波动率、风险度量、高频数据等主题。遇到 GARCH、VaR、金融厚尾时可以查它。</p>
+<p>Hamilton 的 Time Series Analysis 是经典理论书，适合深入理解 ARMA、状态空间、单位根、VAR、协整和宏观时间序列。</p>
+<p>Davidson 的 Stochastic Limit Theory 更理论，适合处理大样本性质、弱收敛、极限定理和高级计量证明。它不是初学者第一本书，但能解释为什么很多估计量和检验在大样本下成立。</p>
+<h3 id="学习路线建议">学习路线建议</h3>
+<p>第一轮只抓主线：时间序列是什么、平稳性是什么、ARMA 怎么来、预测怎么评价。</p>
+<p>第二轮补技术：单位根、信息准则、残差诊断、VAR、GARCH、协整。</p>
+<p>第三轮练实证：找一个金融变量，从下载数据到写出完整报告。</p>
+<p>第四轮读经典：用 Tsay 看金融应用，用 Hamilton 补理论，用 Davidson 理解极限论。</p>
+<h2 id="全章总览表">全章总览表</h2>
+<p>| 课程目标 | 本章对应能力 | 后续章节会展开成 | |---|---|---| | 掌握基本方法和理论 | 随机过程、平稳性、相关结构、ARMA 思维 | ARMA、单位根、VAR、GARCH、协整 | | 运用软件分析数据 | Stata 时间设定、画图、检验、估计、预测 | 可复现实证作业 | | 构建经济金融预测 | 条件期望、损失函数、样本外评价 | 预测比较、滚动窗口、风险预测 |</p>
+<h2 id="一页速记">一页速记</h2>
+<p>时间序列分析研究的是带时间顺序的数据。它的核心问题不是“这些数平均是多少”，而是“过去如何影响现在，现在如何帮助预测未来”。动态规律最先表现为均值、方差和自相关；建模时要判断平稳性，避免伪回归；预测时要用信息集和损失函数定义最优预测；多变量系统用于研究变量关系；金融数据特别强调收益率、波动聚集和厚尾风险；软件实作必须可复现，作业是本课程主战场。</p>
+<h1 id="第0章-习题库与参考答案要点">第0章 习题库与参考答案要点</h1>
+<h2 id="外部延伸来源">外部延伸来源</h2>
+<p>本题库中的外部延伸题参考并改写自以下公开资源的主题范围，不照搬原题：</p>
+<ul>
+<li>StataCorp, Time-Series Reference Manual: https://www.stata.com/manuals/ts.pdf</li>
+<li>Penn State STAT 510 Applied Time Series Analysis: https://online.stat.psu.edu/stat510/</li>
+<li>Duke University, Introduction to ARIMA Models: https://people.duke.edu/~rnau/411arim.htm</li>
+<li>Federal Reserve Bank of St. Louis, FRED API: https://fred.stlouisfed.org/docs/api/fred/</li>
+</ul>
+<h2 id="1-课程定位-为什么金融计量首先是时间序列问题">§1 课程定位：为什么金融计量首先是时间序列问题</h2>
+<ol>
+<li>★ 解释“时间序列数据不能随意打乱顺序”这句话。请至少给出一个金融变量例子。</li>
+</ol>
+<details><summary>参考答案要点</summary>
+<p>时间顺序承载动态依赖、冲击持续、波动聚集和趋势信息。打乱收益率序列可能不改变均值方差，却会破坏连续涨跌、危机期聚集和预测结构。</p>
+</details>
+<ol>
+<li>★ 区分横截面问题和时间序列问题：分别用“股票收益率”和“居民收入”举例。</li>
+</ol>
+<details><summary>参考答案要点</summary>
+<p>横截面比较同一时点不同个体差异；时间序列研究同一变量随时间变化及其惯性。股票收益率可问今天是否受昨天影响；居民收入横截面可问不同家庭收入为何不同。</p>
+</details>
+<ol>
+<li>★★ 课件说时间序列分析可探索数据生成机制。请说明“数据生成机制”不等于“样本图像好看”。</li>
+</ol>
+<details><summary>参考答案要点</summary>
+<p>图像只是样本表现；数据生成机制指概率规律，如均值、方差、相关结构、冲击传播和条件分布。模型要解释这些规律，而非只追求曲线拟合。</p>
+</details>
+<ol>
+<li>★★ 如果某金融变量看起来有趋势，是否一定适合用线性趋势模型预测？说明理由。</li>
+</ol>
+<details><summary>参考答案要点</summary>
+<p>不一定。趋势可能来自单位根、结构变化或样本期偶然；若冲击永久累积，线性趋势外推可能误导。应先看平稳性、经济机制和样本外预测。</p>
+</details>
+<ol>
+<li>★★★ 外部延伸：参考 Penn State STAT 510 的课程主题，设计一个“从描述到预测”的时间序列分析流程。</li>
+</ol>
+<details><summary>参考答案要点</summary>
+<p>可包括画时序图、描述统计、ACF/PACF、平稳性判断、模型识别、估计、残差诊断、预测、样本外评价。重点是流程连贯，而非只列命令。</p>
+</details>
+<h2 id="2-时间序列数据观-样本-信息集与动态规律">§2 时间序列数据观：样本、信息集与动态规律</h2>
+<ol>
+<li>★ 什么是随机过程？什么是样本路径？二者为什么要区分？</li>
+</ol>
+<details><summary>参考答案要点</summary>
+<p>随机过程是一族按时间索引的随机变量；样本路径是实际观察到的一次历史。区分二者是为了从有限历史推断背后的概率规律。</p>
+</details>
+<ol>
+<li>★ 写出一阶差分、增长率和对数收益率的公式，并说明各自用途。</li>
+</ol>
+<details><summary>参考答案要点</summary>
+<p>$\Delta y_t=y_t-y_{t-1}$；$g_t=(y_t-y_{t-1})/y_{t-1}$；$r_t=\ln P_t-\ln P_{t-1}$。差分去除水平漂移，增长率表达相对变化，对数收益率便于多期相加。</p>
+</details>
+<ol>
+<li>★★ 为什么预测 $Y_{t+1}$ 时不能使用 $Y_{t+1}$ 本身或未来变量？</li>
+</ol>
+<details><summary>参考答案要点</summary>
+<p>预测必须基于时点 $t$ 的信息集 $\mathcal{F}_t$。使用未来信息会造成前视偏差，使样本外评价虚假偏好该模型。</p>
+</details>
+<ol>
+<li>★★ 证明当简单收益率 $R_t$ 很小时，对数收益率近似等于简单收益率。</li>
+</ol>
+<details><summary>参考答案要点</summary>
+<p>$r_t=\ln(P_t/P_{t-1})=\ln(1+R_t)$。泰勒展开 $\ln(1+x)=x-x^2/2+x^3/3-\cdots$，当 $x$ 很小时高阶项很小，所以 $r_t\approx R_t$。</p>
+</details>
+<ol>
+<li>★★★ 外部延伸：参考 FRED API 页面，说明下载宏观时间序列数据后，进入计量分析前至少要检查哪些元信息。</li>
+</ol>
+<details><summary>参考答案要点</summary>
+<p>变量定义、频率、单位、季调方式、发布日期、修订情况、缺失值、样本起止日期。宏观数据常有修订，实时预测时还要注意可得性。</p>
+</details>
+<h2 id="3-动态规律的第一层-均值-方差-自协方差与相关图">§3 动态规律的第一层：均值、方差、自协方差与相关图</h2>
+<ol>
+<li>★ 写出弱平稳的三个条件。</li>
+</ol>
+<details><summary>参考答案要点</summary>
+<p>均值为常数；方差有限且为常数；自协方差只依赖滞后阶数，不依赖具体时间点。</p>
+</details>
+<ol>
+<li>★ 白噪声是否一定服从正态分布？为什么？</li>
+</ol>
+<details><summary>参考答案要点</summary>
+<p>不一定。白噪声只要求零均值、常方差、不同期不相关。正态白噪声额外要求正态分布，条件更强。</p>
+</details>
+<ol>
+<li>★★ 解释自协方差 $\gamma(k)$ 和自相关 $\rho(k)$ 的区别。</li>
+</ol>
+<details><summary>参考答案要点</summary>
+<p>$\gamma(k)$ 是原单位下的共同运动，受量纲影响；$\rho(k)=\gamma(k)/\gamma(0)$ 标准化到 $[-1,1]$，便于比较强弱。</p>
+</details>
+<ol>
+<li>★★ 如果一个收益率序列 ACF 基本不显著，能否断言它没有可建模结构？</li>
+</ol>
+<details><summary>参考答案要点</summary>
+<p>不能。均值线性相关弱不代表方差无结构。金融收益率可能有波动聚集、厚尾、杠杆效应，需要看平方收益率 ACF、ARCH 效应等。</p>
+</details>
+<ol>
+<li>★★★ 外部延伸：参考 Penn State STAT 510 的 ACF/PACF 主题，说明为什么建模前要画相关图。</li>
+</ol>
+<details><summary>参考答案要点</summary>
+<p>相关图帮助识别滞后依赖、判断平稳性迹象、区分 AR 与 MA 的候选结构，并检查残差是否仍有系统性相关。</p>
+</details>
+<h2 id="4-建模逻辑-从白噪声到-ARMA-ARIMA">§4 建模逻辑：从白噪声到 ARMA/ARIMA</h2>
+<ol>
+<li>★ 用一句话分别解释 AR、MA、ARMA、ARIMA。</li>
+</ol>
+<details><summary>参考答案要点</summary>
+<p>AR 用过去的变量解释现在；MA 用过去冲击解释现在；ARMA 结合二者；ARIMA 先差分处理非平稳，再对差分序列建 ARMA。</p>
+</details>
+<ol>
+<li>★ 在 AR(1) 模型 $y_t=c+\phi y_{t-1}+\varepsilon_t$ 中，$\phi$ 的经济含义是什么？</li>
+</ol>
+<details><summary>参考答案要点</summary>
+<p>$\phi$ 衡量惯性或冲击持续性。绝对值越大，过去对现在影响越强；接近 1 时冲击衰减很慢。</p>
+</details>
+<ol>
+<li>★★ 推导平稳 AR(1) 的长期均值。</li>
+</ol>
+<details><summary>参考答案要点</summary>
+<p>取期望得 $\mu=c+\phi\mu$，所以 $\mu(1-\phi)=c$，若 $|\phi|&lt;1$，长期均值为 $\mu=c/(1-\phi)$。</p>
+</details>
+<ol>
+<li>★★ 为什么 $\phi=1$ 的 AR(1) 被称为随机游走？它对预测有什么影响？</li>
+</ol>
+<details><summary>参考答案要点</summary>
+<p>$y_t=c+y_{t-1}+\varepsilon_t$，冲击永久进入水平值。未来水平高度依赖当前值，历史均值通常不能作为稳定锚点。</p>
+</details>
+<ol>
+<li>★★★ 外部延伸：参考 Duke ARIMA 介绍，说明“差分”在 ARIMA 中解决的核心问题是什么。</li>
+</ol>
+<details><summary>参考答案要点</summary>
+<p>差分的目的不是让图形变好看，而是把非平稳水平序列转化为更稳定的变化序列，使 ARMA 结构可用于建模和预测。</p>
+</details>
+<h2 id="5-预测-从-看趋势-到-最小化损失">§5 预测：从“看趋势”到“最小化损失”</h2>
+<ol>
+<li>★ 什么是预测误差？写出符号表达。</li>
+</ol>
+<details><summary>参考答案要点</summary>
+<p>预测误差是实际值与预测值之差，常写为 $e_{t+h}=y_{t+h}-\hat y_{t+h|t}$。</p>
+</details>
+<ol>
+<li>★ 区分样本内拟合和样本外预测。</li>
+</ol>
+<details><summary>参考答案要点</summary>
+<p>样本内拟合使用估计模型的同一段数据评价；样本外预测使用估计时未见过的数据评价，更接近真实预测能力。</p>
+</details>
+<ol>
+<li>★★ 推导平方损失下最优预测为条件期望。</li>
+</ol>
+<details><summary>参考答案要点</summary>
+<p>最小化 $E[(Y-a)^2|\mathcal{F}]$。展开为 $E[Y^2|\mathcal{F}]-2aE[Y|\mathcal{F}]+a^2$，对 $a$ 求导得 $-2E[Y|\mathcal{F}]+2a=0$，所以 $a=E[Y|\mathcal{F}]$。</p>
+</details>
+<ol>
+<li>★★ 比较 MAE 与 RMSE。什么时候 RMSE 更合适？</li>
+</ol>
+<details><summary>参考答案要点</summary>
+<p>MAE 平均绝对误差，更稳健；RMSE 对大误差惩罚更重。若大误差代价特别高，如风险管理或库存短缺，RMSE 更合适。</p>
+</details>
+<ol>
+<li>★★★ 外部延伸：参考 Stata 时间序列手册中 forecast/rolling 相关主题，设计一个滚动窗口预测实验。</li>
+</ol>
+<details><summary>参考答案要点</summary>
+<p>设定窗口长度，如 120 期；每次用窗口内数据估计模型；预测下一期；窗口向前移动；收集预测误差；比较 RMSE/MAE。关键是不能使用未来信息。</p>
+</details>
+<h2 id="6-多个序列之间的关系-VAR-Granger-因果与协整">§6 多个序列之间的关系：VAR、Granger 因果与协整</h2>
+<ol>
+<li>★ VAR 与单变量 AR 模型的主要区别是什么？</li>
+</ol>
+<details><summary>参考答案要点</summary>
+<p>AR 只用一个变量自身滞后；VAR 同时包含多个变量的滞后，并把系统中的变量通常都视为内生变量。</p>
+</details>
+<ol>
+<li>★ Granger 因果为什么不是哲学意义上的因果？</li>
+</ol>
+<details><summary>参考答案要点</summary>
+<p>它衡量的是预测增量：加入 $x$ 的过去值是否改善对 $y$ 的预测。它不自动排除遗漏变量、共同原因或结构性识别问题。</p>
+</details>
+<ol>
+<li>★★ 写出二维 VAR(1) 的矩阵形式，并解释一个交叉滞后系数。</li>
+</ol>
+<details><summary>参考答案要点</summary>
+<p>可写为 $\mathbf{z}_t=\mathbf{c}+A\mathbf{z}_{t-1}+\mathbf{u}_t$。若 $\mathbf{z}_t=(y_t,x_t)&#x27;$，$a_{12}$ 表示 $x_{t-1}$ 对 $y_t$ 的预测影响。</p>
+</details>
+<ol>
+<li>★★ 什么是协整？为什么两个非平稳变量也可能有长期关系？</li>
+</ol>
+<details><summary>参考答案要点</summary>
+<p>若两个 $I(1)$ 变量的某个线性组合是 $I(0)$，则存在协整。它说明变量各自漂移，但偏离长期均衡的误差不会无限发散。</p>
+</details>
+<ol>
+<li>★★★ 外部延伸：参考 Stata 手册中 VAR/IRF 相关主题，说明冲击响应函数回答什么问题。</li>
+</ol>
+<details><summary>参考答案要点</summary>
+<p>冲击响应函数描述系统受到某个变量冲击后，各变量未来若干期的动态反应。它适合研究政策冲击、风险冲击或金融市场传导。</p>
+</details>
+<h2 id="7-金融时间序列的特殊性-收益率-厚尾和波动聚集">§7 金融时间序列的特殊性：收益率、厚尾和波动聚集</h2>
+<ol>
+<li>★ 为什么金融研究常把价格转化为收益率？</li>
+</ol>
+<details><summary>参考答案要点</summary>
+<p>价格水平常非平稳且尺度依赖强；收益率更接近平稳，能表示投资回报，也便于比较不同资产。</p>
+</details>
+<ol>
+<li>★ 什么是波动聚集？给一个市场例子。</li>
+</ol>
+<details><summary>参考答案要点</summary>
+<p>大波动倾向于接着大波动，小波动倾向于接着小波动。例子：金融危机期间股指连续多日大幅波动。</p>
+</details>
+<ol>
+<li>★★ 写出 GARCH(1,1) 条件方差方程，并解释三个参数。</li>
+</ol>
+<details><summary>参考答案要点</summary>
+<p>$\sigma_t^2=\omega+\alpha\varepsilon_{t-1}^2+\beta\sigma_{t-1}^2$。$\omega$ 是长期底噪，$\alpha$ 衡量新冲击影响，$\beta$ 衡量过去波动持续性。</p>
+</details>
+<ol>
+<li>★★ 如果 $\alpha+\beta$ 接近 1，说明什么？</li>
+</ol>
+<details><summary>参考答案要点</summary>
+<p>说明波动持续性强，冲击衰减慢。危机后的高波动可能持续较久，风险预测需要考虑这种惯性。</p>
+</details>
+<ol>
+<li>★★★ 外部延伸：参考 Stata 手册中 ARCH/GARCH 主题，设计一个检验收益率波动聚集的实证步骤。</li>
+</ol>
+<details><summary>参考答案要点</summary>
+<p>计算收益率；画收益率和平方收益率；查看平方收益率 ACF；估计均值方程；对残差做 ARCH 效应检验；若显著，估计 ARCH/GARCH 模型。</p>
+</details>
+<h2 id="8-软件实作-用-Stata-把理论变成可复现流程">§8 软件实作：用 Stata 把理论变成可复现流程</h2>
+<ol>
+<li>★ <code>tsset</code> 的作用是什么？为什么它是时间序列命令的地基？</li>
+</ol>
+<details><summary>参考答案要点</summary>
+<p><code>tsset</code> 声明时间变量和频率，使 Stata 正确认识时间顺序、间隔和滞后结构。之后才能安全使用 <code>L.</code>、<code>D.</code>、<code>F.</code> 等时间序列算子。</p>
+</details>
+<ol>
+<li>★ 写出 Stata 中生成一阶差分和一阶滞后的语法。</li>
+</ol>
+<details><summary>参考答案要点</summary>
+<p>在 <code>tsset</code> 后可用 <code>gen dy = D.y</code> 生成一阶差分，用 <code>gen ly = L.y</code> 生成一阶滞后。</p>
+</details>
+<ol>
+<li>★★ 为什么导入数据后要先处理日期变量，而不是直接估计模型？</li>
+</ol>
+<details><summary>参考答案要点</summary>
+<p>如果日期未正确识别，滞后和差分可能错位，缺失期可能被忽略，频率也无法判断。时间变量处理错误会污染所有后续结果。</p>
+</details>
+<ol>
+<li>★★ 根据以下任务写出 Stata 命令骨架：导入 CSV，声明月度时间序列，画图，做 ADF 检验。</li>
+</ol>
+<details><summary>参考答案要点</summary>
+<p>可写：<code>import delimited ...</code>；<code>gen mdate=monthly(...)</code>；<code>format mdate %tm</code>；<code>tsset mdate, monthly</code>；<code>tsline y</code>；<code>dfuller y, lags(12)</code>。具体变量名按数据调整。</p>
+</details>
+<ol>
+<li>★★★ 外部延伸：参考 FRED API 与 Stata 手册，说明如何保证作业中的数据下载和模型估计可复现。</li>
+</ol>
+<details><summary>参考答案要点</summary>
+<p>记录 URL、下载日期、变量 ID、样本区间；保留完整清洗代码；固定模型设定；输出日志；说明缺失值处理和频率转换。</p>
+</details>
+<h2 id="9-学术规范与课程考核-作业是主战场">§9 学术规范与课程考核：作业是主战场</h2>
+<ol>
+<li>★ 本课程考核中作业占多少分？这对学习策略意味着什么？</li>
+</ol>
+<details><summary>参考答案要点</summary>
+<p>作业 60 分，是最大部分。学习不能只背公式，要把每章方法落实为数据、代码、图表和解释。</p>
+</details>
+<ol>
+<li>★ 什么叫可复现实证报告？</li>
+</ol>
+<details><summary>参考答案要点</summary>
+<p>别人按照你的数据来源、代码和说明，可以得到相同或可解释差异的结果。报告应包含数据、代码、模型设定和输出解释。</p>
+</details>
+<ol>
+<li>★★ 为什么时间序列作业中特别忌讳“只交结果不交过程”？</li>
+</ol>
+<details><summary>参考答案要点</summary>
+<p>时间序列结果对样本期、频率、差分、滞后阶数和预测窗口敏感。没有过程无法判断结论是否可靠、是否存在前视偏差或选择性报告。</p>
+</details>
+<ol>
+<li>★★ 设计一个检查清单，用于提交作业前自查是否存在学术规范问题。</li>
+</ol>
+<details><summary>参考答案要点</summary>
+<p>检查数据来源是否注明；代码是否完整；引用是否规范；图表是否自己生成；是否避免抄袭文字；是否说明模型选择；是否报告失败或不显著结果。</p>
+</details>
+<ol>
+<li>★★★ 外部延伸：参考 Stata 手册的日志和命令工作流思想，说明为什么保存 <code>.do</code> 文件比只保存交互窗口输出更好。</li>
+</ol>
+<details><summary>参考答案要点</summary>
+<p><code>.do</code> 文件记录完整步骤，可重复运行、修改、审查和提交；交互输出只显示结果片段，难以追踪每一步数据处理。</p>
+</details>
+<h2 id="10-参考书与学习路线-从教材到经典文献">§10 参考书与学习路线：从教材到经典文献</h2>
+<ol>
+<li>★ 课件列出的主教材是哪一本？它在学习中的作用是什么？</li>
+</ol>
+<details><summary>参考答案要点</summary>
+<p>主教材是涂云东《时间序列分析》（人民邮电出版社，2022）。作用是建立课程主线、中文概念和基础模型框架。</p>
+</details>
+<ol>
+<li>★ Tsay、Hamilton、Davidson 三本英文书分别更适合补什么？</li>
+</ol>
+<details><summary>参考答案要点</summary>
+<p>Tsay 偏金融应用；Hamilton 偏经典时间序列理论与宏观应用；Davidson 偏随机极限理论和高级计量证明。</p>
+</details>
+<ol>
+<li>★★ 为什么不建议一开始就啃最难的随机极限理论？</li>
+</ol>
+<details><summary>参考答案要点</summary>
+<p>初学时更需要建立模型直觉和实证流程。随机极限理论解释大样本性质，但若缺少 ARMA、单位根、VAR 等背景，容易只记符号不懂问题。</p>
+</details>
+<ol>
+<li>★★ 为本课程设计一个四周入门复习计划。</li>
+</ol>
+<details><summary>参考答案要点</summary>
+<p>第 1 周：时间序列概念、图形、ACF、平稳性；第 2 周：ARMA/ARIMA 与预测；第 3 周：单位根、VAR、Granger、协整；第 4 周：GARCH、Stata 实证、综合作业。</p>
+</details>
+<ol>
+<li>★★★ 外部延伸：结合 Penn State、Duke ARIMA 与 Stata 手册，说明“理论、识别、估计、诊断、预测”五步如何串成一条学习线。</li>
+</ol>
+<details><summary>参考答案要点</summary>
+<p>理论给出模型假设；识别用图形和 ACF/PACF 选择候选；估计得到参数；诊断检查残差和平稳性；预测用样本外误差评价模型价值。五步缺一不可。</p>
+</details>
+<h2 id="综合提升题">综合提升题</h2>
+<ol>
+<li>★★★ 用 300 字说明：第0章虽然没有复杂公式，为什么仍然是整门课最重要的地图？</li>
+</ol>
+<details><summary>参考答案要点</summary>
+<p>应围绕课程目标、时间序列定义、动态规律、预测、变量关系、软件实作和考核方式展开。重点说明导论章提供问题意识与学习路线，而非只提供行政信息。</p>
+</details>
+<ol>
+<li>★★★ 选择一个金融变量，如沪深300指数、人民币汇率或国债收益率，设计从数据下载到预测评价的完整研究方案。</li>
+</ol>
+<details><summary>参考答案要点</summary>
+<p>应包括变量与频率、样本期、数据来源、收益率或差分处理、平稳性检查、模型候选、估计命令、样本外评价指标、经济解释和局限性。</p>
+</details></main>
+  </div>
+</body>
+</html>
